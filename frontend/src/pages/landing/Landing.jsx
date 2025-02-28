@@ -7,7 +7,7 @@ import Images from './pages/Images'
 import Chart from './pages/Chart'
 import VolunterCtC from './pages/VolunterCtC'
 import NgoCtc from './pages/NgoCtc'
-import Footer from './components/Footer'
+import Foooter from './components/Foooter'
 
 const Landing = () => {
   return (
@@ -20,7 +20,7 @@ const Landing = () => {
         <Chart />
         <VolunterCtC />
         <NgoCtc />
-        <Footer />
+        <Foooter />
     </>
   );
 };
