@@ -16,7 +16,7 @@ export default function Footer() {
         <p className="text-sm mt-2 italic">
           "Striving to make project management seamless and efficient."
         </p>
-        <p className="text-sm font-semibold mt-1">-  Team</p>
+        <p className="text-sm font-semibold mt-1">- Team</p>
 
         {/* Contact Info (Centered in a Row) */}
         <div className="flex flex-wrap justify-center space-x-6 text-sm">
