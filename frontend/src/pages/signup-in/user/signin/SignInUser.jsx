@@ -1,72 +1,124 @@
 import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import AuthLayout from "../../AuthLayout";
-import AuthCard from "../../AuthCard";
+import { Label } from "@/components/ui/label";
+import PageTransition from "@/components/PageTransition";
+import axios from "axios";
 
-const SignInUser = () => {
+function SignInUser() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Sign In:", formData);
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post(login, formData);
+      const { accessToken } = response.data.data;
+      console.log(accessToken);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("userId", response.data.data.user._id);
+      localStorage.setItem("userRole", "CUSTOMER");
+      // Handle success
+      navigate("/customer");
+    } catch (error) {
+      // Handle error
+      console.error("Error logging in:", error.response?.data || error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <AuthLayout>
-      <AuthCard isSignUp={false}>
-        <form onSubmit={handleSubmit} className="space-y-4 mt-6">
-          <div className="space-y-1">
-            <label className="block text-sm font-semibold text-emerald-400">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              className="w-full px-3 py-2 bg-white/10 border-2 border-emerald-800/50 rounded-lg 
-              focus:outline-none focus:border-emerald-400 text-white placeholder-emerald-700/30
-              transition-colors text-sm"
-            />
-          </div>
-          <div className="space-y-1">
-            <div className="flex justify-between items-center">
-              <label className="block text-sm font-semibold text-emerald-400">
-                Password
-              </label>
-              <a href="#" className="text-xs text-emerald-400 hover:text-emerald-300">
-                Forgot Password?
-              </a>
-            </div>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Enter your password"
-              className="w-full px-3 py-2 bg-white/10 border-2 border-emerald-800/50 rounded-lg 
-              focus:outline-none focus:border-emerald-400 text-white placeholder-emerald-700/30
-              transition-colors text-sm"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 mt-4 bg-emerald-600 text-white rounded-lg
-            hover:bg-emerald-500 transition-colors font-semibold text-sm"
-          >
-            Sign In
-          </button>
-        </form>
-      </AuthCard>
+      <PageTransition>
+        <Card className="auth-card max-w-md w-full bg-emerald-950/50 border-emerald-800/50">
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl text-center text-emerald-400">
+              Welcome back
+            </CardTitle>
+            <CardDescription className="text-center text-emerald-300/70">
+              Sign in to continue
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                  }
+                  placeholder="Enter your email"
+                  required
+                  className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
+                placeholder:text-emerald-700/50 focus:border-emerald-500
+                hover:border-emerald-600/50 transition-colors"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Password</Label>
+                <Input
+                  type="password"
+                  value={formData.password}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      password: e.target.value,
+                    }))
+                  }
+                  placeholder="••••••••"
+                  required
+                  className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
+                placeholder:text-emerald-700/50 focus:border-emerald-500
+                hover:border-emerald-600/50 transition-colors"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white
+                transition-colors duration-200"
+                disabled={isLoading}
+              >
+                {isLoading ? "Signing in..." : "Sign In"}
+              </Button>
+            </form>
+          </CardContent>
+          <CardFooter>
+            <p className="text-center text-sm text-emerald-400/70 w-full">
+              New to our platform?{" "}
+              <Link
+                to="/signupuser"
+                className="text-emerald-400 hover:text-emerald-300"
+              >
+                Create an account
+              </Link>
+            </p>
+          </CardFooter>
+        </Card>
+      </PageTransition>
     </AuthLayout>
   );
-};
+}
 
 export default SignInUser;

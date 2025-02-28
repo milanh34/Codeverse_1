@@ -180,7 +180,7 @@ const AuthLayout = ({ children }) => {
       { Icon: Music, delay: 3 },
       { Icon: Smile, delay: 3.5 },
       { Icon: Zap, delay: 4 },
-      { Icon: Ticket, delay: 4.5 }
+      { Icon: Ticket, delay: 4.5 },
     ].map((icon, i) => ({
       ...icon,
       ...getRandomPosition(),
@@ -193,9 +193,10 @@ const AuthLayout = ({ children }) => {
   });
 
   return (
-    <div className="fixed inset-0 w-full h-full flex items-center justify-center p-4 bg-gradient-to-br from-emerald-950 to-emerald-800">
-      {/* Background particles layer - fixed position */}
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800">
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 bg-emerald-900/50 backdrop-blur-3xl"></div>
+
         {/* Large floating icons in background */}
         <AnimatePresence mode="sync">
           {icons.large.map((icon) => (
@@ -224,21 +225,20 @@ const AuthLayout = ({ children }) => {
 
         {/* Spotlight effects */}
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] animate-pulse-slow" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-primary/3 rounded-full blur-[100px] animate-pulse" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse-slow" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-400/5 rounded-full blur-[100px] animate-pulse" />
         </div>
       </div>
 
       {/* Content layer */}
-      <div className="relative z-10 w-full max-w-md mx-auto">
+      <div className="relative z-10 w-full max-w-md">
         <AnimatePresence mode="wait">
           <motion.div
-            key={location?.pathname || "default"}
+            key={location.pathname}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="w-full"
           >
             {children}
           </motion.div>
