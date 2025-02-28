@@ -193,7 +193,7 @@ const AuthLayout = ({ children }) => {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="fixed inset-0 w-full h-full flex items-center justify-center p-4 bg-gradient-to-br from-emerald-950 to-emerald-800">
       {/* Background particles layer - fixed position */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Large floating icons in background */}
@@ -230,14 +230,15 @@ const AuthLayout = ({ children }) => {
       </div>
 
       {/* Content layer */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-md mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
-            key={location.pathname}
+            key={location?.pathname || "default"}
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.3 }}
+            className="w-full"
           >
             {children}
           </motion.div>
