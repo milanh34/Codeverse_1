@@ -61,8 +61,8 @@ export default function NGONavbar() {
       }`}>
         {/* Left - Logo */}
         <div className="flex items-center space-x-2 cursor-pointer">
-          <Heart className="text-teal-600" size={24} />
-          <span className="text-xl font-bold text-teal-700">ImpactNow</span>
+          <Heart className="text-[#1e5631]" size={24} />
+          <span className="text-xl font-bold text-[#1e5631]">ImpactNow</span>
         </div>
         
         {/* Center - Search Bar (desktop) */}
@@ -75,7 +75,7 @@ export default function NGONavbar() {
             placeholder="Search causes..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-4 py-2 rounded-full w-full bg-white shadow-sm text-gray-800 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-teal-400 transition-all"
+            className="pl-10 pr-4 py-2 rounded-full w-full bg-white shadow-sm text-gray-800 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#4a3d69] transition-all"
           />
         </div>
         
@@ -101,7 +101,7 @@ export default function NGONavbar() {
                       <a
                         key={dropIdx}
                         href="#"
-                        className="block px-4 py-3 text-sm text-gray-700 hover:bg-teal-50 hover:text-teal-700 transition-colors"
+                        className="block px-4 py-3 text-sm text-[#1e5631] hover:bg-teal-50 hover:text-teal-700 transition-colors"
                       >
                         {dropdownItem}
                       </a>
@@ -115,7 +115,7 @@ export default function NGONavbar() {
           {/* Action Buttons */}
           <div className="flex items-center space-x-3">
             {/* Donation Button */}
-            <button className="bg-teal-600 hover:bg-teal-700 text-white font-medium py-2 px-4 rounded-full transition-all shadow-sm">
+            <button className="bg-[#1e5631] hover:bg-teal-500 text-white font-medium py-2 px-4 rounded-full transition-all shadow-sm">
               Donate Now
             </button>
             

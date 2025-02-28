@@ -91,7 +91,7 @@ const AboutUs = () => {
     <div className="bg-gradient-to-b from-[#E6F4F2] to-white">
       {/* Hero Section with Background Image */}
       <div className="relative">
-        <div className="absolute inset-0 bg-[#264653]/70 z-10"></div>
+        <div className="absolute inset-0 bg-[#7ca982]/70 z-10"></div>
         <div
           className="h-[70vh] bg-cover bg-center"
           style={{ backgroundImage: `url('/api/placeholder/1920/1080')` }}
@@ -102,7 +102,7 @@ const AboutUs = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-8 max-w-3xl"
             >
-              <Badge className="mb-4 bg-[#2A9D8F] text-white px-4 py-2 text-lg">
+              <Badge className="mb-4 bg-[] text-white px-4 py-2 text-lg">
                 About Us
               </Badge>
               <h1 className="text-6xl font-bold mb-6 text-white leading-tight">
@@ -117,14 +117,14 @@ const AboutUs = () => {
               <div className="flex gap-4 justify-center">
                 <Button
                   size="lg"
-                  className="bg-[#2A9D8F] hover:bg-[#2A9D8F]/80 text-white text-lg px-8 py-6"
+                  className="bg-teal-500 hover:bg-[#1e5631] text-white text-lg px-8 py-6 rounded-full"
                 >
                   Our Mission
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white text-white hover:bg-white/10 text-lg px-8 py-6"
+                  className="border-white text-white hover:bg-white/10  hover:text-[#1e5631] text-lg px-8 py-6 rounded-full"
                 >
                   Watch Video
                 </Button>
@@ -134,7 +134,8 @@ const AboutUs = () => {
         </div>
       </div>
 
-      {/* Achievement Cards with Enhanced Details */}
+      {/* Achievement Cards 
+      with Enhanced Details */}
       <div className="bg-[#F7FDFC] py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-4xl font-bold mb-16 text-center text-[#264653]">
