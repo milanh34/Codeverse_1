@@ -22,7 +22,7 @@ const Landing = () => {
         <NgoCtc />
         <Footer />
     </>
-  )
-}
+  );
+};
 
-export default Landing
+export default Landing;
