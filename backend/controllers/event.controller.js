@@ -207,10 +207,22 @@ export const getEventById = TryCatch(async (req, res, next) => {
 
 export const getAllNGOEvents = TryCatch(async (req, res, next) => {
   const ngoId = req.user; // Get NGO ID from authenticated user
+  const { ngo } = req.body;
+
+  let id;
+  if(!ngo && !ngoId){
+    return next(new ErrorHandler("NGO not found", 404));
+  }
+
+  if(ngo){
+    id = ngo;
+  } else{
+    id = ngoId;
+  }
 
   console.count("NGO Events");
 
-  const events = await Event.find({ organizer: ngoId })
+  const events = await Event.find({ organizer: id })
     .populate("organizer", "name profile_image")
     .populate("participants", "name username profile_image")
     .sort({ createdAt: -1 }); // Sort by latest first
