@@ -82,10 +82,9 @@ export default function UserProfileNavbar() {
     },
     {
       name: "Volunteer",
-      hasDropdown: true,
+      hasDropdown: false,
       icon: <Users size={18} />,
       path: "/user/volunteer",
-      dropdownItems: ["Volunteer History"],
     },
   ];
 
@@ -298,6 +297,14 @@ export default function UserProfileNavbar() {
                     Donation History
                   </a>
 
+                  <a
+                    href="#"
+                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors"
+                  >
+                    <Users size={16} className="mr-2" />
+                    Volunteer History
+                  </a>
+
                   <div className="border-t border-[#8df1e2]/30 mt-1">
                     <a
                       href="#"
@@ -432,6 +439,14 @@ export default function UserProfileNavbar() {
               >
                 <History size={16} className="mr-2 text-[#166856]" />
                 Donation History
+              </a>
+
+              <a
+                href="#"
+                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320]"
+              >
+                <Users size={16} className="mr-2 text-[#166856]" />
+                Volunteer History
               </a>
 
               <div className="pt-4 mt-4 border-t border-[#8df1e2]/30">
