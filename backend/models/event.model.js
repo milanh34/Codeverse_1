@@ -28,6 +28,10 @@ const eventSchema = new Schema(
       ref: "NGO",
       required: true,
     },
+    isEmergency: {
+      type: Boolean,
+      default: false,
+    },
     participants: [
       {
         type: Schema.Types.ObjectId,
@@ -44,6 +48,15 @@ const eventSchema = new Schema(
         type: String,
       },
     ],
+    allocatedFund: {
+      type: Number,
+    },
+    startDate: {
+      type: Date,
+    },
+    endDate: {
+      type: Date,
+    },
   },
   { timestamps: true }
 );

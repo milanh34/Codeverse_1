@@ -26,70 +26,6 @@ export const createVolunteerRequest = TryCatch(async (req, res, next) => {
   });
 });
 
-export const acceptVolunteerRequest = TryCatch(async (req, res, next) => {
-  const { requestId } = req.params;
-  const ngoId = req.user;
-
-  const request = await Request.findById(requestId).populate("event");
-  if (!request) return next(new ErrorHandler("Request not found", 404));
-
-  if (request.event.organizer.toString() !== ngoId) {
-    return next(
-      new ErrorHandler("Only event organizers can accept requests", 403)
-    );
-  }
-
-  request.status = "accepted";
-  await request.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Request accepted",
-    request,
-  });
-});
-
-export const rejectVolunteerRequest = TryCatch(async (req, res, next) => {
-  const { requestId } = req.params;
-  const ngoId = req.user;
-
-  const request = await Request.findById(requestId).populate("event");
-  if (!request) return next(new ErrorHandler("Request not found", 404));
-
-  if (request.event.organizer.toString() !== ngoId) {
-    return next(
-      new ErrorHandler("Only event organizers can reject requests", 403)
-    );
-  }
-
-  request.status = "rejected";
-  await request.save();
-
-  res.status(200).json({
-    success: true,
-    message: "Request rejected",
-    request,
-  });
-});
-
-export const getPendingRequests = TryCatch(async (req, res, next) => {
-  const ngoId = req.user;
-
-  const events = await Event.find({ organizer: ngoId }).select("_id");
-  const eventIds = events.map((event) => event._id);
-
-  const requests = await Request.find({
-    event: { $in: eventIds },
-    status: "pending",
-  })
-    .populate("user", "username email")
-    .populate("event", "name");
-
-  res.status(200).json({
-    success: true,
-    requests,
-  });
-});
 
 export const getUserRequests = TryCatch(async (req, res, next) => {
   const userId = req.user;
@@ -104,3 +40,73 @@ export const getUserRequests = TryCatch(async (req, res, next) => {
     requests,
   });
 });
+
+
+
+
+
+//redundant 
+// export const acceptVolunteerRequest = TryCatch(async (req, res, next) => {
+//   const { requestId } = req.params;
+//   const ngoId = req.user;
+
+//   const request = await Request.findById(requestId).populate("event");
+//   if (!request) return next(new ErrorHandler("Request not found", 404));
+
+//   if (request.event.organizer.toString() !== ngoId) {
+//     return next(
+//       new ErrorHandler("Only event organizers can accept requests", 403)
+//     );
+//   }
+
+//   request.status = "accepted";
+//   await request.save();
+
+//   res.status(200).json({
+//     success: true,
+//     message: "Request accepted",
+//     request,
+//   });
+// });
+
+// export const rejectVolunteerRequest = TryCatch(async (req, res, next) => {
+//   const { requestId } = req.params;
+//   const ngoId = req.user;
+
+//   const request = await Request.findById(requestId).populate("event");
+//   if (!request) return next(new ErrorHandler("Request not found", 404));
+
+//   if (request.event.organizer.toString() !== ngoId) {
+//     return next(
+//       new ErrorHandler("Only event organizers can reject requests", 403)
+//     );
+//   }
+
+//   request.status = "rejected";
+//   await request.save();
+
+//   res.status(200).json({
+//     success: true,
+//     message: "Request rejected",
+//     request,
+//   });
+// });
+
+// export const getPendingRequests = TryCatch(async (req, res, next) => {
+//   const ngoId = req.user;
+
+//   const events = await Event.find({ organizer: ngoId }).select("_id");
+//   const eventIds = events.map((event) => event._id);
+
+//   const requests = await Request.find({
+//     event: { $in: eventIds },
+//     status: "pending",
+//   })
+//     .populate("user", "username email")
+//     .populate("event", "name");
+
+//   res.status(200).json({
+//     success: true,
+//     requests,
+//   });
+// });

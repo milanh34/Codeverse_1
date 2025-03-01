@@ -4,6 +4,7 @@ import { ErrorHandler, TryCatch } from "../middlewares/error.middleware.js";
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { NGO } from "../models/ngo.model.js";
+import { Notification } from "../models/notification.model.js";
 
 export const newUser = TryCatch(async (req, res, next) => {
   const {
@@ -225,5 +226,63 @@ export const toggleFollowNGO = TryCatch(async (req, res, next) => {
       ? "Successfully unfollowed the NGO"
       : "Successfully followed the NGO",
     isFollowing: !isFollowing,
+  });
+});
+
+export const getNotifications = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+
+  const notifications = await Notification.findOne({ user: userId }).sort({
+    "notifications.createdAt": -1,
+  });
+
+  res.status(200).json({
+    success: true,
+    notifications: notifications?.notifications || [],
+  });
+});
+
+export const markNotificationAsRead = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+  const { notificationId } = req.params;
+
+  const notification = await Notification.findOneAndUpdate(
+    {
+      user: userId,
+      "notifications._id": notificationId,
+    },
+    {
+      $set: { "notifications.$.isRead": true },
+    },
+    { new: true }
+  );
+
+  if (!notification) {
+    return next(new ErrorHandler("Notification not found", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Notification marked as read",
+  });
+});
+
+export const getVolunteerHistory = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+
+  const volunteerHistory = await Volunteer.find({ user: userId })
+    .populate({
+      path: "event",
+      select: "name date description location",
+      populate: {
+        path: "organizer",
+        select: "name profile_image",
+      },
+    })
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    volunteerHistory,
   });
 });

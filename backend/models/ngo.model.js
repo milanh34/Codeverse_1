@@ -62,6 +62,14 @@ const ngoSchema = new Schema(
         ref: "User",
       },
     ],
+    totalFunds: {
+      type: Number,
+      default: 0,
+    },
+    staff:{
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

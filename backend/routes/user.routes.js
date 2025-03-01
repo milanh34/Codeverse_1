@@ -1,10 +1,7 @@
 import express from "express";
 import {
-  acceptVolunteerRequest,
   createVolunteerRequest,
-  getPendingRequests,
   getUserRequests,
-  rejectVolunteerRequest,
 } from "../controllers/request.controller.js";
 import {
   changePassword,
@@ -12,8 +9,10 @@ import {
   login,
   logout,
   newUser,
-  updateProfile,
   toggleFollowNGO,
+  updateProfile,
+  getNotifications,
+  markNotificationAsRead,
 } from "../controllers/user.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -47,19 +46,29 @@ router.put(
 // Request routes
 router.post("/request/:eventId", isAuthenticated, createVolunteerRequest);
 router.get("/my-requests", isAuthenticated, getUserRequests);
-router.get("/pending-requests", isAuthenticated, getPendingRequests);
-router.put(
-  "/request/:requestId/accept",
-  isAuthenticated,
-  acceptVolunteerRequest
-);
-router.put(
-  "/request/:requestId/reject",
-  isAuthenticated,
-  rejectVolunteerRequest
-);
+// router.get("/pending-requests", isAuthenticated, getPendingRequests);
+// router.put(
+//   "/request/:requestId/accept",
+//   isAuthenticated,
+//   acceptVolunteerRequest
+// );
+// router.put(
+//   "/request/:requestId/reject",
+//   isAuthenticated,
+//   rejectVolunteerRequest
+// );
 
 // Follow/Unfollow routes
 router.post("/toggle-follow/:ngoId", isAuthenticated, toggleFollowNGO);
+
+// Notification routes
+router.get("/notifications", isAuthenticated, getNotifications);
+router.put(
+  "/notifications/:notificationId/read",
+  isAuthenticated,
+  markNotificationAsRead
+);
+
+router.get("/volunteer-history", isAuthenticated, getVolunteerHistory);
 
 export default router;
