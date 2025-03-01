@@ -2,6 +2,8 @@ import { sendToken } from "../lib/token.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.middleware.js";
 import { NGO } from "../models/ngo.model.js";
 import bcrypt from "bcrypt";
+import { Request } from "../models/request.model.js";
+import { Event } from "../models/event.model.js";
 
 export const newNGO = TryCatch(async (req, res, next) => {
   const {
@@ -175,5 +177,65 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
     success: true,
     message: "NGO profile updated successfully",
     ngo: updatedNGO,
+  });
+});
+
+export const getPendingVolunteerRequests = TryCatch(async (req, res, next) => {
+  const ngoId = req.user;
+
+  // Find all events organized by this NGO
+  const events = await Event.find({ organizer: ngoId }).select("_id");
+  const eventIds = events.map((event) => event._id);
+
+  // Find all pending requests for these events
+  const requests = await Request.find({
+    event: { $in: eventIds },
+    status: "pending",
+  })
+    .populate("user", "name email profile_image")
+    .populate("event", "name date");
+
+  res.status(200).json({
+    success: true,
+    requests,
+  });
+});
+
+export const handleVolunteerRequest = TryCatch(async (req, res, next) => {
+  const { requestId, action } = req.params;
+  const ngoId = req.user;
+
+  if (!["accept", "reject"].includes(action)) {
+    return next(new ErrorHandler("Invalid action", 400));
+  }
+
+  const request = await Request.findById(requestId)
+    .populate("event")
+    .populate("user", "name email");
+
+  if (!request) {
+    return next(new ErrorHandler("Request not found", 404));
+  }
+
+  // Verify if the NGO owns this event
+  if (request.event.organizer.toString() !== ngoId) {
+    return next(new ErrorHandler("Unauthorized to handle this request", 403));
+  }
+
+  // Update request status
+  request.status = action === "accept" ? "accepted" : "rejected";
+  await request.save();
+
+  // If accepted, add user to event participants
+  if (action === "accept") {
+    await Event.findByIdAndUpdate(request.event._id, {
+      $addToSet: { participants: request.user._id },
+    });
+  }
+
+  res.status(200).json({
+    success: true,
+    message: `Request ${action}ed successfully`,
+    request,
   });
 });

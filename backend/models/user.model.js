@@ -63,6 +63,12 @@ const userSchema = new Schema(
     refreshToken: {
       type: String,
     },
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "NGO",
+      },
+    ],
     // notifications: [
     //   {
     //     type: mongoose.Schema.Types.ObjectId,
