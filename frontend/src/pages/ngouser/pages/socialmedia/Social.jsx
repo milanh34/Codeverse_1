@@ -228,10 +228,10 @@ const Social = () => {
     likes: post.likesCount || 0,
     comments:
       post.comments?.map((comment) => ({
-        id: comment._id,
+        id: comment.user._id,
         author: comment.user?.name || "Unknown User",
-        content: comment.text,
-        timestamp: comment.createdAt,
+        content: comment.comment,
+        timestamp: comment.createdAt ||null,
         avatar: comment.user?.profile_image || "",
       })) || [],
   });

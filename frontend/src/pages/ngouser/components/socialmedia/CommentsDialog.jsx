@@ -24,7 +24,7 @@ const CommentItem = motion(({ comment }) => (
       <div className="flex items-center gap-2">
         <p className="font-medium text-[#0d3320]">{comment.author}</p>
         <span className="text-xs text-[#166856]/60">
-          {formatDistanceToNow(new Date(comment.timestamp), { addSuffix: true })}
+          {/* {formatDistanceToNow(new Date(comment.timestamp), { addSuffix: true })} */}
         </span>
       </div>
       <p className="text-[#166856] mt-1">{comment.content}</p>
