@@ -7,7 +7,7 @@ const notificationSchema = new Schema(
             ref: "User", 
             required: true 
         },
-        notifications: [
+        notifications: 
             {
                 content: { 
                     type: String, 
@@ -23,7 +23,7 @@ const notificationSchema = new Schema(
                     default: false 
                 },
             }
-        ],
+        
     },
     { timestamps: true }
 );
