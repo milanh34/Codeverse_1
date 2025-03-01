@@ -20,6 +20,10 @@ import {
 } from "../controllers/user.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
+import {
+    createDonation,
+    getUserDonations,
+} from "../controllers/donation.controller.js";
 
 const router = express.Router();
 
@@ -79,5 +83,9 @@ router.get("/volunteer-history", isAuthenticated, getVolunteerHistory);
 router.get("/posts/following", isAuthenticated, getFollowingNGOPosts);
 router.post("/post/:postId/toggle-like", isAuthenticated, togglePostLike);
 router.post("/post/:postId/comment", isAuthenticated, addComment);
+
+// Donation routes
+router.post("/donation/create", isAuthenticated, createDonation);
+router.get("/donations", isAuthenticated, getUserDonations);
 
 export default router;

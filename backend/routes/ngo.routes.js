@@ -14,6 +14,10 @@ import {
 } from "../controllers/ngo.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import { multerUpload } from "../lib/multer.js";
+import {
+  getNGODonations,
+  getNGOFunds
+} from "../controllers/donation.controller.js";
 
 const router = express.Router();
 
@@ -60,5 +64,9 @@ router.post(
 
 router.get("/posts", isAuthenticated, getMyPosts);
 router.delete("/post/:postId", isAuthenticated, deletePost);
+
+// Donation routes
+router.get("/donations", isAuthenticated, getNGODonations);
+router.get("/funds", isAuthenticated, getNGOFunds);
 
 export default router;

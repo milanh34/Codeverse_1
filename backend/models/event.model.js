@@ -38,9 +38,10 @@ const eventSchema = new Schema(
         ref: "User",
       },
     ],
-    event_galley: [
+    event_gallery: [
       {
         type: String,
+        trim: true,
       },
     ],
     badges: [
