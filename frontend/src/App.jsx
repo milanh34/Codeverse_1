@@ -21,6 +21,7 @@ import { SERVER } from "./config/constant";
 
 import Home from "./pages/normaluser/pages/Home";
 import Project from "./pages/normaluser/pages/Project";
+import SocialUser from "./pages/normaluser/pages/SocialUser";
 import UserNavbar from "./pages/normaluser/components/UserNavbar";
 import UserLayout from "./layout/UserLayout";
 function App() {
@@ -152,6 +153,9 @@ function App() {
           <Route path="/user" element={<Home />} />
           <Route path="/user/projects" element={<Project />} />
           <Route path="/user/donate" element={<Donate />} />
+          <Route path="/user/social" element={<SocialUser />} />
+          
+
         </Route>
       </Routes>
     </>

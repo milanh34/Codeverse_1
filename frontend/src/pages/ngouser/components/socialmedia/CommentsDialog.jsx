@@ -32,7 +32,12 @@ const CommentItem = motion(({ comment }) => (
   </div>
 ));
 
-const CommentsDialog = ({ isOpen, onClose, comments: initialComments, onAddComment }) => {
+const CommentsDialog = ({
+  isOpen,
+  onClose,
+  comments: initialComments,
+  onAddComment,
+}) => {
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState(initialComments);
 
@@ -59,7 +64,7 @@ const CommentsDialog = ({ isOpen, onClose, comments: initialComments, onAddComme
         <DialogHeader className="border-b pb-4">
           <DialogTitle>Comments</DialogTitle>
         </DialogHeader>
-        
+
         <div className="flex flex-col gap-4">
           <ScrollArea className="h-[60vh] pr-4">
             <AnimatePresence initial={false}>
@@ -74,14 +79,17 @@ const CommentsDialog = ({ isOpen, onClose, comments: initialComments, onAddComme
                     type: "spring",
                     stiffness: 500,
                     damping: 30,
-                    delay: index * 0.05
+                    delay: index * 0.05,
                   }}
                 />
               ))}
             </AnimatePresence>
           </ScrollArea>
 
-          <form onSubmit={handleSubmitComment} className="flex gap-2 sticky bottom-0 bg-white p-4 -mx-4 -mb-4 border-t">
+          <form
+            onSubmit={handleSubmitComment}
+            className="flex gap-2 sticky bottom-0 bg-white p-4 -mx-4 -mb-4 border-t"
+          >
             <Input
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -89,7 +97,7 @@ const CommentsDialog = ({ isOpen, onClose, comments: initialComments, onAddComme
               className="flex-1 rounded-full border-[#166856]/20 focus:border-[#166856]
                 focus:ring-1 focus:ring-[#166856]/20"
             />
-            <Button 
+            <Button
               type="submit"
               className="rounded-full bg-[#166856] text-white hover:bg-[#0d3320]"
             >

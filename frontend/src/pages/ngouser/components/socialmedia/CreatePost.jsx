@@ -26,7 +26,7 @@ const CreatePost = ({ onPost }) => {
     setMedia({
       type: isVideo ? "video" : "image",
       file,
-      preview: URL.createObjectURL(file)
+      preview: URL.createObjectURL(file),
     });
   };
 
@@ -36,22 +36,24 @@ const CreatePost = ({ onPost }) => {
     setIsLoading(true);
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       const newPost = {
         id: Date.now(),
         author: {
           name: "Current User", // Replace with actual user
-          avatar: "https://api.dicebear.com/7.x/avatars/svg?seed=current"
+          avatar: "https://api.dicebear.com/7.x/avatars/svg?seed=current",
         },
         content,
-        media: media ? {
-          type: media.type,
-          url: media.preview // In real app, this would be the uploaded file URL
-        } : null,
+        media: media
+          ? {
+              type: media.type,
+              url: media.preview, // In real app, this would be the uploaded file URL
+            }
+          : null,
         timestamp: new Date().toISOString(),
         likes: 0,
-        comments: []
+        comments: [],
       };
 
       onPost(newPost);
@@ -105,7 +107,7 @@ const CreatePost = ({ onPost }) => {
           accept="image/*,video/*"
           className="hidden"
         />
-        
+
         <Button
           variant="outline"
           size="sm"
@@ -115,7 +117,7 @@ const CreatePost = ({ onPost }) => {
           <Image className="h-4 w-4" />
           Image
         </Button>
-        
+
         <Button
           variant="outline"
           size="sm"
@@ -125,15 +127,12 @@ const CreatePost = ({ onPost }) => {
           <Video className="h-4 w-4" />
           Video
         </Button>
-        
+
         <div className="ml-auto">
           <Button
             onClick={handleSubmit}
             disabled={isLoading || (!content.trim() && !media)}
-            className={cn(
-              "px-6",
-              isLoading && "opacity-50 cursor-not-allowed"
-            )}
+            className={cn("px-6", isLoading && "opacity-50 cursor-not-allowed")}
           >
             {isLoading ? "Posting..." : "Post"}
           </Button>

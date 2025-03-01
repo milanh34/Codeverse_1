@@ -231,7 +231,7 @@ const Social = () => {
         id: comment.user._id,
         author: comment.user?.name || "Unknown User",
         content: comment.comment,
-        timestamp: comment.createdAt ||null,
+        timestamp: comment.createdAt || null,
         avatar: comment.user?.profile_image || "",
       })) || [],
   });
