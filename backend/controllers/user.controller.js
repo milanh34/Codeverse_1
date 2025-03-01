@@ -1,3 +1,4 @@
+import { s3Upload } from "../lib/s3.js";
 import { sendToken } from "../lib/token.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.middleware.js";
 import { User } from "../models/user.model.js";
@@ -13,24 +14,33 @@ export const newUser = TryCatch(async (req, res, next) => {
     age,
     gender,
     address,
-    profile_image,
     aadhaar,
-    certificate,
   } = req.body;
 
-  console.count("newUser");
   if (!username || !name || !email || !password) {
-    return next(new ErrorHandler("Username, email, name, and password are required", 400));
+    return next(
+      new ErrorHandler("Username, email, name, and password are required", 400)
+    );
   }
 
-  console.count("newUser");
+  const files = req.files;
+
+  if (!files?.file?.[0]) {
+    return next(new ErrorHandler("Profile image is required", 400));
+  }
+
+  if (!files?.certificate?.[0]) {
+    return next(new ErrorHandler("Certificate is required", 400));
+  }
+
+  // Upload profile image to S3
+  const profile_image = await s3Upload(files.file[0]);
+  const certificate = await s3Upload(files.certificate[0]);
 
   const userExists = await User.findOne({ email });
   if (userExists) {
     return next(new ErrorHandler("User already exists", 400));
   }
-
-  console.count("newUser");
 
   const userData = {
     username,
@@ -43,9 +53,9 @@ export const newUser = TryCatch(async (req, res, next) => {
   if (age) userData.age = age;
   if (gender) userData.gender = gender;
   if (date_of_birth) userData.date_of_birth = date_of_birth;
-  if (profile_image) userData.profile_image = profile_image;
+  if (profile_image) userData.profile_image = profile_image.url;
   if (aadhaar) userData.aadhaar = aadhaar;
-  if (certificate) userData.certificate = certificate;
+  if (certificate) userData.certificate = certificate.url;
 
   if (address) {
     userData.address = {
@@ -59,8 +69,6 @@ export const newUser = TryCatch(async (req, res, next) => {
   }
 
   const user = await User.create(userData);
-
-  console.count("newUser");
 
   sendToken(res, user, 201, "User registered successfully");
 });

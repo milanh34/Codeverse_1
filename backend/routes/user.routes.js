@@ -5,13 +5,21 @@ import {
   logout,
   newUser,
   changePassword,
-  updateProfile
+  updateProfile,
 } from "../controllers/user.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
+import { multerUpload } from "../lib/multer.js";
 
 const router = express.Router();
 
-router.post("/new", newUser);
+router.post(
+  "/new",
+  multerUpload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "certificate", maxCount: 1 },
+  ]),
+  newUser
+);
 router.post("/login", login);
 
 router.use(isAuthenticated);
