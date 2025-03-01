@@ -14,45 +14,61 @@ import {
 import AuthLayout from "../../AuthLayout";
 import { Label } from "@/components/ui/label";
 import PageTransition from "@/components/PageTransition";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { SERVER } from "@/config/constant";
 import axios from "axios";
 
 function SignInUser() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const { mutate: loginMutation, isPending: isLoading } = useMutation({
+    mutationFn: async ({ username, password }) => {
+      const response = await fetch(`${SERVER}/api/user/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to login");
+      }
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Logged in successfully!");
+      queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      navigate("/user");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Invalid credentials");
+    },
+  });
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post(login, formData);
-      const { accessToken } = response.data.data;
-      console.log(accessToken);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("userId", response.data.data.user._id);
-      localStorage.setItem("userRole", "CUSTOMER");
-      // Handle success
-      navigate("/customer");
-    } catch (error) {
-      // Handle error
-      console.error("Error logging in:", error.response?.data || error.message);
-    } finally {
-      setIsLoading(false);
+    if (!formData.username || !formData.password) {
+      toast.error("Please fill in all fields");
+      return;
     }
+    loginMutation(formData);
   };
 
   return (
     <AuthLayout>
       <PageTransition>
         <div className="min-h-screen w-full flex items-center justify-center px-4">
-          <Card
-            className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
-          backdrop-blur-xl shadow-xl"
-          >
+          <Card className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl backdrop-blur-xl shadow-xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl text-center text-white">
                 Welcome back
@@ -64,17 +80,16 @@ function SignInUser() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-white">Email</Label>
+                  <Label className="text-white">Username</Label>
                   <Input
-                    type="email"
-                    value={formData.email}
+                    value={formData.username}
                     onChange={(e) =>
                       setFormData((prev) => ({
                         ...prev,
-                        email: e.target.value,
+                        username: e.target.value,
                       }))
                     }
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
                     required
                     className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
                     placeholder:text-emerald-900/50 focus:border-emerald-500

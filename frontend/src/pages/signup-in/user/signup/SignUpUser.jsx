@@ -1,37 +1,25 @@
-import React, { useState } from "react";
-import { motion } from "framer-motion";
+import PageTransition from "@/components/PageTransition";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import axios from "axios";
+import { AlertCircle, Camera, Upload } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from "../../AuthLayout";
-import { Label } from "@/components/ui/label";
-import {
-  Camera,
-  Instagram,
-  Twitter,
-  Facebook,
-  Upload,
-  AlertCircle,
-} from "lucide-react";
-import PageTransition from "@/components/PageTransition";
-import axios from "axios";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SERVER } from "@/config/constant";
+import { QueryClient, useMutation } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ProfileImageUpload = ({ profileImage, onImageChange }) => (
   <div className="space-y-2 bg-emerald-900/10 p-4 rounded-lg border border-emerald-400/20 backdrop-blur-sm">
@@ -120,7 +108,7 @@ const AadharUpload = ({ aadharImage, onAadharChange }) => (
 );
 
 const SignUpUser = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -139,6 +127,60 @@ const SignUpUser = () => {
     },
     aadharNumber: "",
     aadharImage: null,
+  });
+
+  const query = new QueryClient();
+  const { mutate: signupUser, isPending: isLoading } = useMutation({
+    mutationFn: async (formData) => {
+      const formDataToSend = new FormData();
+
+      // Append user data
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("name", formData.fullName);
+      formDataToSend.append("phone_no", formData.phone_no);
+      formDataToSend.append("age", formData.age);
+      formDataToSend.append("gender", formData.gender);
+      formDataToSend.append("aadhaar", formData.aadharNumber);
+
+      // Append address
+      if (formData.address) {
+        formDataToSend.append("address[street]", formData.address.street);
+        formDataToSend.append("address[city]", formData.address.city);
+        formDataToSend.append("address[state]", formData.address.state);
+        formDataToSend.append("address[pincode]", formData.address.pincode);
+      }
+
+      // Append files with correct keys
+      if (formData.profileImage) {
+        formDataToSend.append("file", formData.profileImage);
+      }
+      if (formData.aadharImage) {
+        formDataToSend.append("certificate", formData.aadharImage);
+      }
+
+      const response = await fetch(`${SERVER}/api/user/new`, {
+        method: "POST",
+        credentials: "include",
+        body: formDataToSend,
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to register");
+      }
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Registration successful!");
+      query.invalidateQueries("authUser");
+      navigate("/user");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to register");
+      console.error("Registration error:", error);
+    },
   });
 
   const handleInputChange = (e) => {
@@ -160,33 +202,38 @@ const SignUpUser = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    const dataToSend = {
-      ...formData,
-      address: {
-        street: formData.address.street,
-        city: formData.address.city,
-        state: formData.address.state,
-        pincode: formData.address.pincode,
-      },
-    };
-
-    try {
-      const response = await axios.post(register, dataToSend);
-      // Handle success
-      console.log("User registered successfully:", response.data);
-    } catch (error) {
-      // Handle error
-      console.error(
-        "Error registering user:",
-        error.response?.data || error.message
-      );
-    } finally {
-      setIsLoading(false);
+    // Validate required fields
+    if (
+      !formData.username ||
+      !formData.email ||
+      !formData.password ||
+      !formData.aadharNumber
+    ) {
+      toast.error("Please fill in all required fields");
+      return;
     }
+
+    // Validate aadhar number format
+    if (!/^\d{12}$/.test(formData.aadharNumber)) {
+      toast.error("Please enter a valid 12-digit Aadhaar number");
+      return;
+    }
+
+    // Validate required files
+    if (!formData.profileImage) {
+      toast.error("Profile image is required");
+      return;
+    }
+
+    if (!formData.aadharImage) {
+      toast.error("Aadhar document is required");
+      return;
+    }
+
+    signupUser(formData);
   };
 
   return (
@@ -303,10 +350,12 @@ const SignUpUser = () => {
                     />
                   </div>
                 </div>
-                
+
                 {/* Required Document Upload */}
                 <div className="space-y-4">
-                  <h3 className="text-lg font-medium text-white">Document Verification *</h3>
+                  <h3 className="text-lg font-medium text-white">
+                    Document Verification *
+                  </h3>
                   <AadharUpload
                     aadharImage={formData.aadharImage}
                     onAadharChange={handleAadharChange}

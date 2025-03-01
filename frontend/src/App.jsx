@@ -98,11 +98,11 @@ function App() {
         {/* Auth Routes */}
         <Route
           path="/signinuser"
-          element={!authUser ? <SignInUser /> : <Navigate to="/user/profile" />}
+          element={!authUser ? <SignInUser /> : <Navigate to="/user" />}
         />
         <Route
           path="/signupuser"
-          element={!authUser ? <SignUpUser /> : <Navigate to="/user/profile" />}
+          element={!authUser ? <SignUpUser /> : <Navigate to="/user" />}
         />
         <Route
           path="/signinngo"
@@ -150,12 +150,24 @@ function App() {
         </Route>
 
         <Route element={<UserLayout />}>
-          <Route path="/user" element={<Home />} />
-          <Route path="/user/projects" element={<Project />} />
-          <Route path="/user/donate" element={<Donate />} />
-          <Route path="/user/social" element={<SocialUser />} />
-          
-
+          <Route element={<UserLayout />}>
+            <Route
+              path="/user"
+              element={authUser ? <Home /> : <Navigate to="/signinuser" />}
+            />
+            <Route
+              path="/user/projects"
+              element={authUser ? <Project /> : <Navigate to="/signinuser" />}
+            />
+            <Route
+              path="/user/donate"
+              element={authUser ? <Donate /> : <Navigate to={"/siginuser"} />}
+            />
+          </Route>
+          <Route
+            path="/user/social"
+            element={authUser ? <SocialUser /> : <Navigate to={"/siginuser"} />}
+          />
         </Route>
       </Routes>
     </>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   ChevronDown,
   ChevronUp,
@@ -18,11 +18,8 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import RequestDialog from './RequestDialog';
 
 const VolunCard = ({ event, isOpen, onToggle }) => {
-  const [showRequests, setShowRequests] = useState(false);
-
   const {
     id,
     title,
@@ -87,24 +84,14 @@ const VolunCard = ({ event, isOpen, onToggle }) => {
               {volunteers.length} Volunteers
             </span>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowRequests(true)}
-              className="text-[#166856] border-[#166856]"
-            >
-              View Requests
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={onToggle}
-              className="text-[#166856] border-[#166856]"
-            >
-              {isOpen ? "Hide Details" : "View Details"}
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onToggle}
+            className="text-[#166856] border-[#166856]"
+          >
+            {isOpen ? "Hide Details" : "View Details"}
+          </Button>
         </div>
 
         {/* Expanded Details */}
@@ -142,12 +129,6 @@ const VolunCard = ({ event, isOpen, onToggle }) => {
           <span className="text-sm text-gray-600">{organizer.name}</span>
         </div> */}
       </div>
-
-      <RequestDialog 
-        eventId={id}
-        open={showRequests}
-        onOpenChange={setShowRequests}
-      />
     </Card>
   );
 };
