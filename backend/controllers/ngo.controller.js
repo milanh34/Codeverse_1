@@ -5,6 +5,8 @@ import bcrypt from "bcrypt";
 import { Request } from "../models/request.model.js";
 import { Event } from "../models/event.model.js";
 import { Notification } from "../models/notification.model.js";
+import { Post } from "../models/post.model.js";
+import { s3Upload } from "../lib/s3.js";
 
 export const newNGO = TryCatch(async (req, res, next) => {
   const {
@@ -276,5 +278,78 @@ export const handleVolunteerRequest = TryCatch(async (req, res, next) => {
     success: true,
     message: `Request ${action}ed successfully`,
     request,
+  });
+});
+
+export const createPost = TryCatch(async (req, res, next) => {
+  const ngoId = req.user;
+  const { caption } = req.body;
+
+  if (!caption) {
+    return next(new ErrorHandler("Caption is required", 400));
+  }
+
+  const files = req.files;
+  if (!files?.media) {
+    return next(new ErrorHandler("At least one media file is required", 400));
+  }
+
+  // Upload all media files to S3
+  const mediaPromises = files.media.map((file) => s3Upload(file));
+  const mediaResults = await Promise.all(mediaPromises);
+  const mediaUrls = mediaResults.map((result) => result.url);
+
+  const post = await Post.create({
+    caption,
+    media: mediaUrls,
+    ngo: ngoId,
+  });
+
+  res.status(201).json({
+    success: true,
+    message: "Post created successfully",
+    post,
+  });
+});
+
+export const deletePost = TryCatch(async (req, res, next) => {
+  const ngoId = req.user;
+  const { postId } = req.params;
+
+  const post = await Post.findById(postId);
+
+  if (!post) {
+    return next(new ErrorHandler("Post not found", 404));
+  }
+
+  // if (post.ngo.toString() !== ngoId) {
+  //   return next(new ErrorHandler("Unauthorized to delete this post", 403));
+  // }
+
+  await post.deleteOne();
+
+  res.status(200).json({
+    success: true,
+    message: "Post deleted successfully",
+  });
+});
+
+export const getMyPosts = TryCatch(async (req, res, next) => {
+  const ngoId = req.user;
+
+  const posts = await Post.find({ ngo: ngoId })
+    .sort({ createdAt: -1 })
+    .populate("likes", "name profile_image")
+    .populate("comments.user", "name profile_image");
+
+  const postsWithCounts = posts.map((post) => ({
+    ...post._doc,
+    likesCount: post.likes.length,
+    commentsCount: post.comments.length,
+  }));
+
+  res.status(200).json({
+    success: true,
+    posts: postsWithCounts,
   });
 });

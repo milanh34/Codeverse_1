@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { NGO } from "../models/ngo.model.js";
 import { Notification } from "../models/notification.model.js";
+import { Post } from "../models/post.model.js";
 
 export const newUser = TryCatch(async (req, res, next) => {
   const {
@@ -284,5 +285,103 @@ export const getVolunteerHistory = TryCatch(async (req, res, next) => {
   res.status(200).json({
     success: true,
     volunteerHistory,
+  });
+});
+
+export const getFollowingNGOPosts = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+
+  // Get the user's following NGOs
+  const user = await User.findById(userId);
+  const followingNGOs = user.following;
+
+  // Get posts from followed NGOs with populated data
+  const posts = await Post.find({ ngo: { $in: followingNGOs } })
+    .populate("ngo", "name profile_image")
+    .populate({
+      path: "comments",
+      populate: {
+        path: "user",
+        select: "name profile_image",
+      },
+    })
+    .select("caption media likes comments createdAt")
+    .sort({ createdAt: -1 });
+
+  // Add like and comment counts, and check if user has liked each post
+  const postsWithCounts = posts.map((post) => ({
+    ...post.toObject(),
+    likeCount: post.likes.length,
+    commentCount: post.comments.length,
+    isLiked: post.likes.includes(userId),
+  }));
+
+  res.status(200).json({
+    success: true,
+    posts: postsWithCounts,
+  });
+});
+
+export const togglePostLike = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+  const { postId } = req.params;
+
+  const post = await Post.findById(postId);
+  if (!post) {
+    return next(new ErrorHandler("Post not found", 404));
+  }
+
+  const isLiked = post.likes.includes(userId);
+
+  if (isLiked) {
+    // Unlike
+    post.likes = post.likes.filter((id) => id.toString() !== userId);
+  } else {
+    // Like
+    post.likes.push(userId);
+  }
+
+  await post.save();
+
+  res.status(200).json({
+    success: true,
+    message: isLiked ? "Post unliked" : "Post liked",
+    likeCount: post.likes.length,
+    isLiked: !isLiked,
+  });
+});
+
+export const addComment = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+  const { postId } = req.params;
+  const { comment } = req.body;
+
+  if (!comment) {
+    return next(new ErrorHandler("Comment text is required", 400));
+  }
+
+  const post = await Post.findById(postId);
+  if (!post) {
+    return next(new ErrorHandler("Post not found", 404));
+  }
+
+  post.comments.push({
+    user: userId,
+    comment,
+  });
+
+  await post.save();
+
+  // Fetch the updated post with populated comment user details
+  const updatedPost = await Post.findById(postId).populate({
+    path: "comments.user",
+    select: "name profile_image",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Comment added successfully",
+    comments: updatedPost.comments,
+    commentCount: updatedPost.comments.length,
   });
 });

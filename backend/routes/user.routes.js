@@ -13,6 +13,10 @@ import {
   updateProfile,
   getNotifications,
   markNotificationAsRead,
+  getVolunteerHistory,
+  getFollowingNGOPosts,
+  togglePostLike,
+  addComment,
 } from "../controllers/user.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -70,5 +74,10 @@ router.put(
 );
 
 router.get("/volunteer-history", isAuthenticated, getVolunteerHistory);
+
+// Social Media routes
+router.get("/posts/following", isAuthenticated, getFollowingNGOPosts);
+router.post("/post/:postId/toggle-like", isAuthenticated, togglePostLike);
+router.post("/post/:postId/comment", isAuthenticated, addComment);
 
 export default router;

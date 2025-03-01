@@ -8,6 +8,9 @@ import {
   logoutNGO,
   newNGO,
   updateNGOProfile,
+  createPost,
+  deletePost,
+  getMyPosts,
 } from "../controllers/ngo.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import { multerUpload } from "../lib/multer.js";
@@ -47,5 +50,15 @@ router.put(
   handleVolunteerRequest
 );
 
+// Social Media routes
+router.post(
+  "/post/new",
+  isAuthenticated,
+  multerUpload.fields([{ name: "media", maxCount: 5 }]),
+  createPost
+);
+
+router.get("/posts", isAuthenticated, getMyPosts);
+router.delete("/post/:postId", isAuthenticated, deletePost);
 
 export default router;
