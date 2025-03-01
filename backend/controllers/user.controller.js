@@ -33,14 +33,13 @@ export const newUser = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Certificate is required", 400));
   }
 
-  // Upload profile image to S3
-  const profile_image = await s3Upload(files.file[0]);
-  const certificate = await s3Upload(files.certificate[0]);
-
   const userExists = await User.findOne({ email });
   if (userExists) {
     return next(new ErrorHandler("User already exists", 400));
   }
+
+  const profile_image = await s3Upload(files.file[0]);
+  const certificate = await s3Upload(files.certificate[0]);
 
   const userData = {
     username,
@@ -52,7 +51,6 @@ export const newUser = TryCatch(async (req, res, next) => {
   if (phone_no) userData.phone_no = phone_no;
   if (age) userData.age = age;
   if (gender) userData.gender = gender;
-  if (date_of_birth) userData.date_of_birth = date_of_birth;
   if (profile_image) userData.profile_image = profile_image.url;
   if (aadhaar) userData.aadhaar = aadhaar;
   if (certificate) userData.certificate = certificate.url;
@@ -145,8 +143,7 @@ export const changePassword = TryCatch(async (req, res, next) => {
 
 export const updateProfile = TryCatch(async (req, res, next) => {
   const userId = req.user;
-  const { email, name, phone_no, age, gender, date_of_birth, address } =
-    req.body;
+  const { email, name, phone_no, age, gender, address } = req.body;
 
   const user = await User.findById(userId);
   if (!user) {
@@ -159,7 +156,6 @@ export const updateProfile = TryCatch(async (req, res, next) => {
   if (phone_no) updates.phone_no = phone_no;
   if (age) updates.age = age;
   if (gender) updates.gender = gender;
-  if (date_of_birth) updates.date_of_birth = date_of_birth;
 
   if (address) {
     updates.address = {
@@ -170,6 +166,12 @@ export const updateProfile = TryCatch(async (req, res, next) => {
       latitude: address.latitude || user.address?.latitude,
       longitude: address.longitude || user.address?.longitude,
     };
+  }
+
+  const files = req.files;
+  if (files?.file?.[0]) {
+    const profile_image = await s3Upload(files.file[0]);
+    updates.profile_image = profile_image.url;
   }
 
   const updatedUser = await User.findByIdAndUpdate(userId, updates, {

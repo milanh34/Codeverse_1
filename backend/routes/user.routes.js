@@ -30,6 +30,10 @@ router.get("/logout", logout);
 
 router.post("/change-password", changePassword);
 
-router.put("/update-profile", updateProfile);
+router.put(
+  "/update-profile",
+  multerUpload.fields([{ name: "file", maxCount: 1 }]),
+  updateProfile
+);
 
 export default router;

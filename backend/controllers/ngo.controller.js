@@ -13,18 +13,31 @@ export const newNGO = TryCatch(async (req, res, next) => {
     registrationNumber,
     socials,
     description,
-    profile_image,
-    certificate,
   } = req.body;
 
   if (!name || !email || !password) {
-    return next(new ErrorHandler("NGO name, email, and password are required", 400));
+    return next(
+      new ErrorHandler("NGO name, email, and password are required", 400)
+    );
   }
 
   const ngoExists = await NGO.findOne({ email });
   if (ngoExists) {
     return next(new ErrorHandler("NGO already exists", 400));
   }
+
+  const files = req.files;
+
+  if (!files?.file?.[0]) {
+    return next(new ErrorHandler("Profile image is required", 400));
+  }
+
+  if (!files?.certificate?.[0]) {
+    return next(new ErrorHandler("Certificate is required", 400));
+  }
+
+  const profile_image = await s3Upload(files.file[0]);
+  const certificate = await s3Upload(files.certificate[0]);
 
   const ngoData = {
     name,
@@ -36,8 +49,8 @@ export const newNGO = TryCatch(async (req, res, next) => {
   if (registrationNumber) ngoData.registrationNumber = registrationNumber;
   if (socials && socials.length) ngoData.socials = socials;
   if (description) ngoData.description = description;
-  if (profile_image) ngoData.profile_image = profile_image;
-  if (certificate) ngoData.certificate = certificate;
+  if (profile_image) ngoData.profile_image = profile_image.url;
+  if (certificate) ngoData.certificate = certificate.url;
 
   if (address) {
     ngoData.address = {
@@ -51,6 +64,7 @@ export const newNGO = TryCatch(async (req, res, next) => {
   }
 
   const ngo = await NGO.create(ngoData);
+
   sendToken(res, ngo, 201, "NGO registered successfully");
 });
 
@@ -117,7 +131,7 @@ export const changePassword = TryCatch(async (req, res, next) => {
 
 export const updateNGOProfile = TryCatch(async (req, res, next) => {
   const ngoId = req.user;
-  const { name, email, phone_no, address, socials, description, profile_image, certificate } = req.body;
+  const { name, email, phone_no, address, socials, description } = req.body;
 
   const ngo = await NGO.findById(ngoId);
   if (!ngo) {
@@ -130,8 +144,6 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
   if (phone_no) updates.phone_no = phone_no;
   if (socials) updates.socials = socials;
   if (description) updates.description = description;
-  if (profile_image) updates.profile_image = profile_image;
-  if (certificate) updates.certificate = certificate;
 
   if (address) {
     updates.address = {
@@ -142,6 +154,12 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
       latitude: address.latitude || ngo.address?.latitude,
       longitude: address.longitude || ngo.address?.longitude,
     };
+  }
+
+  const files = req.files;
+  if (files?.file?.[0]) {
+    const profile_image = await s3Upload(files.file[0]);
+    updates.profile_image = profile_image.url;
   }
 
   const updatedNGO = await NGO.findByIdAndUpdate(ngoId, updates, {
