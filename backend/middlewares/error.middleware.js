@@ -24,7 +24,7 @@ const errorMiddleware = (err, req, res, next) => {
   const response = {
     success: false,
     message: err.message,
-    error: err,
+    // error: err,
   };
 
   return res.status(err.statusCode).json(response);
