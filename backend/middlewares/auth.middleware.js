@@ -13,3 +13,11 @@ export const isAuthenticated = TryCatch(async (req, res, next) => {
 
   next();
 });
+
+export const isAdmin = TryCatch(async (req, res, next) => {
+  const admin = await Admin.findById(req.user);
+  if (!admin) {
+    return next(new ErrorHandler("Unauthorized: Admin access required", 403));
+  }
+  next();
+});
