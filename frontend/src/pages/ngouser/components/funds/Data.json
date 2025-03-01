@@ -1,37 +1,246 @@
 {
-  "funds": [
-    {
-      "id": 1,
-      "project": "Education Initiative 2024",
-      "amount": 500000,
-      "date": "2024-02-20",
-      "status": "received",
-      "donor": "Tech Corp Ltd",
-      "category": "Education"
-    },
-    {
-      "id": 2,
-      "project": "Healthcare Program",
-      "amount": 750000,
-      "date": "2024-02-15",
-      "status": "pending",
-      "donor": "Healthcare Foundation",
-      "category": "Healthcare"
-    },
-    {
-      "id": 3,
-      "project": "Rural Development",
-      "amount": 300000,
-      "date": "2024-02-10",
-      "status": "received",
-      "donor": "Rural Aid Trust",
-      "category": "Development"
-    }
-  ],
-  "monthlyStats": [
-    { "month": "Jan", "received": 450000, "allocated": 400000 },
-    { "month": "Feb", "received": 750000, "allocated": 600000 },
-    { "month": "Mar", "received": 600000, "allocated": 550000 },
-    { "month": "Apr", "received": 850000, "allocated": 800000 }
-  ]
-}
+    "events": [
+      {
+        "id": 1,
+        "event_name": "Annual Charity Gala",
+        "date": "2024-05-15",
+        "location": "Grand Hyatt Hotel",
+        "attendees": 350,
+        "funds_raised": 1250000,
+        "sponsors": ["Tech Corp Ltd", "Healthcare Foundation", "Global Bank"],
+        "category": "Fundraiser"
+      },
+      {
+        "id": 2,
+        "event_name": "Charity Run for Education",
+        "date": "2024-04-10",
+        "location": "Central Park",
+        "attendees": 780,
+        "funds_raised": 420000,
+        "sponsors": ["Athletic Sportswear", "Digital Future Inc", "Fresh Water Company"],
+        "category": "Sports"
+      },
+      {
+        "id": 3,
+        "event_name": "Environmental Awareness Workshop",
+        "date": "2024-06-22",
+        "location": "Community Center",
+        "attendees": 180,
+        "funds_raised": 75000,
+        "sponsors": ["Green Energy Partners", "Ocean Protection Society", "Eco Solutions"],
+        "category": "Education"
+      },
+      {
+        "id": 4,
+        "event_name": "Healthcare Symposium",
+        "date": "2024-03-18",
+        "location": "Medical University Auditorium",
+        "attendees": 290,
+        "funds_raised": 520000,
+        "sponsors": ["Global Health Partnership", "Mindful Care Association", "Pharma Life Inc"],
+        "category": "Conference"
+      },
+      {
+        "id": 5,
+        "event_name": "Children's Benefit Concert",
+        "date": "2024-07-05",
+        "location": "City Concert Hall",
+        "attendees": 620,
+        "funds_raised": 380000,
+        "sponsors": ["Musical Arts Foundation", "Pediatric Care Trust", "Youth Empowerment Trust"],
+        "category": "Arts"
+      },
+      {
+        "id": 6,
+        "event_name": "Tech for Good Summit",
+        "date": "2024-06-12",
+        "location": "Innovation Center",
+        "attendees": 270,
+        "funds_raised": 640000,
+        "sponsors": ["Tech Diversity Alliance", "Digital Rights Coalition", "Responsible Technology Coalition"],
+        "category": "Conference"
+      },
+      {
+        "id": 7,
+        "event_name": "Rural Development Fundraiser",
+        "date": "2024-04-22",
+        "location": "Heritage Hall",
+        "attendees": 190,
+        "funds_raised": 320000,
+        "sponsors": ["Rural Aid Trust", "Sustainable Farming Institute", "Community Housing Trust"],
+        "category": "Fundraiser"
+      },
+      {
+        "id": 8,
+        "event_name": "Clean Water Initiative Launch",
+        "date": "2024-03-30",
+        "location": "Riverside Convention Center",
+        "attendees": 320,
+        "funds_raised": 580000,
+        "sponsors": ["Global Water Foundation", "Marine Resources Trust", "Fresh Aqua Inc"],
+        "category": "Launch"
+      },
+      {
+        "id": 9,
+        "event_name": "Women's Empowerment Conference",
+        "date": "2024-08-18",
+        "location": "Metropolitan Hotel",
+        "attendees": 410,
+        "funds_raised": 490000,
+        "sponsors": ["Women's Rights Coalition", "Inclusive Society Foundation", "Global Leaders Network"],
+        "category": "Conference"
+      },
+      {
+        "id": 10,
+        "event_name": "Youth Sports Tournament",
+        "date": "2024-07-28",
+        "location": "Sports Complex",
+        "attendees": 920,
+        "funds_raised": 240000,
+        "sponsors": ["Sports For All Foundation", "Athletic Community Trust", "Health Nutrition Co"],
+        "category": "Sports"
+      }
+    ],
+    "transactions": [
+      {
+        "id": 1,
+        "username": "John Doe",
+        "amount": 25000,
+        "date": "2024-01-20",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=John"
+      },
+      {
+        "id": 2,
+        "username": "Sarah Smith",
+        "amount": 50000,
+        "date": "2024-01-25",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah"
+      },
+      {
+        "id": 3,
+        "username": "Michael Johnson",
+        "amount": 35000,
+        "date": "2024-01-28",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Michael"
+      },
+      {
+        "id": 4,
+        "username": "Emily Chen",
+        "amount": 75000,
+        "date": "2024-02-05",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Emily"
+      },
+      {
+        "id": 5,
+        "username": "Robert Williams",
+        "amount": 15000,
+        "date": "2024-02-10",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Robert"
+      },
+      {
+        "id": 6,
+        "username": "Jessica Brown",
+        "amount": 42000,
+        "date": "2024-02-15",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jessica"
+      },
+      {
+        "id": 7,
+        "username": "David Miller",
+        "amount": 30000,
+        "date": "2024-02-20",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=David"
+      },
+      {
+        "id": 8,
+        "username": "Amanda Davis",
+        "amount": 22000,
+        "date": "2024-02-25",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Amanda"
+      },
+      {
+        "id": 9,
+        "username": "James Wilson",
+        "amount": 18000,
+        "date": "2024-02-28",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=James"
+      },
+      {
+        "id": 10,
+        "username": "Jennifer Taylor",
+        "amount": 60000,
+        "date": "2024-03-05",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Jennifer"
+      },
+      {
+        "id": 11,
+        "username": "Richard Moore",
+        "amount": 55000,
+        "date": "2024-03-10",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Richard"
+      },
+      {
+        "id": 12,
+        "username": "Linda Garcia",
+        "amount": 29000,
+        "date": "2024-03-15",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Linda"
+      },
+      {
+        "id": 13,
+        "username": "Thomas Anderson",
+        "amount": 48000,
+        "date": "2024-03-20",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Thomas"
+      },
+      {
+        "id": 14,
+        "username": "Michelle Lee",
+        "amount": 33000,
+        "date": "2024-03-25",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Michelle"
+      },
+      {
+        "id": 15,
+        "username": "Daniel Harris",
+        "amount": 65000,
+        "date": "2024-04-01",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Daniel"
+      },
+      {
+        "id": 16,
+        "username": "Patricia Lewis",
+        "amount": 27000,
+        "date": "2024-04-05",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Patricia"
+      },
+      {
+        "id": 17,
+        "username": "Christopher Martinez",
+        "amount": 38000,
+        "date": "2024-04-10",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Christopher"
+      },
+      {
+        "id": 18,
+        "username": "Elizabeth Thompson",
+        "amount": 52000,
+        "date": "2024-04-15",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Elizabeth"
+      },
+      {
+        "id": 19,
+        "username": "Kevin Jackson",
+        "amount": 31000,
+        "date": "2024-04-20",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Kevin"
+      },
+      {
+        "id": 20,
+        "username": "Laura Rodriguez",
+        "amount": 44000,
+        "date": "2024-04-25",
+        "profileImage": "https://api.dicebear.com/7.x/avataaars/svg?seed=Laura"
+      }
+    ]
+  }

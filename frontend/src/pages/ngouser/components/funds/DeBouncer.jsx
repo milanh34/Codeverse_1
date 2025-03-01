@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Search, ArrowRight } from "lucide-react";
+import { Search, ArrowRight, Calendar, Users } from "lucide-react";
 
 const DeBouncer = ({ onSearch, suggestions, onSelectSuggestion }) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -43,31 +43,37 @@ const DeBouncer = ({ onSearch, suggestions, onSelectSuggestion }) => {
           className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-[#166856]/20 
                    focus:border-[#166856] focus:ring-1 focus:ring-[#166856]/50
                    bg-white shadow-lg text-lg"
-          placeholder="Search funds, donors, or projects..."
+          placeholder="Search events..."
         />
       </div>
 
       {/* Search Suggestions */}
       {showSuggestions && suggestions.length > 0 && (
         <div className="absolute w-full mt-2 py-2 bg-white rounded-2xl shadow-xl border border-[#166856]/10 z-50">
-          {suggestions.map((suggestion, index) => (
+          {suggestions.map((event, index) => (
             <div
-              key={suggestion.id}
+              key={event.id}
               className={`px-4 py-3 cursor-pointer flex items-center justify-between
-                ${highlightedIndex === index ? "bg-[#8df1e2]/20" : "hover:bg-[#8df1e2]/10"}
-                ${suggestion.matchScore > 0.8 ? "border-l-4 border-[#166856]" : ""}`}
+                ${highlightedIndex === index ? "bg-[#8df1e2]/20" : "hover:bg-[#8df1e2]/10"}`}
               onClick={() => {
-                onSelectSuggestion(suggestion);
+                onSelectSuggestion(event);
                 setShowSuggestions(false);
               }}
               onMouseEnter={() => setHighlightedIndex(index)}
             >
               <div>
                 <div className="font-medium text-[#0d3320]">
-                  {suggestion.project}
+                  {event.event_name}
                 </div>
-                <div className="text-sm text-[#166856]">
-                  ₹{suggestion.amount.toLocaleString()} • {suggestion.donor}
+                <div className="text-sm text-[#166856] flex items-center gap-4">
+                  <span className="flex items-center">
+                    <Calendar className="h-4 w-4 mr-1" />
+                    {new Date(event.date).toLocaleDateString()}
+                  </span>
+                  <span className="flex items-center">
+                    <Users className="h-4 w-4 mr-1" />
+                    {event.attendees}
+                  </span>
                 </div>
               </div>
               <ArrowRight
