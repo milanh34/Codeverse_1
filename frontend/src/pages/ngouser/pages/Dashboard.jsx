@@ -76,6 +76,33 @@ const ScrollableCard = ({ title, viewAllText, children, height = "400px" }) => (
   </Card>
 );
 
+const mockNewsData = [
+  {
+    id: '1',
+    title: 'Local NGO Launches Environmental Initiative',
+    description: 'Community-based organization starts new recycling program',
+    date: '2024-02-20',
+    source: 'Environmental News',
+    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3',
+  },
+  {
+    id: '2',
+    title: 'NGO Partners with Government for Education Program',
+    description: 'New partnership aims to improve rural education access',
+    date: '2024-02-19',
+    source: 'Education Weekly',
+    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3',
+  },
+  {
+    id: '3',
+    title: 'Community Engagement: Best Practices for NGOs',
+    description: 'New guidelines for community engagement released',
+    date: '2024-02-18',
+    source: 'NGO Times',
+    image: 'https://images.unsplash.com/photo-1584982751601-97dcc096659c?ixlib=rb-4.0.3',
+  }
+];
+
 const Dashboard = () => {
   const [stats, setStats] = useState({
     totalDonations: 0,
