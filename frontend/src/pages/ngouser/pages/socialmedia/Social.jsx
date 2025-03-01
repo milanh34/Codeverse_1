@@ -1,5 +1,7 @@
 import React from "react";
-
+import SocialCard from "../../components/socialmedia/SocialCard";
+import CreatePost from "../../components/socialmedia/CreatePost";
+import Comment from "../../components/socialmedia/Comment";
 const Social = () => {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">

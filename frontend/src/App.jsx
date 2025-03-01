@@ -5,7 +5,7 @@ import Funds from "./pages/ngouser/pages/Funds";
 import PostEvent from "./pages/ngouser/pages/PostEvent";
 import Profile from "./pages/ngouser/pages/Profile";
 import Projects from "./pages/ngouser/pages/Projects";
-import Social from "./pages/ngouser/pages/Social";
+import Social from "./pages/ngouser/pages/socialmedia/Social";
 import StaffRecruitment from "./pages/ngouser/pages/StaffRecruitment";
 import Volunteer from "./pages/ngouser/pages/Volunteer";
 import SignInNgo from "./pages/signup-in/ngo/signin/SignInNgo";
