@@ -1,18 +1,18 @@
 import express from "express";
 import {
-  getMyProfile,
-  login,
-  logout,
-  newUser,
-  changePassword,
-  updateProfile
-} from "../controllers/user.controller.js";
+    newNGO,
+    loginNGO,
+    getMyProfile,
+    logout,
+    changePassword,
+    updateProfile,
+} from "../controllers/ngo.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/new", newUser);
-router.post("/login", login);
+router.post("/new", newNGO);
+router.post("/login", loginNGO);
 
 router.use(isAuthenticated);
 
