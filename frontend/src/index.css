@@ -4,10 +4,14 @@
 
 .perspective-1000 {
   perspective: 1000px;
+  transform-style: preserve-3d;
 }
 
 .preserve-3d {
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
 .backface-hidden {
@@ -15,3 +19,28 @@
   -webkit-backface-visibility: hidden;
 }
 
+.backface-visible {
+  backface-visibility: visible;
+  -webkit-backface-visibility: visible;
+}
+
+.transform-center {
+  transform-origin: center center;
+}
+
+@keyframes gradient-ease {
+  0% {
+    background-position: 0% 76%;
+  }
+  50% {
+    background-position: 100% 25%;
+  }
+  100% {
+    background-position: 0% 76%;
+  }
+}
+
+.animate-gradient {
+  background-size: 400% 400%;
+  animation: gradient-ease 15s ease infinite;
+}

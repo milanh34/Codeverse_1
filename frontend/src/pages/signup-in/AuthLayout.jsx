@@ -193,9 +193,12 @@ const AuthLayout = ({ children }) => {
   });
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-800">
+    <div
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden 
+      bg-gradient-to-br from-emerald-400 via-emerald-300 to-emerald-200 animate-gradient"
+    >
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-emerald-900/50 backdrop-blur-3xl"></div>
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-3xl"></div>
 
         {/* Large floating icons in background */}
         <AnimatePresence mode="sync">
@@ -225,13 +228,19 @@ const AuthLayout = ({ children }) => {
 
         {/* Spotlight effects */}
         <div className="fixed inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-emerald-500/10 rounded-full blur-[120px] animate-pulse-slow" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-emerald-400/5 rounded-full blur-[100px] animate-pulse" />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+            w-[600px] h-[600px] bg-emerald-300/30 rounded-full blur-[120px] animate-pulse-slow"
+          />
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+            w-[500px] h-[500px] bg-emerald-200/20 rounded-full blur-[100px] animate-pulse"
+          />
         </div>
       </div>
 
       {/* Content layer */}
-      <div className="relative z-10 w-full max-w-md">
+      <div className="relative z-10 w-full max-w-[50%] mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}

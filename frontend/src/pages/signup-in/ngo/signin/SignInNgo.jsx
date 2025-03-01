@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import PageTransition from "@/components/PageTransition";
 import axios from "axios";
 
-function SignInNgo() {
+function SignInUser() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -48,19 +48,22 @@ function SignInNgo() {
   return (
     <AuthLayout>
       <PageTransition>
-        <Card className="auth-card max-w-md w-full bg-emerald-950/50 border-emerald-800/50">
+        <Card
+          className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
+          backdrop-blur-xl shadow-xl"
+        >
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-emerald-400">
+            <CardTitle className="text-2xl text-center text-white">
               Welcome back
             </CardTitle>
-            <CardDescription className="text-center text-emerald-300/70">
+            <CardDescription className="text-center text-white/70">
               Sign in to continue
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label>Email</Label>
+                <Label className="text-white">Email</Label>
                 <Input
                   type="email"
                   value={formData.email}
@@ -69,14 +72,15 @@ function SignInNgo() {
                   }
                   placeholder="Enter your email"
                   required
-                  className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+                  className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                    placeholder:text-emerald-900/50 focus:border-emerald-500
+                    hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                    focus:bg-white"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>Password</Label>
+                <Label className="text-white">Password</Label>
                 <Input
                   type="password"
                   value={formData.password}
@@ -88,16 +92,18 @@ function SignInNgo() {
                   }
                   placeholder="••••••••"
                   required
-                  className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+                  className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                    placeholder:text-emerald-900/50 focus:border-emerald-500
+                    hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                    focus:bg-white"
                 />
               </div>
 
               <Button
                 type="submit"
                 className="w-full bg-emerald-600 hover:bg-emerald-500 text-white
-                transition-colors duration-200"
+                  transition-all duration-200 backdrop-blur-sm border border-emerald-500/30
+                  hover:border-emerald-400/50 shadow-lg shadow-emerald-900/20"
                 disabled={isLoading}
               >
                 {isLoading ? "Signing in..." : "Sign In"}
@@ -105,11 +111,11 @@ function SignInNgo() {
             </form>
           </CardContent>
           <CardFooter>
-            <p className="text-center text-sm text-emerald-400/70 w-full">
+            <p className="text-center text-sm text-emerald-100/70 w-full">
               New to our platform?{" "}
               <Link
                 to="/signupngo"
-                className="text-emerald-400 hover:text-emerald-300"
+                className="text-white hover:text-emerald-200"
               >
                 Create an account
               </Link>
@@ -121,4 +127,4 @@ function SignInNgo() {
   );
 }
 
-export default SignInNgo;
+export default SignInUser;

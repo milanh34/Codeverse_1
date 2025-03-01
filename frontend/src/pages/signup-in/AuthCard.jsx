@@ -9,7 +9,7 @@ const AuthCard = ({ children, isSignUp }) => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto perspective-1000">
+    <div className="w-full relative perspective-1000">
       <motion.div
         initial={{ rotateY: isSignUp ? 180 : 0 }}
         animate={{ rotateY: isSignUp ? 180 : 0 }}
@@ -20,15 +20,24 @@ const AuthCard = ({ children, isSignUp }) => {
           damping: 20,
           mass: 1.2,
         }}
-        className="relative w-full bg-gradient-to-br from-emerald-950/95 via-emerald-900/90 to-emerald-800/80 
-          backdrop-blur-xl rounded-xl p-8 shadow-xl preserve-3d border border-emerald-400/30
-          shadow-emerald-900/30 hover:shadow-emerald-700/20 transition-shadow"
-        style={{ transformStyle: "preserve-3d" }}
+        className="relative w-full bg-emerald-900/95 backdrop-blur-xl rounded-2xl p-8 
+          shadow-xl border border-emerald-600/30 shadow-emerald-900/20 
+          hover:shadow-emerald-800/30 transition-all hover:border-emerald-500/40"
+        style={{
+          transformStyle: "preserve-3d",
+          transformOrigin: "50% 50%",
+          position: "relative",
+          left: "50%",
+          transform: `translateX(-50%) rotateY(${isSignUp ? 180 : 0}deg)`,
+        }}
       >
         <motion.div
+          className="absolute inset-0 w-full h-full"
           style={{
-            transform: isSignUp ? "rotateY(180deg)" : "rotateY(0deg)",
+            backfaceVisibility: "hidden",
+            WebkitBackfaceVisibility: "hidden",
             transformStyle: "preserve-3d",
+            transform: isSignUp ? "rotateY(180deg)" : "rotateY(0deg)",
           }}
         >
           {children}

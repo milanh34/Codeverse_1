@@ -94,7 +94,7 @@ const CustomGlobe = () => {
       {/* Dark gradient background for the globe section */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d3320] to-[#166856] rounded-xl opacity-90"></div>
       
-      <span className="absolute z-10 pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-[#ffffff] to-[#e1f5f2] bg-clip-text text-center text-7xl font-bold leading-none text-transparent">
+      <span className="absolute z-10 pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-[#0d3320] to-[#166856] bg-clip-text text-center text-7xl font-bold leading-none text-transparent">
         Global Impact
       </span>
       
