@@ -236,9 +236,10 @@ export const handleVolunteerRequest = TryCatch(async (req, res, next) => {
 
   try {
     // Create notification content
-    const notificationContent = action === "accept"
-      ? `Your volunteer request for ${request.event.name} has been accepted!`
-      : `Your volunteer request for ${request.event.name} has been rejected.`;
+    const notificationContent =
+      action === "accept"
+        ? `Your volunteer request for ${request.event.name} has been accepted!`
+        : `Your volunteer request for ${request.event.name} has been rejected.`;
 
     // Create or update notification
     await Notification.findOneAndUpdate(
@@ -249,9 +250,9 @@ export const handleVolunteerRequest = TryCatch(async (req, res, next) => {
             content: notificationContent,
             type: "event",
             isRead: false,
-            createdAt: new Date()
-          }
-        }
+            createdAt: new Date(),
+          },
+        },
       },
       { upsert: true, new: true }
     );
@@ -338,7 +339,8 @@ export const getMyPosts = TryCatch(async (req, res, next) => {
   const posts = await Post.find({ ngo: ngoId })
     .sort({ createdAt: -1 })
     .populate("likes", "name profile_image")
-    .populate("comments.user", "name profile_image");
+    .populate("comments.user", "name profile_image")
+    .populate("ngo", "name profile_image");
 
   const postsWithCounts = posts.map((post) => ({
     ...post._doc,
@@ -360,9 +362,7 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
     Event.find({ organizer: ngoId })
       .populate("participants", "name profile_image")
       .lean(),
-    Donation.find({ ngo: ngoId })
-      .populate("user", "name profile_image")
-      .lean()
+    Donation.find({ ngo: ngoId }).populate("user", "name profile_image").lean(),
   ]);
 
   if (!ngo) {
@@ -370,7 +370,10 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
   }
 
   // Calculate total donations
-  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
+  const totalDonations = donations.reduce(
+    (sum, donation) => sum + donation.amount,
+    0
+  );
 
   // Calculate total donations for each event and add other event details
   const eventsWithDetails = events.map((event) => ({

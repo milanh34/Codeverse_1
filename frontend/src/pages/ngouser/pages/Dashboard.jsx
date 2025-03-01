@@ -9,6 +9,7 @@ import {
   IndianRupee,
   Calendar,
   Download,
+  Badge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

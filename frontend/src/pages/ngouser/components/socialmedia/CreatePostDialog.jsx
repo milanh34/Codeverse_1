@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,77 +10,51 @@ import { Textarea } from "@/components/ui/textarea";
 import { Image, Video, X, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PostSuccessMessage } from "./PostSuccessMessage";
+import toast from "react-hot-toast";
 
-const CreatePostDialog = ({ open, onOpenChange, onPost }) => {
-  const [content, setContent] = useState("");
-  const [media, setMedia] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+const CreatePostDialog = ({ open, onOpenChange, onPost, isLoading }) => {
+  const [caption, setCaption] = useState("");
+  const [media, setMedia] = useState([]);
+  const [previews, setPreviews] = useState([]);
   const fileInputRef = useRef(null);
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    handleFile(file);
+    const files = Array.from(e.dataTransfer.files);
+    handleFileChange({ target: { files } });
   };
 
-  const handleFile = (file) => {
-    if (!file) return;
-    const isVideo = file.type.startsWith("video/");
-    const isImage = file.type.startsWith("image/");
-
-    if (!isVideo && !isImage) {
-      toast.error("Please upload an image or video file");
+  const handleFileChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 5) {
+      toast.error("Maximum 5 files allowed");
       return;
     }
 
-    setMedia({
-      type: isVideo ? "video" : "image",
-      file,
-      preview: URL.createObjectURL(file)
-    });
+    setMedia(files);
+
+    // Create previews
+    const newPreviews = files.map((file) => ({
+      url: URL.createObjectURL(file),
+      type: file.type.startsWith("video/") ? "video" : "image",
+    }));
+    setPreviews(newPreviews);
   };
 
-  const handleSubmit = async () => {
-    if (!content.trim() && !media) return;
-    setIsLoading(true);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onPost({ caption, media });
+  };
 
-    try {
-      // Simulate upload
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const newPost = {
-        id: Date.now(),
-        author: {
-          name: "Current User",
-          avatar: "https://api.dicebear.com/7.x/avatars/svg?seed=current"
-        },
-        content,
-        media: media ? {
-          type: media.type,
-          url: media.preview
-        } : null,
-        timestamp: new Date().toISOString(),
-        likes: 0,
-        comments: []
-      };
-
-      handlePost(newPost);
-      resetForm();
-    } finally {
-      setIsLoading(false);
+  // Cleanup previews when dialog closes
+  useEffect(() => {
+    if (!open) {
+      previews.forEach((preview) => URL.revokeObjectURL(preview.url));
+      setCaption("");
+      setMedia([]);
+      setPreviews([]);
     }
-  };
-
-  const handlePost = (postData) => {
-    onPost(postData);
-    setShowSuccess(true);
-  };
-
-  const resetForm = () => {
-    setContent("");
-    setMedia(null);
-  };
+  }, [open]);
 
   return (
     <>
@@ -94,14 +68,14 @@ const CreatePostDialog = ({ open, onOpenChange, onPost }) => {
 
           <div className="space-y-4 pt-2">
             <Textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
               placeholder="What's on your mind?"
               className="min-h-[100px] resize-none border-[#166856]/20 focus:border-[#166856] focus:ring-1 focus:ring-[#166856]/20 placeholder:text-[#166856]/50"
             />
 
-            {/* Media Upload Area */}
-            {!media ? (
+            {/* Optional Media Upload Area */}
+            {!media.length ? (
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
@@ -110,10 +84,10 @@ const CreatePostDialog = ({ open, onOpenChange, onPost }) => {
               >
                 <Upload className="h-8 w-8 mx-auto mb-2 text-[#166856]" />
                 <p className="text-sm text-[#166856] font-medium">
-                  Drop files here or click to upload
+                  Drop files here or click to upload (optional)
                 </p>
                 <p className="text-xs text-[#166856]/60 mt-1">
-                  Supports images and videos
+                  Supports images and videos (max 5 files)
                 </p>
               </div>
             ) : (
@@ -123,22 +97,26 @@ const CreatePostDialog = ({ open, onOpenChange, onPost }) => {
                   size="icon"
                   className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 
                 text-white rounded-full z-10"
-                  onClick={() => setMedia(null)}
+                  onClick={() => setMedia([])}
                 >
                   <X className="h-4 w-4" />
                 </Button>
-                {media.type === "image" ? (
-                  <img
-                    src={media.preview}
-                    alt="Upload preview"
-                    className="w-full max-h-[300px] object-cover rounded-xl"
-                  />
-                ) : (
-                  <video
-                    src={media.preview}
-                    controls
-                    className="w-full max-h-[300px] rounded-xl"
-                  />
+                {previews.map((preview, index) =>
+                  preview.type === "image" ? (
+                    <img
+                      key={index}
+                      src={preview.url}
+                      alt="Upload preview"
+                      className="w-full max-h-[300px] object-cover rounded-xl"
+                    />
+                  ) : (
+                    <video
+                      key={index}
+                      src={preview.url}
+                      controls
+                      className="w-full max-h-[300px] rounded-xl"
+                    />
+                  )
                 )}
               </div>
             )}
@@ -146,9 +124,10 @@ const CreatePostDialog = ({ open, onOpenChange, onPost }) => {
             <input
               type="file"
               ref={fileInputRef}
-              onChange={(e) => handleFile(e.target.files[0])}
+              onChange={handleFileChange}
               accept="image/*,video/*"
               className="hidden"
+              multiple
             />
 
             <div className="flex justify-end gap-2 pt-2">
@@ -163,19 +142,24 @@ const CreatePostDialog = ({ open, onOpenChange, onPost }) => {
                 Cancel
               </Button>
               <Button
+                type="submit"
                 onClick={handleSubmit}
-                disabled={isLoading || (!content.trim() && !media)}
+                disabled={isLoading || !caption.trim()}
                 className="bg-[#166856] text-white hover:bg-[#0d3320]"
               >
-                {isLoading ? "Posting..." : "Post"}
+                {isLoading ? (
+                  <>
+                    <span className="animate-spin mr-2">⏳</span>
+                    Creating...
+                  </>
+                ) : (
+                  "Create Post"
+                )}
               </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-      {showSuccess && (
-        <PostSuccessMessage onClose={() => setShowSuccess(false)} />
-      )}
     </>
   );
 };
