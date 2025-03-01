@@ -17,6 +17,10 @@ import { Label } from "@/components/ui/label";
 import { Camera, Upload } from "lucide-react";
 import PageTransition from "@/components/PageTransition";
 import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { SERVER } from "@/config/constant";
 
 const FileUploadArea = ({ label, onChange, accept, description, value }) => (
   <div className="space-y-2">
@@ -41,6 +45,9 @@ const FileUploadArea = ({ label, onChange, accept, description, value }) => (
 );
 
 const SignUpNgo = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -73,18 +80,81 @@ const SignUpNgo = () => {
     }
   };
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData) => {
+      try {
+        // Create FormData object for file upload
+        const form = new FormData();
+        form.append("name", formData.name);
+        form.append("email", formData.email);
+        form.append("password", formData.password);
+        form.append("phone_no", formData.phoneNo);
+        form.append("registrationNumber", formData.registrationNumber);
+        form.append("description", formData.description);
+
+        // Append files
+        if (formData.profileImage) {
+          form.append("file", formData.profileImage);
+        }
+        if (formData.certificate) {
+          form.append("certificate", formData.certificate);
+        }
+
+        // Add address if provided
+        if (formData.address) {
+          form.append("address", JSON.stringify(formData.address));
+        }
+
+        console.log(formData);
+
+        const response = await fetch(`${SERVER}/api/ngo/new`, {
+          method: "POST",
+          credentials: "include",
+          body: form, // Send as FormData
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to register NGO");
+        }
+
+        return data;
+      } catch (error) {
+        console.error("NGO registration error:", error);
+        throw error;
+      }
+    },
+    onSuccess: (data) => {
+      toast.success("NGO registered successfully!");
+      queryClient.invalidateQueries({ queryKey: ["authNGO"] });
+      navigate("/ngo/profile");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to register NGO");
+    },
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
 
-    try {
-      const response = await axios.post(register, formData);
-      console.log("NGO registered successfully:", response.data);
-    } catch (error) {
-      console.error("Error registering NGO:", error.response?.data || error.message);
-    } finally {
-      setIsLoading(false);
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
     }
+
+    // Validate required files
+    if (!formData.profileImage) {
+      toast.error("Profile image is required");
+      return;
+    }
+    if (!formData.certificate) {
+      toast.error("NGO certificate is required");
+      return;
+    }
+
+    // Submit form
+    mutate(formData);
   };
 
   return (
@@ -229,11 +299,11 @@ const SignUpNgo = () => {
                   <h3 className="text-lg font-medium text-white border-b border-emerald-800/50 pb-2">
                     Document Verification
                   </h3>
-                  
+
                   <FileUploadArea
                     label="NGO Certificate"
                     accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange(e, 'certificate')}
+                    onChange={(e) => handleFileChange(e, "certificate")}
                     description="Upload registration certificate or proof of NGO status (PDF or Image)"
                     value={formData.certificate}
                   />
@@ -251,7 +321,10 @@ const SignUpNgo = () => {
             <CardFooter className="py-6">
               <p className="text-center text-sm text-white/70 w-full">
                 Already registered?{" "}
-                <Link to="/signinngo" className="text-white hover:text-emerald-200">
+                <Link
+                  to="/signinngo"
+                  className="text-white hover:text-emerald-200"
+                >
                   Sign in
                 </Link>
               </p>
