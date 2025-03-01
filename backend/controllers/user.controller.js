@@ -103,7 +103,7 @@ export const login = TryCatch(async (req, res, next) => {
 export const logout = TryCatch(async (req, res, next) => {
   return res
     .status(200)
-    .cookie("auth-token", "", { ...cookieOptions, maxAge: 0 })
+    .cookie("auth-token", "", { httpOnly: true, secure: true, sameSite: "None", maxAge: 0 })
     .json({
       success: true,
       message: "Logged Out Successfully!",
@@ -132,7 +132,7 @@ export const changePassword = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Incorrect old password", 400));
   }
 
-  user.password = await bcrypt.hash(newPassword, 10);
+  user.password = newPassword;
   await user.save();
 
   res.status(200).json({
