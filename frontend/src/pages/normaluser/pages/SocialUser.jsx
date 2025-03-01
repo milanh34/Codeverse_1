@@ -7,96 +7,72 @@ import { Plus } from "lucide-react";
 import SocialCard from "../../ngouser/components/socialmedia/SocialCard";
 import CreatePostDialog from "../../ngouser/components/socialmedia/CreatePostDialog";
 import { PostSuccessMessage } from "../../ngouser/components/socialmedia/PostSuccessMessage";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { SERVER } from "@/config/constant";
 import { toast } from "react-hot-toast";
 
+// Static mock data
+const mockPosts = [
+  {
+    id: 1,
+    author: {
+      name: "Green Earth NGO",
+      avatar: "https://api.dicebear.com/7.x/avatars/svg?seed=1",
+    },
+    content:
+      "Just completed our tree plantation drive! 🌳 Over 1000 saplings planted today.",
+    media: [
+      {
+        type: "image",
+        url: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09",
+      },
+    ],
+    timestamp: new Date().toISOString(),
+    likes: 242,
+    comments: [
+      {
+        id: 1,
+        author: "John Doe",
+        content: "Amazing work! Keep it up! 👏",
+        timestamp: new Date().toISOString(),
+        avatar: "https://api.dicebear.com/7.x/avatars/svg?seed=john",
+      },
+    ],
+  },
+  // ... add more mock posts as needed ...
+];
+
 const SocialUser = () => {
-  const queryClient = useQueryClient();
   const [isCreatePostOpen, setIsCreatePostOpen] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-
-  // Fetch all NGO posts
-  const {
-    data: posts,
-    isLoading: isPostsLoading,
-    error: postsError,
-  } = useQuery({
-    queryKey: ["fetchAllNgoPosts"],
-    queryFn: async () => {
-      const response = await fetch(`${SERVER}/api/user/ngo-posts`, {
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-      return data.posts;
-    },
-  });
-
-  // Create post mutation for normal users
-  const { mutate: createPost, isPending: isCreatingPost } = useMutation({
-    mutationFn: async (formData) => {
-      const form = new FormData();
-      form.append("caption", formData.caption);
-
-      if (formData.media?.length > 0) {
-        formData.media.forEach((file) => {
-          form.append("media", file);
-        });
-      }
-
-      const response = await fetch(`${SERVER}/api/user/post/new`, {
-        // Changed endpoint
-        method: "POST",
-        credentials: "include",
-        body: form,
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-      return data;
-    },
-    onSuccess: () => {
-      setShowSuccessMessage(true);
-      queryClient.invalidateQueries({ queryKey: ["fetchAllNgoPosts"] });
-      setIsCreatePostOpen(false);
-    },
-    onError: (error) => {
-      toast.error(error.message || "Failed to create post");
-    },
-  });
+  const [posts, setPosts] = useState(mockPosts);
 
   const handleCreatePost = (postData) => {
     if (!postData.caption.trim()) {
       toast.error("Caption is required");
       return;
     }
-    createPost(postData);
-  };
 
-  const transformPost = (post) => ({
-    id: post._id,
-    author: {
-      name: post.ngo?.name || "Unknown NGO",
-      avatar: post.ngo?.profile_image || "",
-    },
-    content: post.caption,
-    media:
-      post.media?.map((url) => ({
-        type: url.toLowerCase().endsWith(".mp4") ? "video" : "image",
-        url,
-      })) || [],
-    timestamp: post.createdAt,
-    likes: post.likesCount || 0,
-    comments:
-      post.comments?.map((comment) => ({
-        id: comment.user._id,
-        author: comment.user?.name || "Unknown User",
-        content: comment.comment,
-        timestamp: comment.createdAt,
-        avatar: comment.user?.profile_image || "",
-      })) || [],
-  });
+    // Create new mock post
+    const newPost = {
+      id: Date.now(),
+      author: {
+        name: "Current User",
+        avatar: "https://api.dicebear.com/7.x/avatars/svg?seed=current",
+      },
+      content: postData.caption,
+      media:
+        postData.media?.map((file) => ({
+          type: file.type.startsWith("video/") ? "video" : "image",
+          url: URL.createObjectURL(file),
+        })) || [],
+      timestamp: new Date().toISOString(),
+      likes: 0,
+      comments: [],
+    };
+
+    setPosts((prev) => [newPost, ...prev]);
+    setShowSuccessMessage(true);
+    setIsCreatePostOpen(false);
+  };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-[#166856]/5 to-white/80">
@@ -133,32 +109,16 @@ const SocialUser = () => {
 
               {/* Posts Feed */}
               <div className="space-y-4 pb-20">
-                {isPostsLoading ? (
-                  <div className="space-y-4">
-                    {[1, 2, 3].map((n) => (
-                      <PostSkeleton key={n} />
-                    ))}
-                  </div>
-                ) : postsError ? (
-                  <div className="text-center py-8 text-red-500">
-                    {postsError.message || "Failed to load posts"}
-                  </div>
-                ) : posts?.length > 0 ? (
-                  posts.map((post) => (
-                    <SocialCard key={post._id} post={transformPost(post)} />
-                  ))
-                ) : (
-                  <div className="text-center py-8 text-gray-500">
-                    No posts available.
-                  </div>
-                )}
+                {posts.map((post) => (
+                  <SocialCard key={post.id} post={post} />
+                ))}
               </div>
 
               <CreatePostDialog
                 open={isCreatePostOpen}
                 onOpenChange={setIsCreatePostOpen}
                 onPost={handleCreatePost}
-                isLoading={isCreatingPost}
+                isLoading={false}
               />
             </div>
           </ScrollArea>
@@ -172,19 +132,5 @@ const SocialUser = () => {
     </div>
   );
 };
-
-// Post loading skeleton component
-const PostSkeleton = () => (
-  <Card className="p-4">
-    <div className="flex items-center space-x-4">
-      <div className="w-12 h-12 rounded-full bg-[#166856]/20 animate-pulse" />
-      <div className="space-y-2 flex-1">
-        <div className="h-4 w-1/4 bg-[#166856]/20 rounded animate-pulse" />
-        <div className="h-3 w-1/3 bg-[#166856]/20 rounded animate-pulse" />
-      </div>
-    </div>
-    <div className="mt-4 h-48 bg-[#166856]/10 rounded animate-pulse" />
-  </Card>
-);
 
 export default SocialUser;
