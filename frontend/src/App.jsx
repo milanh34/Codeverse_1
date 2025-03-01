@@ -11,12 +11,14 @@ import StaffRecruitment from "./pages/ngouser/pages/StaffRecruitment";
 import Volunteer from "./pages/ngouser/pages/Volunteer";
 import Social from "./pages/ngouser/pages/Social";
 import PostEvent from "./pages/ngouser/pages/PostEvent";
+import { Toaster } from 'react-hot-toast';
 
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./layout/Layout";
 function App() {
   return (
     <>
+    <Toaster position="top-right" />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Landing />} />

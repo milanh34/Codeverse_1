@@ -49,12 +49,12 @@ const Sidebar = () => {
       path: "/ngo/projects",
       description: "Create and manage projects",
     },
-    // {
-    //   icon: IndianRupee,
-    //   label: "Funds",
-    //   path: "/ngo/funds",
-    //   description: "Track donations and expenditures",
-    // },
+    {
+      icon: IndianRupee,
+      label: "Funds",
+      path: "/ngo/funds",
+      description: "Track donations and expenditures",
+    },
     {
       icon: Users,
       label: "Staff Recruitment",
@@ -150,8 +150,12 @@ const Sidebar = () => {
       >
         <div className="flex flex-col h-full">
           {/* Logo Area with Animation */}
-          <div className={`p-6 border-b border-gray-100 dark:border-gray-800 transition-all duration-300 ${isCollapsed ? "flex justify-center p-4" : ""}`}>
-            <div className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-2"}`}>
+          <div
+            className={`p-6 border-b border-gray-100 dark:border-gray-800 transition-all duration-300 ${isCollapsed ? "flex justify-center p-4" : ""}`}
+          >
+            <div
+              className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-2"}`}
+            >
               <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-green-400 to-green-600 flex items-center justify-center text-white font-bold animate-pulse">
                 CV
               </div>
@@ -177,7 +181,9 @@ const Sidebar = () => {
           </Button>
 
           {/* Navigation Links with Hover Effects */}
-          <ScrollArea className={`flex-1 ${isCollapsed ? "px-2" : "px-3"} py-4`}>
+          <ScrollArea
+            className={`flex-1 ${isCollapsed ? "px-2" : "px-3"} py-4`}
+          >
             <div className="space-y-2">
               {sidebarLinks.map((link, index) => {
                 const active = isActive(link.path);
@@ -210,11 +216,13 @@ const Sidebar = () => {
                       onClick={() => handleNavigation(link.path)}
                     >
                       {/* Animated background effect on hover */}
-                      <div className={`
+                      <div
+                        className={`
                         absolute inset-0 bg-gradient-to-r from-green-500/10 to-green-600/10
                         transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500
                         ${active ? "translate-x-0" : ""}
-                      `} />
+                      `}
+                      />
 
                       {/* Active indicator */}
                       {active && (
@@ -237,7 +245,9 @@ const Sidebar = () => {
 
                       {!isCollapsed && (
                         <div className="flex flex-col items-start flex-1 overflow-hidden">
-                          <span className="font-medium truncate whitespace-nowrap">{link.label}</span>
+                          <span className="font-medium truncate whitespace-nowrap">
+                            {link.label}
+                          </span>
 
                           {/* Description tooltip on hover */}
                           <span
@@ -267,7 +277,9 @@ const Sidebar = () => {
                     {isCollapsed && hoveredItem === index && (
                       <div className="absolute left-full top-0 ml-2 bg-gray-900 dark:bg-gray-800 text-white p-2 rounded-md shadow-lg z-50 whitespace-nowrap transform transition-all duration-300 opacity-100 scale-100 origin-left">
                         <div className="font-medium">{link.label}</div>
-                        <div className="text-xs text-gray-300">{link.description}</div>
+                        <div className="text-xs text-gray-300">
+                          {link.description}
+                        </div>
                         <div className="absolute left-0 top-1/2 transform -translate-x-full -translate-y-1/2">
                           <div className="border-8 border-transparent border-r-gray-900 dark:border-r-gray-800" />
                         </div>
@@ -280,7 +292,9 @@ const Sidebar = () => {
           </ScrollArea>
 
           {/* Theme Toggle with Animation */}
-          <div className={`transition-all duration-300 ${isCollapsed ? "p-3" : "p-6"} border-t border-gray-200 dark:border-gray-800`}>
+          <div
+            className={`transition-all duration-300 ${isCollapsed ? "p-3" : "p-6"} border-t border-gray-200 dark:border-gray-800`}
+          >
             <Button
               variant="outline"
               className={`
@@ -295,10 +309,12 @@ const Sidebar = () => {
                   {isDarkMode ? "Light Mode" : "Dark Mode"}
                 </span>
               )}
-              <div className={`
+              <div
+                className={`
                 ${isCollapsed ? "" : "h-6 w-12"} 
                 bg-gray-200 dark:bg-gray-700 rounded-full p-1 relative transition-colors duration-300
-              `}>
+              `}
+              >
                 <div
                   className={`
                   absolute ${isCollapsed ? "inset-0 flex items-center justify-center" : "top-1 h-4 w-4"} 
@@ -308,17 +324,21 @@ const Sidebar = () => {
                 `}
                 >
                   {isDarkMode ? (
-                    <Moon className={`
+                    <Moon
+                      className={`
                       ${isCollapsed ? "h-5 w-5" : "h-4 w-4"} 
                       text-blue-900
                       transition-all duration-300 animate-spin
-                    `} />
+                    `}
+                    />
                   ) : (
-                    <Sun className={`
+                    <Sun
+                      className={`
                       ${isCollapsed ? "h-5 w-5" : "h-4 w-4"} 
                       text-yellow-500 
                       transition-all duration-300 animate-spin
-                    `} />
+                    `}
+                    />
                   )}
                 </div>
               </div>
