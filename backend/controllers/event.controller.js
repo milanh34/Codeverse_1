@@ -213,10 +213,10 @@ export const getAllNGOEvents = TryCatch(async (req, res, next) => {
     .populate("participants", "name username profile_image")
     .sort({ createdAt: -1 }); // Sort by latest first
 
-  console.log("event", events);
+  // console.log("event", events);
   console.count("NGO Events");
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     events,
     count: events.length,
