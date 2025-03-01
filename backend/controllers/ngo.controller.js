@@ -353,3 +353,54 @@ export const getMyPosts = TryCatch(async (req, res, next) => {
     posts: postsWithCounts,
   });
 });
+
+export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
+  const ngoId = req.user;
+
+  const ngo = await NGO.findById(ngoId).select("-password").lean();
+
+  if (!ngo) {
+    return next(new ErrorHandler("NGO not found", 404));
+  }
+
+  // Get all events organized by this NGO with their details
+  const events = await Event.find({ organizer: ngoId })
+    .populate("participants", "name profile_image")
+    .populate({
+      path: "donations",
+      populate: {
+        path: "donor",
+        select: "name profile_image",
+      },
+    })
+    .lean();
+
+  // Calculate total donations for each event
+  const eventsWithTotalFunds = events.map((event) => ({
+    ...event,
+    totalEventFunds:
+      event.donations?.reduce((sum, donation) => sum + donation.amount, 0) || 0,
+    participantsCount: event.participants?.length || 0,
+  }));
+
+  // Get total volunteers across all events
+  const totalVolunteers = new Set(
+    events.flatMap((event) => event.participants?.map((p) => p._id.toString()))
+  ).size;
+
+  const responseData = {
+    ...ngo,
+    events: eventsWithTotalFunds,
+    totalEvents: events.length,
+    totalVolunteers,
+    recentEvents: eventsWithTotalFunds
+      .filter((event) => new Date(event.date) >= new Date())
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(0, 5),
+  };
+
+  res.status(200).json({
+    success: true,
+    ngoDetails: responseData,
+  });
+});
