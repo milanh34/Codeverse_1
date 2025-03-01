@@ -94,7 +94,7 @@ const CustomGlobe = () => {
       {/* Dark gradient background for the globe section */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d3320] to-[#166856] rounded-xl opacity-90"></div>
       
-      <span className="absolute z-10 pointer-events-none whitespace-pre-wrap bg-gradient-to-b from-[#ffffff] to-[#e1f5f2] bg-clip-text text-center text-7xl font-bold leading-none text-transparent">
+      <span className="absolute z-10 pointer-events-none whitespace-pre-wrap bg-gradient-to-b  from-[#0d3320] to-[#166856] bg-clip-text text-center text-7xl font-bold leading-none text-transparent">
         Global Impact
       </span>
       
@@ -134,7 +134,7 @@ const AboutUs = () => {
           className="h-[75vh] bg-cover bg-center"
           style={{ backgroundImage: `url('/api/placeholder/1920/1080')` }}
         >
-          <div className="container mx-auto px-4 h-full relative z-20 flex flex-col justify-center items-center">
+          <div className="container mx-auto px-4 mt-10 mb-6  h-full relative z-20 flex flex-col justify-center items-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -232,6 +232,30 @@ const AboutUs = () => {
         </div>
       </div>
 
+      {/*markup */}
+      <div
+      
+      className=" scroller_badaDabba "
+    >
+      <div className=" scroller_chota ">
+        <h1 className="lai"> Ready to Join Our Cause ?&nbsp;&nbsp;&nbsp;</h1>
+        <h1 className="lai">Ready to Join Our Cause ?&nbsp;&nbsp;&nbsp;</h1>
+        <h1 className="lai ">Ready to Join Our Cause ?&nbsp;&nbsp;&nbsp;</h1>
+      </div>
+      
+     
+    </div>
+    <div className="container mx-auto px-4 text-center text-white">
+    <Button
+    size="lg"
+    variant="outline"
+    className=" m-6 bg-[#166856] hover:bg-[#0d3320] text-white text-lg px-8 py-6 rounded-full"
+  >
+    Get Involved Today
+  </Button>
+    </div>
+
+
       {/* Achievement Cards with Enhanced Styling */}
       <div className="bg-gradient-to-b from-[#f0f9f7] to-[#e1f5f2] py-20">
         <div className="container mx-auto px-4">
@@ -327,7 +351,7 @@ const AboutUs = () => {
       </div>
 
       {/* Enhanced Call to Action */}
-      <div className="bg-gradient-to-r from-[#0d3320] to-[#166856] py-16">
+      {/* <div className="bg-gradient-to-r from-[#0d3320] to-[#166856] py-16">
         <div className="container mx-auto px-4 text-center text-white">
           <h3 className="text-3xl font-bold mb-6">Ready to Join Our Cause?</h3>
           <p className="max-w-2xl mx-auto text-white/90 mb-8">
@@ -342,7 +366,7 @@ const AboutUs = () => {
             Get Involved Today
           </Button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
