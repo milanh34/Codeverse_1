@@ -9,7 +9,6 @@ import {
   IndianRupee,
   Calendar,
   Download,
-  Badge,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -31,6 +30,7 @@ import { SERVER } from "@/config/constant";
 import { useQuery } from "@tanstack/react-query";
 import { fetchNGONews } from "../components/News";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@mui/material";
 
 const NewsCard = ({ news }) => (
   <div
@@ -523,7 +523,7 @@ const Dashboard = () => {
                   <div className="flex items-center justify-between">
                     <h3 className="font-medium text-gray-800">{event.name}</h3>
                     {event.isEmergency && (
-                      <Badge className="bg-red-100 text-red-800 border-red-200">
+                      <Badge className="px-3 py-1 rounded-xl text-sm  bg-red-100 text-red-800 border-1 border-red-800">
                         Emergency
                       </Badge>
                     )}
