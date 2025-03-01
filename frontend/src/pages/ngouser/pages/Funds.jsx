@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { SERVER } from "@/config/constant";
 import {
   IndianRupee,
   Download,
@@ -11,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Chart from "../components/funds/Chart";
 import DeBouncer from "../components/funds/DeBouncer";
-import mockData from "../components/funds/Data.json";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
@@ -23,219 +24,165 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const Funds = () => {
-  // Separate states for events and transactions
-  const [events, setEvents] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [filteredEvents, setFilteredEvents] = useState([]);
-  const [chartData, setChartData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+const PaginationControls = ({
+  currentPage,
+  totalPages,
+  pageSize,
+  totalItems,
+  onPageChange,
+  onPageSizeChange,
+}) => {
+  // Calculate for display, making sure values are valid
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
+  const endItem = Math.min(currentPage * pageSize, totalItems);
+  
+  return (
+    <div className="mt-4 flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-[#166856]">Rows per page:</span>
+        <Select
+          value={pageSize.toString()}
+          onValueChange={(value) => {
+            const newSize = Number(value);
+            onPageSizeChange(newSize);
+          }}
+        >
+          <SelectTrigger className="w-[70px]">
+            <SelectValue placeholder={pageSize} />
+          </SelectTrigger>
+          <SelectContent>
+            {[10, 20, 30, 50].map((size) => (
+              <SelectItem key={size} value={size.toString()}>
+                {size}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-  // Pagination state for transactions
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-[#166856]">
+          {totalItems === 0 ? "0-0" : `${startItem}-${endItem}`} of {totalItems}
+        </span>
+        <div className="flex gap-1">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onPageChange(1)}
+            disabled={currentPage === 1 || totalItems === 0}
+          >
+            <ChevronsLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1 || totalItems === 0}
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages || totalItems === 0}
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onPageChange(totalPages)}
+            disabled={currentPage === totalPages || totalItems === 0}
+          >
+            <ChevronsRight className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Funds = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    try {
-      setIsLoading(true);
-      
-      // Validate and initialize mock data
-      const validEvents = Array.isArray(mockData.events) ? mockData.events : [];
-      const validTransactions = Array.isArray(mockData.transactions) ? mockData.transactions : [];
-      
-      // Initialize data
-      setEvents(validEvents);
-      setFilteredEvents(validEvents);
-      setTransactions(validTransactions);
-      
-      // Use transactions directly for chart data instead of monthlyTransactions
-      setChartData(validTransactions);
-      
-      // Calculate total pages
-      const totalPagesCount = Math.max(1, Math.ceil(validTransactions.length / pageSize));
-      setTotalPages(totalPagesCount);
-      
-      console.log("Data loaded:", { 
-        eventsCount: validEvents.length,
-        transactionsCount: validTransactions.length,
-        calculatedPages: totalPagesCount
+  // Fetch NGO complete details
+  const { data: ngoDetails, isLoading } = useQuery({
+    queryKey: ["ngoCompleteDetails"],
+    queryFn: async () => {
+      const response = await fetch(`${SERVER}/api/ngo/complete-details`, {
+        credentials: "include",
       });
-      
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error loading data:", error);
-      // Set default empty arrays in case of error
-      setEvents([]);
-      setFilteredEvents([]);
-      setTransactions([]);
-      setChartData([]);
-      setTotalPages(1);
-      setIsLoading(false);
-    }
-  }, []);
-
-  // Update total pages when page size changes
-  useEffect(() => {
-    if (transactions.length > 0) {
-      const newTotalPages = Math.max(1, Math.ceil(transactions.length / pageSize));
-      setTotalPages(newTotalPages);
-      
-      // If current page is now out of bounds, adjust it
-      if (currentPage > newTotalPages) {
-        setCurrentPage(newTotalPages);
+      if (!response.ok) {
+        throw new Error("Failed to fetch NGO details");
       }
-    }
-  }, [transactions.length, pageSize]);
+      const data = await response.json();
+      return data.ngoDetails;
+    },
+  });
 
-  // Event search handler
-  const handleEventSearch = (searchTerm) => {
-    if (!searchTerm.trim()) {
-      setFilteredEvents(events);
-      return;
-    }
-
-    const filtered = events.filter((event) =>
-      Object.values(event).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-    setFilteredEvents(filtered);
-  };
-
-  // Get paginated transactions with improved logic
-  const getCurrentTransactions = () => {
-    if (transactions.length === 0) return [];
-    
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = Math.min(startIndex + pageSize, transactions.length);
-    
-    return transactions.slice(startIndex, endIndex);
-  };
-
-  // Excel export functionality
+  // Add exportToExcel function
   const exportToExcel = () => {
     try {
-      // Prepare the data for export - use current page data
-      const dataToExport = getCurrentTransactions().map(transaction => {
+      // Prepare the data for export - use all donations
+      const dataToExport = ngoDetails?.recentDonations?.map(donation => {
         return {
-          'User': transaction.username,
-          'Amount': `₹${(transaction.amount || 0).toLocaleString()}`,
-          'Date': transaction.date 
-            ? new Date(transaction.date).toLocaleDateString() 
-            : "N/A"
+          'Donor': donation.user.name,
+          'Amount': `₹${donation.amount.toLocaleString()}`,
+          'Date': new Date(donation.createdAt).toLocaleDateString(),
+          'Order ID': donation.orderId
         };
-      });
+      }) || [];
 
       // Create a worksheet
       const worksheet = XLSX.utils.json_to_sheet(dataToExport);
 
       // Create a workbook
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Transactions");
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Donations");
 
       // Generate Excel file
       const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
       
       // Save file
       const fileData = new Blob([excelBuffer], { type: 'application/octet-stream' });
-      const fileName = `Transactions_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
+      const fileName = `Donations_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.xlsx`;
       saveAs(fileData, fileName);
+
+      toast.success('Report exported successfully');
     } catch (error) {
       console.error("Error exporting to Excel:", error);
-      alert("Failed to export data. Please try again.");
+      toast.error("Failed to export data. Please try again.");
     }
   };
 
-  // Pagination controls with validation
-  const goToPage = (page) => {
-    const validPage = Math.min(Math.max(1, page), totalPages);
-    setCurrentPage(validPage);
+  // Calculate total pages for donations
+  const totalPages = Math.ceil((ngoDetails?.recentDonations?.length || 0) / pageSize);
+
+  // Get current page donations
+  const getCurrentDonations = () => {
+    if (!ngoDetails?.recentDonations) return [];
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return ngoDetails.recentDonations.slice(startIndex, endIndex);
   };
 
-  const PaginationControls = ({
-    currentPage,
-    totalPages,
-    pageSize,
-    totalItems,
-    onPageChange,
-    onPageSizeChange,
-  }) => {
-    // Calculate for display, making sure values are valid
-    const startItem = totalItems === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-    const endItem = Math.min(currentPage * pageSize, totalItems);
-    
-    return (
-      <div className="mt-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-[#166856]">Rows per page:</span>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(value) => {
-              const newSize = Number(value);
-              onPageSizeChange(newSize);
-            }}
-          >
-            <SelectTrigger className="w-[70px]">
-              <SelectValue placeholder={pageSize} />
-            </SelectTrigger>
-            <SelectContent>
-              {[10, 20, 30, 50].map((size) => (
-                <SelectItem key={size} value={size.toString()}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+  // Calculate allocated and available funds
+  const totalFunds = ngoDetails?.totalFunds || 0;
+  const allocatedFunds = ngoDetails?.events?.reduce((sum, event) => sum + (event.allocatedFund || 0), 0) || 0;
+  const availableFunds = totalFunds - allocatedFunds;
 
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-[#166856]">
-            {totalItems === 0 ? "0-0" : `${startItem}-${endItem}`} of {totalItems}
-          </span>
-          <div className="flex gap-1">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(1)}
-              disabled={currentPage === 1 || totalItems === 0}
-            >
-              <ChevronsLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(currentPage - 1)}
-              disabled={currentPage === 1 || totalItems === 0}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(currentPage + 1)}
-              disabled={currentPage === totalPages || totalItems === 0}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => onPageChange(totalPages)}
-              disabled={currentPage === totalPages || totalItems === 0}
-            >
-              <ChevronsRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  };
+  // Chart data preparation
+  const chartData = ngoDetails?.recentDonations?.map(donation => ({
+    amount: donation.amount,
+    date: new Date(donation.createdAt).toLocaleDateString(),
+    user: donation.user.name
+  })) || [];
 
   return (
     <div className="p-6 space-y-6">
@@ -261,9 +208,21 @@ const Funds = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { title: "Total Funds", amount: "₹25,00,000", change: "+12%" },
-          { title: "Allocated", amount: "₹18,50,000", change: "+8%" },
-          { title: "Available", amount: "₹6,50,000", change: "-4%" },
+          { 
+            title: "Total Funds", 
+            amount: `₹${totalFunds.toLocaleString()}`,
+            change: "+12%" // You might want to calculate this
+          },
+          { 
+            title: "Allocated", 
+            amount: `₹${allocatedFunds.toLocaleString()}`,
+            change: "+8%" 
+          },
+          { 
+            title: "Available", 
+            amount: `₹${availableFunds.toLocaleString()}`,
+            change: availableFunds >= 0 ? "+4%" : "-4%" 
+          },
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-start">
@@ -283,23 +242,35 @@ const Funds = () => {
         ))}
       </div>
 
-      {/* Event Search */}
-      <div className="flex justify-center mb-6">
-        <DeBouncer
-          onSearch={handleEventSearch}
-          suggestions={filteredEvents}
-          onSelectSuggestion={(event) => navigate(`/ngo/projects/${event.id}`)}
-        />
+      {/* Events List */}
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <h2 className="text-xl font-semibold text-[#0d3320] mb-4">Recent Events</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {ngoDetails?.recentEvents?.map((event) => (
+            <div key={event._id} className="border p-4 rounded-lg">
+              <h3 className="font-semibold">{event.name}</h3>
+              <p className="text-sm text-gray-600">{event.description}</p>
+              <div className="mt-2 flex justify-between items-center">
+                <span className="text-sm text-[#166856]">
+                  Allocated: ₹{event.allocatedFund?.toLocaleString()}
+                </span>
+                <span className="text-sm text-gray-500">
+                  {new Date(event.date).toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Chart - Pass transactions data directly */}
+      {/* Chart */}
       <Chart data={chartData} />
 
       {/* Transactions Table */}
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-semibold text-[#0d3320]">
-            Recent Transactions
+            Recent Donations
           </h2>
           <Button variant="outline" className="gap-2">
             <Filter className="h-4 w-4" />
@@ -309,42 +280,36 @@ const Funds = () => {
 
         <div className="overflow-x-auto">
           {isLoading ? (
-            <div className="py-10 text-center text-[#166856]">Loading transactions...</div>
-          ) : transactions.length > 0 ? (
+            <div className="py-10 text-center text-[#166856]">Loading donations...</div>
+          ) : getCurrentDonations().length > 0 ? (
             <>
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-[#166856]/10">
-                    <th className="text-left py-3 px-4 text-[#166856]">User</th>
+                    <th className="text-left py-3 px-4 text-[#166856]">Donor</th>
                     <th className="text-left py-3 px-4 text-[#166856]">Amount</th>
                     <th className="text-left py-3 px-4 text-[#166856]">Date</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {getCurrentTransactions().map((transaction, index) => (
+                  {getCurrentDonations().map((donation) => (
                     <tr
-                      key={`${transaction.id}-${index}`}
+                      key={donation._id}
                       className="border-b border-[#166856]/10 hover:bg-[#8df1e2]/5 transition-colors"
                     >
                       <td className="py-3 px-4 flex items-center gap-3">
                         <img
-                          src={transaction.profileImage || "/api/placeholder/32/32"}
-                          alt={transaction.username}
+                          src={donation.user.profile_image}
+                          alt={donation.user.name}
                           className="w-8 h-8 rounded-full"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = "/api/placeholder/32/32";
-                          }}
                         />
-                        {transaction.username}
+                        {donation.user.name}
                       </td>
                       <td className="py-3 px-4">
-                        ₹{(transaction.amount || 0).toLocaleString()}
+                        ₹{donation.amount.toLocaleString()}
                       </td>
                       <td className="py-3 px-4">
-                        {transaction.date 
-                          ? new Date(transaction.date).toLocaleDateString() 
-                          : "N/A"}
+                        {new Date(donation.createdAt).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
@@ -355,13 +320,13 @@ const Funds = () => {
                 currentPage={currentPage}
                 totalPages={totalPages}
                 pageSize={pageSize}
-                totalItems={transactions.length}
-                onPageChange={goToPage}
+                totalItems={ngoDetails?.recentDonations?.length || 0}
+                onPageChange={setCurrentPage}
                 onPageSizeChange={setPageSize}
               />
             </>
           ) : (
-            <div className="py-10 text-center text-[#166856]">No transaction data available</div>
+            <div className="py-10 text-center text-[#166856]">No donations available</div>
           )}
         </div>
       </div>

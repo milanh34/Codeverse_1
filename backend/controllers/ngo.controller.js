@@ -8,6 +8,7 @@ import { Notification } from "../models/notification.model.js";
 import { Post } from "../models/post.model.js";
 import { s3Upload } from "../lib/s3.js";
 import { cookieOptions } from "../constants/cookie-options.js";
+import { Donation } from "../models/donation.model.js";
 
 export const newNGO = TryCatch(async (req, res, next) => {
   const {
@@ -360,29 +361,26 @@ export const getMyPosts = TryCatch(async (req, res, next) => {
 export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
   const ngoId = req.user;
 
-  const ngo = await NGO.findById(ngoId).select("-password").lean();
+  const [ngo, events, donations] = await Promise.all([
+    NGO.findById(ngoId).select("-password").lean(),
+    Event.find({ organizer: ngoId })
+      .populate("participants", "name profile_image")
+      .lean(),
+    Donation.find({ ngo: ngoId })
+      .populate("user", "name profile_image")
+      .lean()
+  ]);
 
   if (!ngo) {
     return next(new ErrorHandler("NGO not found", 404));
   }
 
-  // Get all events organized by this NGO with their details
-  const events = await Event.find({ organizer: ngoId })
-    .populate("participants", "name profile_image")
-    .populate({
-      path: "donations",
-      populate: {
-        path: "donor",
-        select: "name profile_image",
-      },
-    })
-    .lean();
+  // Calculate total donations
+  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
 
-  // Calculate total donations for each event
-  const eventsWithTotalFunds = events.map((event) => ({
+  // Calculate total donations for each event and add other event details
+  const eventsWithDetails = events.map((event) => ({
     ...event,
-    totalEventFunds:
-      event.donations?.reduce((sum, donation) => sum + donation.amount, 0) || 0,
     participantsCount: event.participants?.length || 0,
   }));
 
@@ -393,10 +391,12 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
 
   const responseData = {
     ...ngo,
-    events: eventsWithTotalFunds,
+    events: eventsWithDetails,
     totalEvents: events.length,
     totalVolunteers,
-    recentEvents: eventsWithTotalFunds
+    totalFunds: totalDonations,
+    recentDonations: donations.slice(0, 5), // Latest 5 donations
+    recentEvents: eventsWithDetails
       .filter((event) => new Date(event.date) >= new Date())
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .slice(0, 5),
