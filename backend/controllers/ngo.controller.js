@@ -9,6 +9,7 @@ import { Post } from "../models/post.model.js";
 import { s3Upload } from "../lib/s3.js";
 import { cookieOptions } from "../constants/cookie-options.js";
 import { Donation } from "../models/donation.model.js";
+import { Volunteer } from "../models/volunteer.model.js";
 
 export const newNGO = TryCatch(async (req, res, next) => {
   const {
@@ -127,7 +128,7 @@ export const changePassword = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Incorrect old password", 400));
   }
 
-  ngo.password = await bcrypt.hash(newPassword, 10);
+  ngo.password = newPassword;
   await ngo.save();
 
   res.status(200).json({
@@ -233,56 +234,50 @@ export const handleVolunteerRequest = TryCatch(async (req, res, next) => {
   request.status = action === "accept" ? "accepted" : "rejected";
   await request.save();
 
-  // Create notification
-  const notificationContent =
-    action === "accept"
-      ? `Your volunteer request for ${request.event.name} has been accepted!`
-      : `Your volunteer request for ${request.event.name} has been rejected.`;
+  try {
+    // Create notification content
+    const notificationContent =
+      action === "accept"
+        ? `Your volunteer request for ${request.event.name} has been accepted!`
+        : `Your volunteer request for ${request.event.name} has been rejected.`;
 
-  // Check if a notification document exists for the user
-  let userNotification = await Notification.findOne({ user: request.user._id });
-
-  if (!userNotification) {
-    // If no notification document exists, create a new one
-    userNotification = new Notification({
-      user: request.user._id,
-      notifications: [
-        {
-          content: notificationContent,
-          type: "event",
-          isRead: false,
+    // Create or update notification
+    await Notification.findOneAndUpdate(
+      { user: request.user._id },
+      {
+        $push: {
+          notifications: {
+            content: notificationContent,
+            type: "event",
+            isRead: false,
+            createdAt: new Date(),
+          },
         },
-      ],
+      },
+      { upsert: true, new: true }
+    );
+
+    // If accepted, create volunteer document and add user to event participants
+    if (action === "accept") {
+      await Promise.all([
+        Volunteer.create({
+          user: request.user._id,
+          event: request.event._id,
+        }),
+        Event.findByIdAndUpdate(request.event._id, {
+          $addToSet: { participants: request.user._id },
+        }),
+      ]);
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Request ${action}ed successfully`,
+      request,
     });
-  } else {
-    // If notification document exists, add new notification to array
-    userNotification.notifications.push({
-      content: notificationContent,
-      type: "event",
-      isRead: false,
-    });
+  } catch (error) {
+    return next(new ErrorHandler(error.message, 500));
   }
-
-  await userNotification.save();
-
-  // If accepted, create volunteer document and add user to event participants
-  if (action === "accept") {
-    await Promise.all([
-      Volunteer.create({
-        user: request.user._id,
-        event: request.event._id,
-      }),
-      Event.findByIdAndUpdate(request.event._id, {
-        $addToSet: { participants: request.user._id },
-      }),
-    ]);
-  }
-
-  res.status(200).json({
-    success: true,
-    message: `Request ${action}ed successfully`,
-    request,
-  });
 });
 
 export const createPost = TryCatch(async (req, res, next) => {
@@ -344,7 +339,8 @@ export const getMyPosts = TryCatch(async (req, res, next) => {
   const posts = await Post.find({ ngo: ngoId })
     .sort({ createdAt: -1 })
     .populate("likes", "name profile_image")
-    .populate("comments.user", "name profile_image");
+    .populate("comments.user", "name profile_image")
+    .populate("ngo", "name profile_image");
 
   const postsWithCounts = posts.map((post) => ({
     ...post._doc,
@@ -366,9 +362,7 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
     Event.find({ organizer: ngoId })
       .populate("participants", "name profile_image")
       .lean(),
-    Donation.find({ ngo: ngoId })
-      .populate("user", "name profile_image")
-      .lean()
+    Donation.find({ ngo: ngoId }).populate("user", "name profile_image").lean(),
   ]);
 
   if (!ngo) {
@@ -376,7 +370,10 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
   }
 
   // Calculate total donations
-  const totalDonations = donations.reduce((sum, donation) => sum + donation.amount, 0);
+  const totalDonations = donations.reduce(
+    (sum, donation) => sum + donation.amount,
+    0
+  );
 
   // Calculate total donations for each event and add other event details
   const eventsWithDetails = events.map((event) => ({

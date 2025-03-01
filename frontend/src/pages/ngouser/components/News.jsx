@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const NEWS_API_URL = 'https://newsdata.io/api/1/news';
-const API_KEY = 'pub_72484a15c47fd1fdb8e7ae390d6768d94edd3&q=ngo%20india%20news'; 
+const API_KEY = 'pub_72484a15c47fd1fdb8e7ae390d6768d94edd3&q=ngo%20maharashtra%20news'; 
 
 
 
