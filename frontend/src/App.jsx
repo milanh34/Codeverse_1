@@ -5,7 +5,7 @@ import SignUpNgo from "./pages/signup-in/ngo/signup/SignUpNgo";
 import Landing from "./pages/landing/Landing";
 import Profile from "./pages/ngouser/pages/Profile";
 import Dashboard from "./pages/ngouser/pages/Dashboard";
-import NewProjects from "./pages/ngouser/pages/NewProjects";
+import Projects from "./pages/ngouser/pages/Projects";
 import Funds from "./pages/ngouser/pages/Funds";
 import StaffRecruitment from "./pages/ngouser/pages/StaffRecruitment";
 import Volunteer from "./pages/ngouser/pages/Volunteer";
@@ -28,7 +28,7 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/ngo/profile" element={<Profile />} />
             <Route path="/ngo" element={<Dashboard />} />
-            <Route path="/ngo/newprojects" element={<NewProjects />} />
+            <Route path="/ngo/projects" element={<Projects />} />
             <Route path="/ngo/funds" element={<Funds />} />
             <Route
               path="/ngo/staffrecruitment"
