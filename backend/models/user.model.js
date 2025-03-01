@@ -27,16 +27,16 @@ const userSchema = new Schema(
         },
         phone_no: {
             type: String,
-            required: true,
+            // required: true,
             trim: true,
         },
         age: {
             type: Number,
-            required: true,
+            // required: true,
         },
         gender: {
             type: String,
-            required: true,
+            // required: true,
         },
         address: {
             street: { type: String, trim: true },
@@ -51,13 +51,8 @@ const userSchema = new Schema(
         },
         date_of_birth: {
             type: Date,
-            required: true
+            // required: true
         },
-        searchHistory: [
-            {
-                type: String,
-            },
-        ],
         password: {
             type: String,
             required: [true, "Password is required"],
@@ -79,25 +74,25 @@ userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateAccessToken = function () {
-    return jwt.sign(
-        {
-            _id: this._id,
-            email: this.email,
-            username: this.username,
-            fullName: this.fullName,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
-    );
-};
+// userSchema.methods.generateAccessToken = function () {
+//     return jwt.sign(
+//         {
+//             _id: this._id,
+//             email: this.email,
+//             username: this.username,
+//             fullName: this.fullName,
+//         },
+//         process.env.ACCESS_TOKEN_SECRET,
+//         { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+//     );
+// };
 
-userSchema.methods.generateRefreshToken = function () {
-    return jwt.sign(
-        { _id: this._id },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
-    );
-};
+// userSchema.methods.generateRefreshToken = function () {
+//     return jwt.sign(
+//         { _id: this._id },
+//         process.env.REFRESH_TOKEN_SECRET,
+//         { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
+//     );
+// };
 
 export const User = mongoose.model("User", userSchema);
