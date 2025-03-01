@@ -14,51 +14,68 @@ import {
 import AuthLayout from "../../AuthLayout";
 import { Label } from "@/components/ui/label";
 import PageTransition from "@/components/PageTransition";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "react-hot-toast";
+import { SERVER } from "@/config/constant";
 
-function SignInUser() {
+function SignInNgo() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const { mutate: loginMutation, isPending } = useMutation({
+    mutationFn: async ({ email, password }) => {
+      try {
+        const response = await fetch(`${SERVER}/api/ngo/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to login");
+        }
+
+        return data;
+      } catch (error) {
+        console.error("Login error:", error);
+        throw error;
+      }
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || "Logged in successfully!");
+      queryClient.invalidateQueries({ queryKey: ["authNGO"] });
+      navigate("/ngo/profile");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Invalid credentials");
+    },
+  });
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const response = await axios.post(login, formData);
-      const { accessToken } = response.data.data;
-      console.log(accessToken);
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("userId", response.data.data.user._id);
-      localStorage.setItem("userRole", "CUSTOMER");
-      // Handle success
-      navigate("/customer");
-    } catch (error) {
-      // Handle error
-      console.error("Error logging in:", error.response?.data || error.message);
-    } finally {
-      setIsLoading(false);
-    }
+    loginMutation(formData);
   };
 
   return (
     <AuthLayout>
       <PageTransition>
         <div className="min-h-screen w-full flex items-center justify-center px-4">
-          <Card
-            className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
-          backdrop-blur-xl shadow-xl"
-          >
+          <Card className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl backdrop-blur-xl shadow-xl">
             <CardHeader className="space-y-1">
               <CardTitle className="text-2xl text-center text-white">
-                Welcome back
+                NGO Login
               </CardTitle>
               <CardDescription className="text-center text-white/70">
-                Sign in to continue
+                Sign in to your NGO account
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -108,20 +125,20 @@ function SignInUser() {
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white
                   transition-all duration-200 backdrop-blur-sm border border-emerald-500/30
                   hover:border-emerald-400/50 shadow-lg shadow-emerald-900/20"
-                  disabled={isLoading}
+                  disabled={isPending}
                 >
-                  {isLoading ? "Signing in..." : "Sign In"}
+                  {isPending ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
             </CardContent>
             <CardFooter>
               <p className="text-center text-sm text-emerald-100/70 w-full">
-                New to our platform?{" "}
+                Don't have an NGO account?{" "}
                 <Link
                   to="/signupngo"
                   className="text-white hover:text-emerald-200"
                 >
-                  Create an account
+                  Register here
                 </Link>
               </p>
             </CardFooter>
@@ -132,4 +149,4 @@ function SignInUser() {
   );
 }
 
-export default SignInUser;
+export default SignInNgo;

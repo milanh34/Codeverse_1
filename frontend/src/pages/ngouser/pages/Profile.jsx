@@ -40,6 +40,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useQuery } from "@tanstack/react-query";
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -49,6 +50,31 @@ const fadeIn = {
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
+
+  const { data: authNGO } = useQuery({
+    queryKey: ["authNGO"],
+  });
+
+  // Stats data based on authNGO
+  const statsData = [
+    {
+      icon: Users,
+      value: authNGO?.followers?.length || 0,
+      label: "Followers",
+    },
+    {
+      icon: BookOpen,
+      value: authNGO?.staff || 0,
+      label: "Staff Members",
+    },
+    {
+      icon: Heart,
+      value: `₹${authNGO?.totalFunds || 0}`,
+      label: "Total Funds",
+    },
+  ];
+
+  console.log(authNGO);
 
   // Mock data - in a real app this would come from your API
   const profileData = {
@@ -314,9 +340,9 @@ const Profile = () => {
           >
             <div className="relative group">
               <Avatar className="h-32 w-32 ring-4 ring-[#8df1e2] border-4 border-white dark:border-[#0d3320] transition-transform duration-300 group-hover:scale-105">
-                <AvatarImage src={profileData.avatar} alt={profileData.name} />
+                <AvatarImage src={authNGO?.profile_image} alt={authNGO?.name} />
                 <AvatarFallback className="bg-[#166856] text-white">
-                  {profileData.name.substring(0, 2)}
+                  {authNGO?.name?.substring(0, 2)}
                 </AvatarFallback>
               </Avatar>
               <Button
@@ -336,10 +362,10 @@ const Profile = () => {
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              <h1 className="text-3xl font-bold text-white">
-                {profileData.name}
-              </h1>
-              <p className="text-[#8df1e2] opacity-90">{profileData.tagline}</p>
+              <h1 className="text-3xl font-bold text-white">{authNGO?.name}</h1>
+              <p className="text-[#8df1e2] opacity-90">
+                {authNGO?.description}
+              </p>
             </motion.div>
             {!isEditing && (
               <motion.div
@@ -372,23 +398,14 @@ const Profile = () => {
             animate="animate"
             className="flex flex-wrap gap-8 mt-12"
           >
-            {/* Replace existing stats with enhanced versions */}
-            <StatCard
-              icon={Users}
-              value={profileData.followers}
-              label="Followers"
-            />
-            <StatCard
-              icon={Users}
-              value={profileData.following}
-              label="Following"
-            />
-            <StatCard
-              icon={BookOpen}
-              value={profileData.projects}
-              label="Projects"
-            />
-            <StatCard icon={Heart} value={profileData.raised} label="Raised" />
+            {statsData.map((stat, index) => (
+              <StatCard
+                key={index}
+                icon={stat.icon}
+                value={stat.value}
+                label={stat.label}
+              />
+            ))}
           </motion.div>
 
           {/* Progress Bar with animation */}
@@ -414,66 +431,34 @@ const Profile = () => {
 
           {/* Contact & Info */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="flex items-center text-white">
-              <MapPin className="h-5 w-5 text-[#8df1e2] mr-2" />
-              <span>{profileData.location}</span>
-            </div>
-            <div className="flex items-center text-white">
-              <Globe className="h-5 w-5 text-[#8df1e2] mr-2" />
-              <a
-                href={`https://${profileData.website}`}
-                className="text-[#8df1e2] hover:underline"
-              >
-                {profileData.website}
-              </a>
-            </div>
-            <div className="flex items-center text-white">
-              <Mail className="h-5 w-5 text-[#8df1e2] mr-2" />
-              <a
-                href={`mailto:${profileData.email}`}
-                className="text-[#8df1e2] hover:underline"
-              >
-                {profileData.email}
-              </a>
-            </div>
-            <div className="flex items-center text-white">
-              <Phone className="h-5 w-5 text-[#8df1e2] mr-2" />
-              <a
-                href={`tel:${profileData.phone}`}
-                className="text-[#8df1e2] hover:underline"
-              >
-                {profileData.phone}
-              </a>
-            </div>
+            {authNGO?.phone_no && (
+              <div className="flex items-center text-white">
+                <Phone className="h-5 w-5 text-[#8df1e2] mr-2" />
+                <span>{authNGO.phone_no}</span>
+              </div>
+            )}
+            {authNGO?.email && (
+              <div className="flex items-center text-white">
+                <Mail className="h-5 w-5 text-[#8df1e2] mr-2" />
+                <span>{authNGO.email}</span>
+              </div>
+            )}
           </div>
 
           {/* Social Media */}
-          <div className="mt-6 flex space-x-4">
-            <a
-              href={profileData.socialLinks.facebook}
-              className="p-2 rounded-full bg-white/10 text-[#8df1e2] hover:bg-[#166856]/20 transition-colors"
-            >
-              <Facebook className="h-5 w-5" />
-            </a>
-            <a
-              href={profileData.socialLinks.twitter}
-              className="p-2 rounded-full bg-white/10 text-[#8df1e2] hover:bg-[#166856]/20 transition-colors"
-            >
-              <Twitter className="h-5 w-5" />
-            </a>
-            <a
-              href={profileData.socialLinks.instagram}
-              className="p-2 rounded-full bg-white/10 text-[#8df1e2] hover:bg-[#166856]/20 transition-colors"
-            >
-              <Instagram className="h-5 w-5" />
-            </a>
-            <a
-              href={profileData.socialLinks.linkedin}
-              className="p-2 rounded-full bg-white/10 text-[#8df1e2] hover:bg-[#166856]/20 transition-colors"
-            >
-              <Linkedin className="h-5 w-5" />
-            </a>
-          </div>
+          {authNGO?.socials?.length > 0 && (
+            <div className="mt-6 flex space-x-4">
+              {authNGO.socials.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.link}
+                  className="p-2 rounded-full bg-white/10 text-[#8df1e2] hover:bg-[#166856]/20 transition-colors"
+                >
+                  {/* Add logic to show appropriate icon based on social type */}
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </motion.div>
 
@@ -502,24 +487,33 @@ const Profile = () => {
           <TabsContent value="about" className="mt-6 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>About {profileData.name}</CardTitle>
+                <CardTitle>About {authNGO?.name}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-gray-700 dark:text-gray-300">
-                  {profileData.bio}
+                  {authNGO?.description}
                 </p>
 
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold mb-3">Categories</h3>
                   <div className="flex flex-wrap gap-2">
-                    {profileData.categories.map((category, i) => (
-                      <Badge
-                        key={i}
-                        className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
-                      >
-                        {category}
-                      </Badge>
-                    ))}
+                    {authNGO?.badges?.length > 0 && (
+                      <div className="mt-6">
+                        <h3 className="text-lg font-semibold mb-3">
+                          Categories
+                        </h3>
+                        <div className="flex flex-wrap gap-2">
+                          {authNGO.badges.map((badge, i) => (
+                            <Badge
+                              key={i}
+                              className="px-3 py-1 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
+                            >
+                              {badge}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
