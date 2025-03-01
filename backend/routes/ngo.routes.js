@@ -1,23 +1,24 @@
 import express from "express";
 import {
+  getNGODonations,
+  getNGOFunds,
+} from "../controllers/donation.controller.js";
+import {
   changePassword,
+  createPost,
+  deletePost,
   getMyNGOProfile,
+  getMyPosts,
+  getNGOCompleteDetails,
   getPendingVolunteerRequests,
   handleVolunteerRequest,
   loginNGO,
   logoutNGO,
   newNGO,
   updateNGOProfile,
-  createPost,
-  deletePost,
-  getMyPosts,
 } from "../controllers/ngo.controller.js";
-import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import { multerUpload } from "../lib/multer.js";
-import {
-  getNGODonations,
-  getNGOFunds,
-} from "../controllers/donation.controller.js";
+import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
