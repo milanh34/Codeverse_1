@@ -10,6 +10,7 @@ import SignInNgo from "./pages/signup-in/ngo/signin/SignInNgo";
 import SignUpNgo from "./pages/signup-in/ngo/signup/SignUpNgo";
 import SignInUser from "./pages/signup-in/user/signin/SignInUser";
 import SignUpUser from "./pages/signup-in/user/signup/SignUpUser";
+import Donate from "./pages/normaluser/pages/Donate";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./layout/Layout";
@@ -19,6 +20,7 @@ import LoadingSpinner from "./layout/Spinner";
 import { SERVER } from "./config/constant";
 
 import Home from "./pages/normaluser/pages/Home";
+import Project from "./pages/normaluser/pages/Project";
 import UserNavbar from "./pages/normaluser/components/UserNavbar";
 import UserLayout from "./layout/UserLayout";
 function App() {
@@ -148,6 +150,8 @@ function App() {
 
         <Route element={<UserLayout />}>
           <Route path="/user" element={<Home />} />
+          <Route path="/user/projects" element={<Project />} />
+          <Route path="/user/donate" element={<Donate />} />
         </Route>
       </Routes>
     </>
