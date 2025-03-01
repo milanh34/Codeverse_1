@@ -17,7 +17,7 @@ router.get("/all", getAllEvents);
 router.get("/:eventId", getEventById);
 
 // Protected routes (NGO only)
-router.get("/ngo-events", isAuthenticated, getAllNGOEvents);
+router.get("/ngo/all", isAuthenticated, getAllNGOEvents); // Changed from "/ngo-events" to "/ngo/all"
 router.post(
   "/new",
   isAuthenticated,

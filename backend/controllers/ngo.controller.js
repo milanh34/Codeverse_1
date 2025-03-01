@@ -136,7 +136,7 @@ export const changePassword = TryCatch(async (req, res, next) => {
 
 export const updateNGOProfile = TryCatch(async (req, res, next) => {
   const ngoId = req.user;
-  const { name, email, phone_no, address, socials, description } = req.body;
+  const { name, email, phone_no, address, socials, description, staff } = req.body;
 
   const ngo = await NGO.findById(ngoId);
   if (!ngo) {
@@ -149,6 +149,7 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
   if (phone_no) updates.phone_no = phone_no;
   if (socials) updates.socials = socials;
   if (description) updates.description = description;
+  if (staff) updates.staff = staff;
 
   if (address) {
     updates.address = {
