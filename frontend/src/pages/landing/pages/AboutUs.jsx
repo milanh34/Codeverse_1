@@ -140,9 +140,7 @@ const AboutUs = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-center mb-8 max-w-3xl"
             >
-              <Badge className="mb-4 bg-[#0d3320] text-white px-4 py-2 text-lg">
-                About Us
-              </Badge>
+             
               <h1 className="text-6xl font-bold mb-6 text-white leading-tight">
                 Empowering Communities,
                 <br />
