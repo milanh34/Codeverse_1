@@ -391,23 +391,25 @@ export const getAllNGOsWithFollowStatus = TryCatch(async (req, res, next) => {
 
   // Get the user's following list
   const user = await User.findById(userId).select("following");
-  const userFollowingSet = new Set(user.following.map(id => id.toString()));
+  const userFollowingSet = new Set(user.following.map((id) => id.toString()));
 
   // Fetch all NGOs with basic info
   const ngos = await NGO.find()
-    .select("name description profile_image followers address badges totalFunds staff")
+    .select(
+      "name description profile_image followers address badges totalFunds staff"
+    )
     .lean();
 
   // Add isFollowing field to each NGO
-  const ngosWithFollowStatus = ngos.map(ngo => ({
+  const ngosWithFollowStatus = ngos.map((ngo) => ({
     ...ngo,
     isFollowing: userFollowingSet.has(ngo._id.toString()),
-    followerCount: ngo.followers?.length || 0
+    followerCount: ngo.followers?.length || 0,
   }));
 
   res.status(200).json({
     success: true,
     ngos: ngosWithFollowStatus,
-    total: ngos.length
+    total: ngos.length,
   });
 });

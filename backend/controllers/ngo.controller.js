@@ -405,3 +405,23 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
     ngoDetails: responseData,
   });
 });
+
+export const getEventRequests = TryCatch(async (req, res, next) => {
+  const { eventId } = req.params;
+  const ngoId = req.user;
+
+  // Verify event belongs to NGO
+  const event = await Event.findOne({ _id: eventId, organizer: ngoId });
+  if (!event) {
+    return next(new ErrorHandler("Event not found or unauthorized", 404));
+  }
+
+  const requests = await Request.find({ event: eventId })
+    .populate("user", "name email profile_image")
+    .sort({ createdAt: -1 });
+
+  res.status(200).json({
+    success: true,
+    requests,
+  });
+});

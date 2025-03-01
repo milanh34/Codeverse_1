@@ -16,6 +16,7 @@ import {
   logoutNGO,
   newNGO,
   updateNGOProfile,
+  getEventRequests,
 } from "../controllers/ngo.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -72,5 +73,8 @@ router.get("/funds", isAuthenticated, getNGOFunds);
 
 //ngo details for the donation and allocation page
 router.get("/complete-details", isAuthenticated, getNGOCompleteDetails);
+
+// Event requests route
+router.get("/event/:eventId/requests", isAuthenticated, getEventRequests);
 
 export default router;
