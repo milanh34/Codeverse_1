@@ -15,6 +15,7 @@ import SignUpUser from "./pages/signup-in/user/signup/SignUpUser";
 
 import { Route, Routes } from "react-router-dom";
 import Layout from "./layout/Layout";
+import ProjectFinal from "./pages/ngouser/pages/ProjectFinal";
 function App() {
   return (
     <>
@@ -36,6 +37,7 @@ function App() {
           <Route path="/ngo/volunteer" element={<Volunteer />} />
           <Route path="/ngo/social" element={<Social />} />
           <Route path="/ngo/postevent" element={<PostEvent />} />
+          <Route path="/ngo/projects/:id" element={<ProjectFinal />} />
         </Route>
 
         {/* USER ROUTES */}
