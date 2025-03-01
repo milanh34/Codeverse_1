@@ -46,7 +46,7 @@ const Sidebar = () => {
     {
       icon: FolderPlus,
       label: "Projects",
-      path: "/ngo/newprojects",
+      path: "/ngo/projects",
       description: "Create and manage projects",
     },
     // {
