@@ -6,6 +6,7 @@ const DeBouncer = ({ onSearch, suggestions, onSelectSuggestion }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef(null);
+  const wrapperRef = useRef(null); // Add this ref for the wrapper div
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -14,6 +15,20 @@ const DeBouncer = ({ onSearch, suggestions, onSelectSuggestion }) => {
 
     return () => clearTimeout(timeoutId);
   }, [searchTerm, onSearch]);
+
+  // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
@@ -27,7 +42,7 @@ const DeBouncer = ({ onSearch, suggestions, onSelectSuggestion }) => {
   };
 
   return (
-    <div className="relative w-full max-w-2xl">
+    <div className="relative w-full max-w-2xl" ref={wrapperRef}>
       <div className="relative">
         <Search className="absolute left-4 top-3.5 h-5 w-5 text-[#166856]" />
         <input
