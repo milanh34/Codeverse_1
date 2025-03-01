@@ -178,95 +178,95 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label className="text-green-400">Organization Name</Label>
+          <Label>Organization Name</Label>
           <Input
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+            className="w-full border rounded bg-background"
           />
         </div>
         <div>
-          <Label className="text-green-400">Email</Label>
+          <Label>Email</Label>
           <Input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+            className="w-full border rounded bg-background"
           />
         </div>
         <div>
-          <Label className="text-green-400">Phone Number</Label>
+          <Label>Phone Number</Label>
           <Input
             type="tel"
             name="phone_no"
             value={formData.phone_no}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+            className="w-full border rounded bg-background"
           />
         </div>
         <div>
-          <Label className="text-green-400">Staff Count</Label>
+          <Label>Staff Count</Label>
           <Input
             type="number"
             name="staff"
             value={formData.staff}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+            className="w-full border rounded bg-background"
           />
         </div>
       </div>
 
       <div>
-        <Label className="text-green-400">Description</Label>
+        <Label>Description</Label>
         <Textarea
           name="description"
           value={formData.description}
           onChange={handleInputChange}
           rows={4}
-          className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+          className="w-full border rounded bg-background"
         />
       </div>
 
       {/* Address Fields */}
       <div className="space-y-4">
-        <h3 className="font-semibold text-green-400">Address</h3>
+        <h3 className="font-semibold">Address</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label className="text-green-400">Street</Label>
+            <Label>Street</Label>
             <Input
               name="address.street"
               value={formData.address.street}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+              className="w-full border rounded bg-background"
             />
           </div>
           <div>
-            <Label className="text-green-400">City</Label>
+            <Label>City</Label>
             <Input
               name="address.city"
               value={formData.address.city}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+              className="w-full border rounded bg-background"
             />
           </div>
           <div>
-            <Label className="text-green-400">State</Label>
+            <Label>State</Label>
             <Input
               name="address.state"
               value={formData.address.state}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+              className="w-full border rounded bg-background"
             />
           </div>
           <div>
-            <Label className="text-green-400">Pincode</Label>
+            <Label>Pincode</Label>
             <Input
               name="address.pincode"
               value={formData.address.pincode}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
+              className="w-full border rounded bg-background"
             />
           </div>
         </div>
@@ -274,7 +274,7 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
 
       {/* Social Links */}
       <div className="space-y-4">
-        <Label className="text-green-400">Social Links</Label>
+        <Label>Social Links</Label>
         {formData.socials.map((social, index) => (
           <div key={index} className="flex gap-2">
             <Input
@@ -282,7 +282,7 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
               value={social}
               onChange={(e) => handleSocialChange(index, e.target.value)}
               placeholder="Social media link"
-              className="flex-1 bg-gray-900/80 text-green-400"
+              className="flex-1 bg-background"
             />
             <Button
               type="button"
@@ -298,6 +298,7 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
         ))}
         <Button
           type="button"
+          variant="secondary"
           onClick={() => setFormData(prev => ({
             ...prev,
             socials: [...prev.socials, '']
@@ -309,12 +310,12 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
 
       {/* Profile Image */}
       <div>
-        <Label className="text-green-400">Profile Image</Label>
+        <Label>Profile Image</Label>
         <Input
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          className="w-full bg-gray-900/80 text-green-400"
+          className="w-full bg-background"
         />
       </div>
 
@@ -543,10 +544,10 @@ const Profile = () => {
 
       {/* Edit Profile Form */}
       {isEditing && (
-        <Card className="bg-gray-900/80">
+        <Card className="bg-background border">
           <CardHeader>
-            <CardTitle className="text-green-400">Edit Profile</CardTitle>
-            <CardDescription className="text-green-400/80">
+            <CardTitle>Edit Profile</CardTitle>
+            <CardDescription>
               Update your organization's information
             </CardDescription>
           </CardHeader>
