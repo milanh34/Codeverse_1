@@ -1,6 +1,6 @@
 import React from 'react'
 
-const ProjectInfo = () => {
+const EventFunds = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const ProjectInfo = () => {
   )
 }
 
-export default ProjectInfo
+export default EventFunds

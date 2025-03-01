@@ -1,16 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { IndianRupee, Download, Filter } from "lucide-react";
+import React, { useState } from "react";
+import { IndianRupee, Download, Filter, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Chart from "../components/funds/Chart";
 import DeBouncer from "../components/funds/DeBouncer";
 import mockData from "../components/funds/Data.json";
+import { useNavigate } from "react-router-dom";
 
 const Funds = () => {
-  const [funds, setFunds] = useState(mockData.funds);
-  const [filteredFunds, setFilteredFunds] = useState(mockData.funds);
+  const [funds] = useState(mockData.funds);
   const [chartData] = useState(mockData.monthlyStats);
+  const [filteredFunds, setFilteredFunds] = useState(mockData.funds);
+  const navigate = useNavigate();
 
+  // Add search handlers
   const handleSearch = (searchTerm) => {
+    if (!searchTerm.trim()) {
+      setFilteredFunds(funds);
+      return;
+    }
+
     const filtered = funds.filter((fund) =>
       Object.values(fund).some((value) =>
         value.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -19,9 +27,18 @@ const Funds = () => {
     setFilteredFunds(filtered);
   };
 
+  const handleSelectFund = (fund) => {
+    navigate(`/ngo/projects/${fund.id}`);
+  };
+
+  const handleViewDetails = (fundId) => {
+    // Navigate to a separate details page instead of showing dialog
+    navigate(`/ngo/projects/${fundId}`);
+  };
+
   return (
     <div className="p-6 space-y-6">
-      {/* Header */}
+      {/* Header section */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-[#0d3320]">
@@ -62,15 +79,24 @@ const Funds = () => {
         ))}
       </div>
 
+      {/* Add Search Section */}
+      <div className="flex justify-center mb-6">
+        <DeBouncer
+          onSearch={handleSearch}
+          suggestions={filteredFunds}
+          onSelectSuggestion={handleSelectFund}
+        />
+      </div>
+
       {/* Chart */}
       <Chart data={chartData} />
 
       {/* Funds Table Section */}
       <div className="bg-white rounded-xl shadow-lg p-6">
         <div className="flex justify-between items-center mb-6">
-          <div className="w-1/3">
-            <DeBouncer onSearch={handleSearch} />
-          </div>
+          <h2 className="text-xl font-semibold text-[#0d3320]">
+            All Transactions
+          </h2>
           <Button variant="outline" className="gap-2">
             <Filter className="h-4 w-4" />
             Filter
@@ -87,6 +113,7 @@ const Funds = () => {
                 <th className="text-left py-3 px-4 text-[#166856]">Date</th>
                 <th className="text-left py-3 px-4 text-[#166856]">Status</th>
                 <th className="text-left py-3 px-4 text-[#166856]">Donor</th>
+                <th className="text-right py-3 px-4 text-[#166856]">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -112,6 +139,17 @@ const Funds = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4">{fund.donor}</td>
+                  <td className="py-3 px-4 text-right">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-[#166856] hover:text-[#0d3320] hover:bg-[#8df1e2]/10"
+                      onClick={() => handleViewDetails(fund.id)}
+                    >
+                      View Details
+                      <ChevronRight className="h-4 w-4 ml-2" />
+                    </Button>
+                  </td>
                 </tr>
               ))}
             </tbody>
