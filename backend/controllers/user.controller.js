@@ -4,11 +4,23 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
 export const newUser = TryCatch(async (req, res, next) => {
-  const { username, email, name, password } = req.body;
+  const {
+    username,
+    email,
+    name,
+    password,
+    phone_no,
+    age,
+    gender,
+    address,
+    profile_image,
+    aadhaar,
+    certificate,
+  } = req.body;
 
   console.count("newUser");
   if (!username || !name || !email || !password) {
-    return next(new ErrorHandler("All fields are required", 400));
+    return next(new ErrorHandler("Username, email, name, and password are required", 400));
   }
 
   console.count("newUser");
@@ -20,12 +32,33 @@ export const newUser = TryCatch(async (req, res, next) => {
 
   console.count("newUser");
 
-  const user = await User.create({
+  const userData = {
     username,
-    name,
     email,
+    name,
     password,
-  });
+  };
+
+  if (phone_no) userData.phone_no = phone_no;
+  if (age) userData.age = age;
+  if (gender) userData.gender = gender;
+  if (date_of_birth) userData.date_of_birth = date_of_birth;
+  if (profile_image) userData.profile_image = profile_image;
+  if (aadhaar) userData.aadhaar = aadhaar;
+  if (certificate) userData.certificate = certificate;
+
+  if (address) {
+    userData.address = {
+      street: address.street || undefined,
+      city: address.city || undefined,
+      state: address.state || undefined,
+      pincode: address.pincode || undefined,
+      latitude: address.latitude || undefined,
+      longitude: address.longitude || undefined,
+    };
+  }
+
+  const user = await User.create(userData);
 
   console.count("newUser");
 
@@ -33,7 +66,7 @@ export const newUser = TryCatch(async (req, res, next) => {
 });
 
 export const login = TryCatch(async (req, res, next) => {
-  const {username, password } = req.body;
+  const { username, password } = req.body;
 
   console.count("login");
   if (!username || !password) {
@@ -104,7 +137,8 @@ export const changePassword = TryCatch(async (req, res, next) => {
 
 export const updateProfile = TryCatch(async (req, res, next) => {
   const userId = req.user;
-  const { email, name, phone_no, age, gender, date_of_birth, address } = req.body;
+  const { email, name, phone_no, age, gender, date_of_birth, address } =
+    req.body;
 
   const user = await User.findById(userId);
   if (!user) {
@@ -135,7 +169,7 @@ export const updateProfile = TryCatch(async (req, res, next) => {
     runValidators: true,
   }).select("-password");
 
-  if(!updatedUser) {
+  if (!updatedUser) {
     return next(new ErrorHandler("Profile update failed", 404));
   }
 

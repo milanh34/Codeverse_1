@@ -49,13 +49,16 @@ const userSchema = new Schema(
         profile_image: {
             type: String,
         },
-        date_of_birth: {
-            type: Date,
-            // required: true
-        },
         password: {
             type: String,
             required: [true, "Password is required"],
+        },
+        aadhaar: {
+            type: String,
+            // required: true
+        },
+        certificate: {
+            type: String,
         },
         refreshToken: {
             type: String,
@@ -80,7 +83,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 //             _id: this._id,
 //             email: this.email,
 //             username: this.username,
-//             fullName: this.fullName,
+//             name: this.name,
 //         },
 //         process.env.ACCESS_TOKEN_SECRET,
 //         { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
