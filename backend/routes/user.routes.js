@@ -1,14 +1,21 @@
 import express from "express";
 import {
+  acceptVolunteerRequest,
+  createVolunteerRequest,
+  getPendingRequests,
+  getUserRequests,
+  rejectVolunteerRequest,
+} from "../controllers/request.controller.js";
+import {
+  changePassword,
   getMyProfile,
   login,
   logout,
   newUser,
-  changePassword,
   updateProfile,
 } from "../controllers/user.controller.js";
-import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import { multerUpload } from "../lib/multer.js";
+import { isAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
@@ -34,6 +41,21 @@ router.put(
   "/update-profile",
   multerUpload.fields([{ name: "file", maxCount: 1 }]),
   updateProfile
+);
+
+// Request routes
+router.post("/request/:eventId", isAuthenticated, createVolunteerRequest);
+router.get("/my-requests", isAuthenticated, getUserRequests);
+router.get("/pending-requests", isAuthenticated, getPendingRequests);
+router.put(
+  "/request/:requestId/accept",
+  isAuthenticated,
+  acceptVolunteerRequest
+);
+router.put(
+  "/request/:requestId/reject",
+  isAuthenticated,
+  rejectVolunteerRequest
 );
 
 export default router;
