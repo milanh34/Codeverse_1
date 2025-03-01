@@ -13,34 +13,147 @@ import SignUpNgo from "./pages/signup-in/ngo/signup/SignUpNgo";
 import SignInUser from "./pages/signup-in/user/signin/SignInUser";
 import SignUpUser from "./pages/signup-in/user/signup/SignUpUser";
 
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import Layout from "./layout/Layout";
 import ProjectFinal from "./pages/ngouser/pages/ProjectFinal";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "./layout/Spinner";
+import { SERVER } from "./config/constant";
+
 function App() {
+  // Auth User Query
+  const {
+    data: authUser,
+    isError: isUserError,
+    isLoading: isUserLoading,
+  } = useQuery({
+    queryKey: ["authUser"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${SERVER}/api/user/me`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          return null;
+        }
+
+        return data.user;
+      } catch (error) {
+        console.error("Error while fetching user details: ", error);
+        return null;
+      }
+    },
+    retry: false, // Don't retry on failure
+  });
+
+  // Auth NGO Query
+  const {
+    data: authNGO,
+    isError: isNGOError,
+    isLoading: isNGOLoading,
+  } = useQuery({
+    queryKey: ["authNGO"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${SERVER}/api/ngo/me`, {
+          method: "GET",
+          credentials: "include",
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          return null;
+        }
+
+        return data.ngo;
+      } catch (error) {
+        console.error("Error while fetching NGO details: ", error);
+        return null;
+      }
+    },
+    retry: false, // Don't retry on failure
+  });
+
+  if (isUserLoading || isNGOLoading)
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <LoadingSpinner size="lg" />
+      </div>
+    );
+
   return (
     <>
       <Toaster position="top-right" />
 
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/signinuser" element={<SignInUser />} />
-        <Route path="/signupuser" element={<SignUpUser />} />
-        <Route path="/signinngo" element={<SignInNgo />} />
-        <Route path="/signupngo" element={<SignUpNgo />} />
-        {/* NGO ROUTES */}
-        <Route element={<Layout />}>
-          <Route path="/ngo/profile" element={<Profile />} />
-          <Route path="/ngo" element={<Dashboard />} />
-          <Route path="/ngo/projects" element={<Projects />} />
-          <Route path="/ngo/funds" element={<Funds />} />
-          <Route path="/ngo/staffrecruitment" element={<StaffRecruitment />} />
-          <Route path="/ngo/volunteer" element={<Volunteer />} />
-          <Route path="/ngo/social" element={<Social />} />
-          <Route path="/ngo/postevent" element={<PostEvent />} />
-          <Route path="/ngo/projects/:id" element={<ProjectFinal />} />
-        </Route>
 
-        {/* USER ROUTES */}
+        {/* Auth Routes */}
+        <Route
+          path="/signinuser"
+          element={!authUser ? <SignInUser /> : <Navigate to="/user/profile" />}
+        />
+        <Route
+          path="/signupuser"
+          element={!authUser ? <SignUpUser /> : <Navigate to="/user/profile" />}
+        />
+        <Route
+          path="/signinngo"
+          element={!authNGO ? <SignInNgo /> : <Navigate to="/ngo/profile" />}
+        />
+        <Route
+          path="/signupngo"
+          element={!authNGO ? <SignUpNgo /> : <Navigate to="/ngo/profile" />}
+        />
+
+        {/* NGO ROUTES */}
+        <Route element={<Layout authNGO={authNGO} />}>
+          {" "}
+          {/* Pass authNGO to Layout */}
+          <Route
+            path="/ngo/profile"
+            element={
+              authNGO ? <Profile ngo={authNGO} /> : <Navigate to="/signinngo" />
+            }
+          />
+          <Route
+            path="/ngo"
+            element={authNGO ? <Dashboard /> : <Navigate to="/signinngo" />}
+          />
+          <Route
+            path="/ngo/projects"
+            element={authNGO ? <Projects /> : <Navigate to="/signinngo" />}
+          />
+          <Route
+            path="/ngo/funds"
+            element={authNGO ? <Funds /> : <Navigate to="/signinngo" />}
+          />
+          <Route
+            path="/ngo/staffrecruitment"
+            element={
+              authNGO ? <StaffRecruitment /> : <Navigate to="/signinngo" />
+            }
+          />
+          <Route
+            path="/ngo/volunteer"
+            element={authNGO ? <Volunteer /> : <Navigate to="/signinngo" />}
+          />
+          <Route
+            path="/ngo/social"
+            element={authNGO ? <Social /> : <Navigate to="/signinngo" />}
+          />
+          <Route
+            path="/ngo/postevent"
+            element={authNGO ? <PostEvent /> : <Navigate to="/signinngo" />}
+          />
+          <Route
+            path="/ngo/projects/:id"
+            element={authNGO ? <ProjectFinal /> : <Navigate to="/signinngo" />}
+          />
+        </Route>
       </Routes>
     </>
   );

@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import bcrypt from "bcrypt";
 
 const ngoSchema = new Schema(
   {
@@ -66,7 +67,7 @@ const ngoSchema = new Schema(
       type: Number,
       default: 0,
     },
-    staff:{
+    staff: {
       type: Number,
       default: 0,
     },

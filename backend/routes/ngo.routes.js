@@ -35,7 +35,7 @@ router.post("/login", loginNGO);
 
 router.use(isAuthenticated);
 
-router.get("/me", getMyNGOProfile);
+router.get("/me", isAuthenticated  ,getMyNGOProfile);
 
 router.get("/logout", logoutNGO);
 
