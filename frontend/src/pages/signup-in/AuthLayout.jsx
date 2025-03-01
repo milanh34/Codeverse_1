@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Laugh,
-  Ticket,
-  Music,
-  Star,
-  Sparkles,
   Heart,
-  Mic2,
-  PartyPopper,
-  Crown,
-  Popcorn,
-  Smile,
-  Zap,
+  HandHeart,
+  Users,
+  Home,
+  Sprout,
+  TreePine,
+  Handshake,
+  School,
+  Apple,
+  Baby,
+  Flower2,
+  HeartHandshake,
+  Building,
+  GraduationCap,
+  Leaf,
 } from "lucide-react";
 
 const FloatingIcon = ({ Icon, x, y, delay, scale = 1, opacity = 0.2 }) => (
   <motion.div
-    className="absolute text-primary/20 pointer-events-none"
+    className="absolute text-emerald-900/40 pointer-events-none" // Updated color and opacity
     initial={{ x, y, opacity: 0, scale: 0 }}
     animate={{
       x: x + Math.random() * 40 - 20,
@@ -130,63 +133,67 @@ const AuthLayout = ({ children }) => {
   const [icons, setIcons] = useState(() => {
     // Generate icons once and store
     const large = [
-      { Icon: Laugh, delay: 0, scale: 2 },
-      { Icon: PartyPopper, delay: 1, scale: 2.2 },
-      { Icon: Crown, delay: 1, scale: 1.8 },
-      { Icon: Popcorn, delay: 0.5, scale: 2.5 },
-      { Icon: Laugh, delay: 0, scale: 2 },
-      { Icon: PartyPopper, delay: 1, scale: 2.2 },
-      { Icon: Crown, delay: 1, scale: 1.8 },
-      { Icon: Popcorn, delay: 0.5, scale: 2.5 },
-      { Icon: PartyPopper, delay: 1, scale: 2.2 },
-      { Icon: Crown, delay: 2, scale: 1.8 },
-      { Icon: Popcorn, delay: 0.5, scale: 2.5 },
+      { Icon: HandHeart, delay: 0, scale: 2.2 },
+      { Icon: HeartHandshake, delay: 1, scale: 2.4 },
+      { Icon: Sprout, delay: 1.5, scale: 2 },
+      { Icon: Home, delay: 0.5, scale: 2.2 },
+      { Icon: Building, delay: 1, scale: 2 },
+      { Icon: School, delay: 1.2, scale: 2.3 },
+      { Icon: TreePine, delay: 0.8, scale: 2.1 },
+      { Icon: GraduationCap, delay: 1.5, scale: 2 },
     ].map((icon, i) => ({
       ...icon,
       ...getRandomPosition(),
-      opacity: 0.15,
-      id: `large-${i}`, // Add unique ID
+      opacity: 0.35, // Increased opacity for darker appearance
+      id: `large-${i}`,
     }));
 
     const medium = [
-      { Icon: Mic2, delay: 1 },
-      { Icon: Star, delay: 1.5 },
-      { Icon: Sparkles, delay: 2 },
-      { Icon: Heart, delay: 2.5 },
-      { Icon: Music, delay: 1 },
-      { Icon: Smile, delay: 1.5 },
-      { Icon: Zap, delay: 4 },
-      { Icon: Ticket, delay: 1.5 },
-      { Icon: Mic2, delay: 1 },
-      { Icon: Star, delay: 1.5 },
-      { Icon: Sparkles, delay: 2 },
-      { Icon: Heart, delay: 2.5 },
-      { Icon: Music, delay: 3 },
-      { Icon: Smile, delay: 2.5 },
-      { Icon: Zap, delay: 4 },
-      { Icon: Ticket, delay: 2.5 },
-      { Icon: Mic2, delay: 1 },
-      { Icon: Star, delay: 1.5 },
-      { Icon: Sparkles, delay: 2 },
-      { Icon: Heart, delay: 2.5 },
-      { Icon: Music, delay: 2 },
-      { Icon: Smile, delay: 3.5 },
-      { Icon: Zap, delay: 4 },
-      { Icon: Ticket, delay: 4.5 },
-      { Icon: Mic2, delay: 1 },
-      { Icon: Star, delay: 1.5 },
-      { Icon: Sparkles, delay: 2 },
-      { Icon: Heart, delay: 2.5 },
-      { Icon: Music, delay: 3 },
-      { Icon: Smile, delay: 3.5 },
-      { Icon: Zap, delay: 4 },
-      { Icon: Ticket, delay: 4.5 },
+      { Icon: Heart, delay: 1 },
+      { Icon: Users, delay: 1.5 },
+      { Icon: Handshake, delay: 2 },
+      { Icon: Apple, delay: 2.5 },
+      { Icon: Baby, delay: 1 },
+      { Icon: Flower2, delay: 1.5 },
+      { Icon: Leaf, delay: 2 },
+      { Icon: Sprout, delay: 2.5 },
+      // Repeat some icons for more density
+      { Icon: Heart, delay: 3 },
+      { Icon: Handshake, delay: 3.5 },
+      { Icon: Users, delay: 4 },
+      { Icon: Leaf, delay: 4.5 },
+      { Icon: Heart, delay: 1 },
+      { Icon: Users, delay: 1.5 },
+      { Icon: Handshake, delay: 2 },
+      { Icon: Apple, delay: 2.5 },
+      { Icon: Baby, delay: 1 },
+      { Icon: Flower2, delay: 1.5 },
+      { Icon: Leaf, delay: 2 },
+      { Icon: Sprout, delay: 2.5 },
+      // Repeat some icons for more density
+      { Icon: Heart, delay: 3 },
+      { Icon: Handshake, delay: 3.5 },
+      { Icon: Users, delay: 4 },
+      { Icon: Leaf, delay: 4.5 },
+      { Icon: Heart, delay: 1 },
+      { Icon: Users, delay: 1.5 },
+      { Icon: Handshake, delay: 2 },
+      { Icon: Apple, delay: 2.5 },
+      { Icon: Baby, delay: 1 },
+      { Icon: Flower2, delay: 1.5 },
+      { Icon: Leaf, delay: 2 },
+      { Icon: Sprout, delay: 2.5 },
+      // Repeat some icons for more density
+      { Icon: Heart, delay: 3 },
+      { Icon: Handshake, delay: 3.5 },
+      { Icon: Users, delay: 4 },
+      { Icon: Leaf, delay: 4.5 },
     ].map((icon, i) => ({
       ...icon,
       ...getRandomPosition(),
       scale: 1.2,
-      opacity: 0.3,
-      id: `medium-${i}`, // Add unique ID
+      opacity: 10, // Increased opacity for darker appearance
+      id: `medium-${i}`,
     }));
 
     return { large, medium };

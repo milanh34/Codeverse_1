@@ -160,248 +160,6 @@ const SignUpUser = () => {
     }
   };
 
-  const renderForm = () => (
-    <motion.div className="space-y-6">
-      <ProfileImageUpload
-        profileImage={formData.profileImage}
-        onImageChange={handleImageChange}
-      />
-
-      {/* Basic Info */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label className="text-white/90">Username</Label>
-          <Input
-            name="username"
-            value={formData.username}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Email</Label>
-          <Input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-      </div>
-
-      {/* Password Fields */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Password</Label>
-          <Input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Confirm Password</Label>
-          <Input
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-      </div>
-
-      {/* Personal Info */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Full Name</Label>
-          <Input
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Phone Number</Label>
-          <Input
-            name="phone_no"
-            value={formData.phone_no}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-      </div>
-
-      {/* Age and Gender */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Age</Label>
-          <Input
-            type="number"
-            name="age"
-            value={formData.age}
-            onChange={handleInputChange}
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label>Gender</Label>
-          <Select
-            value={formData.gender}
-            onValueChange={(value) =>
-              setFormData((prev) => ({ ...prev, gender: value }))
-            }
-          >
-            <SelectTrigger
-              className="bg-emerald-100/10 border-emerald-300/20 text-emerald-50 
-            placeholder:text-emerald-300/30 focus:border-emerald-400/50
-            hover:border-emerald-400/30 transition-all backdrop-blur-sm"
-            >
-              <SelectValue placeholder="Select gender" />
-            </SelectTrigger>
-            <SelectContent className="bg-emerald-900/90 border-emerald-400/20 text-emerald-50">
-              <SelectItem value="male">Male</SelectItem>
-              <SelectItem value="female">Female</SelectItem>
-              <SelectItem value="other">Other</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Address Fields */}
-      <div className="space-y-4">
-        <Label className="text-base">Address</Label>
-        <div className="grid sm:grid-cols-2 gap-4">
-          <div className="space-y-2 sm:col-span-2">
-            <Label>Street Address</Label>
-            <Input
-              name="address.street"
-              value={formData.address.street}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, street: e.target.value },
-                }))
-              }
-              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>City</Label>
-            <Input
-              name="address.city"
-              value={formData.address.city}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, city: e.target.value },
-                }))
-              }
-              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>State</Label>
-            <Input
-              name="address.state"
-              value={formData.address.state}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, state: e.target.value },
-                }))
-              }
-              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Pincode</Label>
-            <Input
-              name="address.pincode"
-              value={formData.address.pincode}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  address: { ...prev.address, pincode: e.target.value },
-                }))
-              }
-              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-              required
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Aadhar Verification */}
-      <div className="space-y-4">
-        <div className="space-y-2">
-          <Label className="text-emerald-300">Aadhar Number</Label>
-          <Input
-            name="aadharNumber"
-            value={formData.aadharNumber}
-            onChange={handleInputChange}
-            placeholder="XXXX-XXXX-XXXX"
-            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-              placeholder:text-emerald-900/50 focus:border-emerald-500
-              hover:border-emerald-500/50 transition-all backdrop-blur-sm
-              focus:bg-white"
-          />
-        </div>
-        <AadharUpload
-          aadharImage={formData.aadharImage}
-          onAadharChange={handleAadharChange}
-        />
-      </div>
-    </motion.div>
-  );
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -434,10 +192,7 @@ const SignUpUser = () => {
   return (
     <AuthLayout>
       <PageTransition>
-        <Card
-          className="w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
-          backdrop-blur-xl shadow-xl mx-auto px-8"
-        >
+        <Card className="w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl backdrop-blur-xl shadow-xl mx-auto px-8">
           <CardHeader className="space-y-1 py-8">
             <CardTitle className="text-3xl text-center text-white">
               Create an account
@@ -448,254 +203,236 @@ const SignUpUser = () => {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Profile Section */}
-              <div className="space-y-6">
-                <div className="flex flex-col items-center gap-6">
-                  <ProfileImageUpload
-                    profileImage={formData.profileImage}
-                    onImageChange={handleImageChange}
-                  />
-                  <div className="w-full grid grid-cols-2 gap-6">
-                    {/* Basic Info Fields */}
-                    <div className="space-y-2">
-                      <Label className="text-white">Username</Label>
-                      <Input
-                        name="username"
-                        value={formData.username}
-                        onChange={handleInputChange}
-                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                          placeholder:text-emerald-900/50 focus:border-emerald-500
-                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                          focus:bg-white"
-                        required
+              {/* Profile Image Upload Section */}
+              <div className="flex justify-center">
+                <div className="w-32 h-32 relative group">
+                  <div className="w-full h-full rounded-full border-2 border-emerald-500/20 overflow-hidden bg-emerald-800/30">
+                    {formData.profileImage ? (
+                      <img
+                        src={URL.createObjectURL(formData.profileImage)}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-white">Email</Label>
-                      <Input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                          placeholder:text-emerald-900/50 focus:border-emerald-500
-                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                          focus:bg-white"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-white">Password</Label>
-                      <Input
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleInputChange}
-                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                          placeholder:text-emerald-900/50 focus:border-emerald-500
-                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                          focus:bg-white"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-white">Confirm Password</Label>
-                      <Input
-                        type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleInputChange}
-                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                          placeholder:text-emerald-900/50 focus:border-emerald-500
-                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                          focus:bg-white"
-                        required
-                      />
-                    </div>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Camera className="h-12 w-12 text-emerald-400/40" />
+                      </div>
+                    )}
                   </div>
-                </div>
-              </div>
-
-              {/* Personal Information */}
-              <div className="grid grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label className="text-white">Full Name</Label>
-                  <Input
-                    name="fullName"
-                    value={formData.fullName}
-                    onChange={handleInputChange}
-                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                        placeholder:text-emerald-900/50 focus:border-emerald-500
-                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                        focus:bg-white"
-                    required
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                    id="profile-image"
                   />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-white">Phone Number</Label>
-                  <Input
-                    name="phone_no"
-                    value={formData.phone_no}
-                    onChange={handleInputChange}
-                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                        placeholder:text-emerald-900/50 focus:border-emerald-500
-                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                        focus:bg-white"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-white">Age</Label>
-                  <Input
-                    type="number"
-                    name="age"
-                    value={formData.age}
-                    onChange={handleInputChange}
-                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                        placeholder:text-emerald-900/50 focus:border-emerald-500
-                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                        focus:bg-white"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-white">Gender</Label>
-                  <Select
-                    value={formData.gender}
-                    onValueChange={(value) =>
-                      setFormData((prev) => ({ ...prev, gender: value }))
-                    }
+                  <label
+                    htmlFor="profile-image"
+                    className="absolute bottom-0 right-0 p-2 rounded-full bg-emerald-500 text-white cursor-pointer 
+                    hover:bg-emerald-400 transition-colors shadow-lg"
                   >
-                    <SelectTrigger
-                      className="bg-emerald-100/10 border-emerald-300/20 text-emerald-50 
-                      placeholder:text-emerald-300/30 focus:border-emerald-400/50
-                      hover:border-emerald-400/30 transition-all backdrop-blur-sm"
-                    >
-                      <SelectValue placeholder="Select gender" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-emerald-900/90 border-emerald-400/20 text-emerald-50">
-                      <SelectItem value="male">Male</SelectItem>
-                      <SelectItem value="female">Female</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2 col-span-2">
-                  <Label className="text-white">Aadhar Number</Label>
-                  <Input
-                    name="aadharNumber"
-                    value={formData.aadharNumber}
-                    onChange={handleInputChange}
-                    placeholder="XXXX-XXXX-XXXX"
-                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
-                        placeholder:text-emerald-900/50 focus:border-emerald-500
-                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
-                        focus:bg-white"
-                  />
+                    <Camera className="h-5 w-5" />
+                  </label>
+                  <p className="text-center text-sm text-emerald-300/80 mt-2">
+                    Profile Picture (Optional)
+                  </p>
                 </div>
               </div>
 
-              {/* Address Section */}
+              {/* Required Fields Section */}
               <div className="space-y-6">
                 <h3 className="text-lg font-medium text-white border-b border-emerald-800/50 pb-2">
-                  Address Information
+                  Required Information
                 </h3>
                 <div className="grid grid-cols-2 gap-6">
-                  <div className="col-span-2">
-                    <Label className="text-white">Street Address</Label>
+                  <div className="space-y-2">
+                    <Label className="text-white">Username *</Label>
                     <Input
-                      name="address.street"
-                      value={formData.address.street}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          address: {
-                            ...prev.address,
-                            street: e.target.value,
-                          },
-                        }))
-                      }
-                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                      name="username"
+                      value={formData.username}
+                      onChange={handleInputChange}
+                      required
+                      className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
                         placeholder:text-emerald-900/50 focus:border-emerald-500
                         hover:border-emerald-500/50 transition-all backdrop-blur-sm
                         focus:bg-white"
-                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-white">City</Label>
+                    <Label className="text-white">Email *</Label>
                     <Input
-                      name="address.city"
-                      value={formData.address.city}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          address: { ...prev.address, city: e.target.value },
-                        }))
-                      }
-                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required
+                      className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
                         placeholder:text-emerald-900/50 focus:border-emerald-500
                         hover:border-emerald-500/50 transition-all backdrop-blur-sm
                         focus:bg-white"
-                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-white">State</Label>
+                    <Label className="text-white">Password *</Label>
                     <Input
-                      name="address.state"
-                      value={formData.address.state}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          address: { ...prev.address, state: e.target.value },
-                        }))
-                      }
-                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                      type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleInputChange}
+                      required
+                      className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
                         placeholder:text-emerald-900/50 focus:border-emerald-500
                         hover:border-emerald-500/50 transition-all backdrop-blur-sm
                         focus:bg-white"
-                      required
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-white">Pincode</Label>
+                    <Label className="text-white">Aadhaar Number *</Label>
                     <Input
-                      name="address.pincode"
-                      value={formData.address.pincode}
-                      onChange={(e) =>
-                        setFormData((prev) => ({
-                          ...prev,
-                          address: {
-                            ...prev.address,
-                            pincode: e.target.value,
-                          },
-                        }))
-                      }
-                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                      name="aadharNumber"
+                      value={formData.aadharNumber}
+                      onChange={handleInputChange}
+                      required
+                      pattern="\d{12}"
+                      maxLength={12}
+                      title="Please enter a valid 12-digit Aadhaar number"
+                      className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
                         placeholder:text-emerald-900/50 focus:border-emerald-500
                         hover:border-emerald-500/50 transition-all backdrop-blur-sm
                         focus:bg-white"
-                      required
                     />
                   </div>
                 </div>
+                
+                {/* Required Document Upload */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-medium text-white">Document Verification *</h3>
+                  <AadharUpload
+                    aadharImage={formData.aadharImage}
+                    onAadharChange={handleAadharChange}
+                    required={true}
+                  />
+                </div>
               </div>
 
-              {/* Document Verification */}
-              <div className="space-y-4">
+              {/* Optional Fields Section */}
+              <div className="space-y-6">
                 <h3 className="text-lg font-medium text-white border-b border-emerald-800/50 pb-2">
-                  Document Verification
+                  Additional Information (Optional)
                 </h3>
-                <AadharUpload
-                  aadharImage={formData.aadharImage}
-                  onAadharChange={handleAadharChange}
-                />
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-white">Full Name</Label>
+                    <Input
+                      name="fullName"
+                      value={formData.fullName}
+                      onChange={handleInputChange}
+                      className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">Age</Label>
+                    <Input
+                      type="number"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleInputChange}
+                      className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Optional Address Section */}
+                <div className="space-y-4">
+                  <Label className="text-white">Address</Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <Label className="text-white">Street Address</Label>
+                      <Input
+                        name="address.street"
+                        value={formData.address.street}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            address: {
+                              ...prev.address,
+                              street: e.target.value,
+                            },
+                          }))
+                        }
+                        className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">City</Label>
+                      <Input
+                        name="address.city"
+                        value={formData.address.city}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            address: { ...prev.address, city: e.target.value },
+                          }))
+                        }
+                        className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">State</Label>
+                      <Input
+                        name="address.state"
+                        value={formData.address.state}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            address: { ...prev.address, state: e.target.value },
+                          }))
+                        }
+                        className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">Pincode</Label>
+                      <Input
+                        name="address.pincode"
+                        value={formData.address.pincode}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            address: {
+                              ...prev.address,
+                              pincode: e.target.value,
+                            },
+                          }))
+                        }
+                        className="rounded-full bg-white/90 border-emerald-600/30 text-emerald-950
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <Button
                 type="submit"
-                className="w-full py-6 text-lg bg-emerald-600 hover:bg-emerald-500 text-white
+                className="w-full py-6 text-lg rounded-full bg-emerald-600 hover:bg-emerald-500 text-white
                   transition-all duration-200 backdrop-blur-sm border border-emerald-500/30
                   hover:border-emerald-400/50 shadow-lg shadow-emerald-900/20"
                 disabled={isLoading}

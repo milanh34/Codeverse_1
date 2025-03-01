@@ -48,80 +48,85 @@ function SignInUser() {
   return (
     <AuthLayout>
       <PageTransition>
-        <Card
-          className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
+        <div className="min-h-screen w-full flex items-center justify-center px-4">
+          <Card
+            className="auth-card max-w-md w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
           backdrop-blur-xl shadow-xl"
-        >
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-white">
-              Welcome back
-            </CardTitle>
-            <CardDescription className="text-center text-white/70">
-              Sign in to continue
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-white">Email</Label>
-                <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData((prev) => ({ ...prev, email: e.target.value }))
-                  }
-                  placeholder="Enter your email"
-                  required
-                  className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+          >
+            <CardHeader className="space-y-1">
+              <CardTitle className="text-2xl text-center text-white">
+                Welcome back
+              </CardTitle>
+              <CardDescription className="text-center text-white/70">
+                Sign in to continue
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-white">Email</Label>
+                  <Input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        email: e.target.value,
+                      }))
+                    }
+                    placeholder="Enter your email"
+                    required
+                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
                     placeholder:text-emerald-900/50 focus:border-emerald-500
                     hover:border-emerald-500/50 transition-all backdrop-blur-sm
                     focus:bg-white"
-                />
-              </div>
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label className="text-white">Password</Label>
-                <Input
-                  type="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      password: e.target.value,
-                    }))
-                  }
-                  placeholder="••••••••"
-                  required
-                  className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                <div className="space-y-2">
+                  <Label className="text-white">Password</Label>
+                  <Input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
+                    placeholder="••••••••"
+                    required
+                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
                     placeholder:text-emerald-900/50 focus:border-emerald-500
                     hover:border-emerald-500/50 transition-all backdrop-blur-sm
                     focus:bg-white"
-                />
-              </div>
+                  />
+                </div>
 
-              <Button
-                type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white
+                <Button
+                  type="submit"
+                  className="w-full bg-emerald-600 hover:bg-emerald-500 text-white
                   transition-all duration-200 backdrop-blur-sm border border-emerald-500/30
                   hover:border-emerald-400/50 shadow-lg shadow-emerald-900/20"
-                disabled={isLoading}
-              >
-                {isLoading ? "Signing in..." : "Sign In"}
-              </Button>
-            </form>
-          </CardContent>
-          <CardFooter>
-            <p className="text-center text-sm text-emerald-100/70 w-full">
-              New to our platform?{" "}
-              <Link
-                to="/signupngo"
-                className="text-white hover:text-emerald-200"
-              >
-                Create an account
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Signing in..." : "Sign In"}
+                </Button>
+              </form>
+            </CardContent>
+            <CardFooter>
+              <p className="text-center text-sm text-emerald-100/70 w-full">
+                New to our platform?{" "}
+                <Link
+                  to="/signupngo"
+                  className="text-white hover:text-emerald-200"
+                >
+                  Create an account
+                </Link>
+              </p>
+            </CardFooter>
+          </Card>
+        </div>
       </PageTransition>
     </AuthLayout>
   );
