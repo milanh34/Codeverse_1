@@ -14,12 +14,12 @@ import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 
-const AddEvent = ({ onClose }) => {
+const AddEvent = ({ onClose, onSubmit }) => {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    date: "",
+    date: "", // This is required by the backend
     location: {
       street: "",
       city: "",
@@ -30,52 +30,40 @@ const AddEvent = ({ onClose }) => {
     },
     isEmergency: false,
     allocatedFund: 0,
-    startDate: "",
-    endDate: "",
-    event_galley: [], // For image uploads
+    startDate: "", // Optional
+    endDate: "", // Optional
+    gallery: [], // Changed from event_galley to match backend
+    badges: [],
   });
 
   // Add new state for total funds
   const [totalFunds, setTotalFunds] = useState(1000000); // This should come from your API
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
+    
+    // Create a copy of form data for submission
+    const submissionData = {
+      ...formData,
+      date: formData.startDate, // Use startDate as the required date field
+    };
 
-    try {
-      // Simulate API call with setTimeout
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Mock success response
-      toast.success("Event created successfully!", {
-        icon: "🎉",
-        style: {
-          background: "#166856",
-          color: "#fff",
-        },
-        duration: 3000,
-      });
-
-      console.log("Form Data:", formData); // For debugging
-      onClose();
-    } catch (error) {
-      toast.error("Something went wrong!", {
-        icon: "❌",
-        style: {
-          background: "#ff4444",
-          color: "#fff",
-        },
-      });
-    } finally {
-      setLoading(false);
+    // Only include startDate and endDate if they're different from the main date
+    if (formData.startDate !== formData.date) {
+      submissionData.startDate = formData.startDate;
     }
+    if (formData.endDate) {
+      submissionData.endDate = formData.endDate;
+    }
+
+    onSubmit(submissionData);
   };
 
   const handleImageUpload = (e) => {
     const files = Array.from(e.target.files);
     setFormData((prev) => ({
       ...prev,
-      event_galley: [...prev.event_galley, ...files],
+      gallery: [...prev.gallery, ...files], // Changed from event_galley to gallery
     }));
   };
 
@@ -262,7 +250,7 @@ const AddEvent = ({ onClose }) => {
         </div>
 
         {/* Form Content */}
-        <form onSubmit={handleSubmit} className="bg-white p-8 space-y-8">
+h           <form onSubmit={handleSubmit} className="bg-white p-8 space-y-8">
           {/* Image Upload Section */}
           <div className="border-2 border-dashed border-[#166856] rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:bg-[#8df1e2]/5 group">
             <input
@@ -278,7 +266,7 @@ const AddEvent = ({ onClose }) => {
               <p className="text-sm font-medium text-[#166856]">
                 Upload Event Images (Max 5)
               </p>
-              {formData.event_galley.length > 0 && (
+              {formData.gallery.length > 0 && (
                 <div className="mt-3 px-4 py-2 bg-[#166856]/10 rounded-full inline-block">
                   <p className="text-sm text-[#166856]">
                     {formData.event_galley.length} files selected

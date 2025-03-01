@@ -12,6 +12,9 @@ import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import AddEvent from "../components/project/AddProject";
+import { toast } from "react-hot-toast";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { SERVER } from "@/config/constant";
 
 // Mock data with image URLs
 const mockEvents = [
@@ -269,19 +272,77 @@ const EmptyState = ({ message }) => (
   </div>
 );
 
+// Remove the categories constant and keep only status filters
+const statusFilters = ["All", "Upcoming", "Ongoing", "Expired"];
+
 const Projects = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
+  const queryClient = useQueryClient(); // Add this for cache invalidation
 
-  // Removed "All" from categories since it's handled in the filter logic
-  const categories = [
-    "Environmental",
-    "Education",
-    "Healthcare",
-    "Community Service",
-  ];
-  const statusFilters = ["All", "Upcoming", "Ongoing", "Expired"];
+  // Events query
+  const { data: eventsData, isLoading } = useQuery({
+    queryKey: ["ngoEvents"],
+    queryFn: async () => {
+      const response = await fetch(`${SERVER}/api/events/ngo/all`, {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch events");
+      }
+      const data = await response.json();
+      return data.events;
+    },
+  });
+
+  // Add event mutation
+  const { mutate: createEvent } = useMutation({
+    mutationFn: async (eventData) => {
+      const form = new FormData();
+      
+      // Append all event data to FormData
+      Object.keys(eventData).forEach(key => {
+        if (key === 'location') {
+          Object.keys(eventData.location).forEach(locKey => {
+            if (eventData.location[locKey]) {
+              form.append(`location[${locKey}]`, eventData.location[locKey]);
+            }
+          });
+        } else if (key === 'gallery') {
+          eventData.gallery.forEach(file => {
+            form.append('gallery', file);
+          });
+        } else if (key === 'badges') {
+          eventData.badges.forEach((badge, index) => {
+            form.append(`badges[${index}]`, badge);
+          });
+        } else if (eventData[key] !== undefined && eventData[key] !== null) {
+          form.append(key, eventData[key]);
+        }
+      });
+
+      const response = await fetch(`${SERVER}/api/events/new`, {
+        method: 'POST',
+        credentials: 'include',
+        body: form,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to create event');
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      toast.success('Event created successfully');
+      setIsAddEventOpen(false);
+      queryClient.invalidateQueries(["ngoEvents"]); // Refresh events list
+    },
+    onError: (error) => {
+      toast.error(error.message || 'Failed to create event');
+    }
+  });
 
   // Get current date at midnight for accurate comparison
   const currentDate = new Date();
@@ -297,24 +358,106 @@ const Projects = () => {
     return "Expired";
   };
 
-  // Calculate upcoming events once
-  const upcomingEvents = mockEvents.filter(
+  // Calculate upcoming events from actual data
+  const upcomingEvents = eventsData?.filter(
     (event) => getEventStatus(event.date) === "Upcoming"
-  );
+  ) || [];
 
-  // Combined filter function
-  const filteredEvents = mockEvents.filter((event) => {
-    const matchesCategory =
-      selectedCategory === "All" ||
-      event.badges.includes(selectedCategory) ||
-      event.category === selectedCategory;
-
+  // Filter events based on status only
+  const filteredEvents = eventsData?.filter((event) => {
     const eventStatus = getEventStatus(event.date);
-    const matchesStatus =
-      selectedStatus === "All" || eventStatus === selectedStatus;
+    return selectedStatus === "All" || eventStatus === selectedStatus;
+  }) || [];
 
-    return matchesCategory && matchesStatus;
-  });
+  // Update EventCard component to match API data structure
+  const EventCard = ({ event }) => {
+    const navigate = useNavigate();
+
+    return (
+      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full">
+        {/* Image Section */}
+        <div className="relative h-48 overflow-hidden group shrink-0">
+          <img
+            src={event.event_gallery?.[0] || '/placeholder-event.jpg'}
+            alt={event.name}
+            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center">
+              <span className="text-white text-sm font-medium">
+                {event.organizer?.name}
+              </span>
+              <div className="flex gap-2">
+                {event.badges?.map((badge, index) => (
+                  <Badge key={index} className="bg-white/90 text-[#166856]">
+                    {badge}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Section */}
+        <div className="p-6 flex flex-col flex-grow">
+          <div className="flex-grow space-y-4">
+            <div>
+              <h3 className="font-semibold text-lg text-[#0d3320] mb-2">
+                {event.name}
+              </h3>
+              <p className="text-[#166856] text-sm line-clamp-2">
+                {event.description}
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-sm text-[#166856]">
+                <Calendar className="h-4 w-4" />
+                <span>{new Date(event.date).toLocaleDateString()}</span>
+              </div>
+              {event.location && (
+                <div className="flex items-center gap-2 text-sm text-[#166856]">
+                  <MapPin className="h-4 w-4" />
+                  <span>{`${event.location.city || 'N/A'}, ${event.location.state || 'N/A'}`}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-sm text-[#166856]">
+                <Users className="h-4 w-4" />
+                <span>{event.participants?.length || 0} Volunteers</span>
+              </div>
+            </div>
+
+            {/* Gallery Preview */}
+            {event.event_gallery?.length > 0 && (
+              <div className="flex gap-2">
+                {event.event_gallery.slice(0, 2).map((image, index) => (
+                  <div key={index} className="w-16 h-16 rounded-lg overflow-hidden">
+                    <img
+                      src={image}
+                      alt={`${event.name} gallery ${index + 1}`}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
+                    />
+                  </div>
+                ))}
+                {event.event_gallery.length > 2 && (
+                  <div className="w-16 h-16 rounded-lg bg-[#166856]/10 flex items-center justify-center text-[#166856] text-sm font-medium">
+                    +{event.event_gallery.length - 2}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          <Button
+            onClick={() => navigate(`/ngo/projects/${event._id}`)}
+            className="w-full mt-6 bg-white hover:bg-[#166856]/5 text-[#166856] rounded-full shadow-lg border-2 border-[#166856]"
+          >
+            View Details
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="p-6 space-y-8">
@@ -339,62 +482,34 @@ const Projects = () => {
       </div>
 
       {/* Add Event Modal */}
-      {isAddEventOpen && <AddEvent onClose={() => setIsAddEventOpen(false)} />}
+      {isAddEventOpen && <AddEvent onClose={() => setIsAddEventOpen(false)} onSubmit={(eventData) => createEvent(eventData)} />}
 
-      {/* Filter Section - Now with consistent button widths */}
+      {/* Status Filter Section - simplified */}
       <div className="flex flex-wrap gap-4">
-        <div className="flex flex-wrap gap-4">
-          {/* Filter buttons with consistent width */}
-          {["All Categories", ...categories].map((category) => (
-            <Button
-              key={category}
-              variant={
-                selectedCategory ===
-                (category === "All Categories" ? "All" : category)
-                  ? "default"
-                  : "outline"
-              }
-              className={`rounded-full transition-all duration-300 whitespace-nowrap w-[160px] justify-center ${
-                selectedCategory ===
-                (category === "All Categories" ? "All" : category)
-                  ? "bg-white border-2 border-[#166856] text-[#166856] shadow-lg hover:bg-[#166856]/5"
-                  : "border-2 border-[#166856]/30 text-[#166856]/60 hover:border-[#166856] hover:text-[#166856] hover:bg-white"
-              }`}
-              onClick={() =>
-                setSelectedCategory(
-                  category === "All Categories" ? "All" : category
-                )
-              }
-            >
-              {category}
-            </Button>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-4">
-          {statusFilters.map((status) => (
-            <Button
-              key={status}
-              variant={selectedStatus === status ? "default" : "outline"}
-              className={`rounded-full transition-all duration-300 whitespace-nowrap w-[160px] justify-center ${
-                selectedStatus === status
-                  ? "bg-white border-2 border-[#166856] text-[#166856] shadow-lg hover:bg-[#166856]/5"
-                  : "border-2 border-[#166856]/30 text-[#166856]/60 hover:border-[#166856] hover:text-[#166856] hover:bg-white"
-              }`}
-              onClick={() => setSelectedStatus(status)}
-            >
-              {status}
-            </Button>
-          ))}
-        </div>
+        {statusFilters.map((status) => (
+          <Button
+            key={status}
+            variant={selectedStatus === status ? "default" : "outline"}
+            className={`rounded-full transition-all duration-300 whitespace-nowrap w-[160px] justify-center ${
+              selectedStatus === status
+                ? "bg-white border-2 border-[#166856] text-[#166856] shadow-lg hover:bg-[#166856]/5"
+                : "border-2 border-[#166856]/30 text-[#166856]/60 hover:border-[#166856] hover:text-[#166856] hover:bg-white"
+            }`}
+            onClick={() => setSelectedStatus(status)}
+          >
+            {status}
+          </Button>
+        ))}
       </div>
 
       {/* Events Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.length > 0 ? (
+        {isLoading ? (
+          <div className="col-span-full text-center py-10">Loading events...</div>
+        ) : filteredEvents.length > 0 ? (
           filteredEvents.map((event) => (
             <EventCard
-              key={event.id}
+              key={event._id} // Changed from event.id to event._id
               event={{
                 ...event,
                 status: getEventStatus(event.date).toLowerCase(),
@@ -404,13 +519,9 @@ const Projects = () => {
         ) : (
           <EmptyState
             message={
-              selectedCategory !== "All" && selectedStatus !== "All"
-                ? `No ${selectedStatus.toLowerCase()} events found in ${selectedCategory} category.`
-                : selectedCategory !== "All"
-                  ? `No events found in ${selectedCategory} category.`
-                  : selectedStatus !== "All"
-                    ? `No ${selectedStatus.toLowerCase()} events available.`
-                    : "No events available at the moment."
+              selectedStatus !== "All"
+                ? `No ${selectedStatus.toLowerCase()} events available.`
+                : "No events available at the moment."
             }
           />
         )}
