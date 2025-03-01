@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { useQuery } from "@tanstack/react-query";
+import { SERVER } from "@/config/constant";
 
 const AddEvent = ({ onClose, onSubmit }) => {
   const [loading, setLoading] = useState(false);
@@ -36,8 +38,21 @@ const AddEvent = ({ onClose, onSubmit }) => {
     badges: [],
   });
 
-  // Add new state for total funds
-  const [totalFunds, setTotalFunds] = useState(1000000); // This should come from your API
+  // Replace hardcoded totalFunds with API call
+  const { data: fundsData, isLoading: isFundsLoading } = useQuery({
+    queryKey: ["ngoFunds"],
+    queryFn: async () => {
+      const response = await fetch(`${SERVER}/api/ngo/funds`, {
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch funds");
+      }
+      return response.json();
+    },
+  });
+
+  const totalFunds = fundsData?.totalFunds || 0;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -238,19 +253,25 @@ const AddEvent = ({ onClose, onSubmit }) => {
                 <p className="text-sm text-[#166856] font-medium">
                   Available Funds
                 </p>
-                <p className="text-2xl font-bold text-[#0d3320]">
-                  ₹{totalFunds.toLocaleString()}
-                </p>
+                {isFundsLoading ? (
+                  <div className="h-8 w-32 animate-pulse bg-[#166856]/10 rounded"></div>
+                ) : (
+                  <p className="text-2xl font-bold text-[#0d3320]">
+                    ₹{totalFunds.toLocaleString()}
+                  </p>
+                )}
               </div>
             </div>
             <div className="bg-[#166856]/5 px-4 py-2 rounded-lg">
-              <p className="text-sm text-[#166856]">Fiscal Year 2024</p>
+              <p className="text-sm text-[#166856]">
+                {fundsData?.ngoName || 'Loading...'}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Form Content */}
-h           <form onSubmit={handleSubmit} className="bg-white p-8 space-y-8">
+        <form onSubmit={handleSubmit} className="bg-white p-8 space-y-8">
           {/* Image Upload Section */}
           <div className="border-2 border-dashed border-[#166856] rounded-2xl p-8 text-center cursor-pointer transition-all duration-300 hover:bg-[#8df1e2]/5 group">
             <input

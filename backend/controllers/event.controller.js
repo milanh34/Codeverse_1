@@ -192,10 +192,12 @@ export const getEventById = TryCatch(async (req, res, next) => {
   const { eventId } = req.params;
 
   const event = await Event.findById(eventId)
-    .populate("organizer", "name email profile_image")
+    .populate("organizer", "name profile_image")
     .populate("participants", "name username profile_image");
 
-  if (!event) return next(new ErrorHandler("Event not found", 404));
+  if (!event) {
+    return next(new ErrorHandler("Event not found", 404));
+  }
 
   res.status(200).json({
     success: true,
