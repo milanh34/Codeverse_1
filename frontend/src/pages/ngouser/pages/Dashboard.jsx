@@ -11,17 +11,37 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { format } from 'date-fns';
+import { fetchNGONews, mockNewsData } from '../components/News';
 
 const NewsCard = ({ news }) => (
   <div className="p-4 bg-gradient-to-r from-[#8df1e2]/5 to-transparent hover:from-[#8df1e2]/10 
     hover:to-transparent transition-colors rounded-lg">
     <div className="flex items-start gap-3">
-      <div className="w-16 h-16 rounded-lg overflow-hidden">
-        <img src={news.image} alt={news.title} className="w-full h-full object-cover" />
+      <div className="w-16 h-16 rounded-lg overflow-hidden bg-[#166856]/10">
+        <img 
+          src={news.image} 
+          alt={news.title} 
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            e.target.src = '/placeholder-news.jpg';
+          }}
+        />
       </div>
       <div className="flex-1">
-        <h4 className="font-medium text-[#0d3320] line-clamp-2">{news.title}</h4>
-        <p className="text-sm text-[#166856] mt-1">{news.date}</p>
+        <a 
+          href={news.url} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="font-medium text-[#0d3320] line-clamp-2 hover:text-[#166856] transition-colors"
+        >
+          {news.title}
+        </a>
+        <div className="flex items-center gap-2 mt-1">
+          <span className="text-sm text-[#166856]">{news.date}</span>
+          <span className="text-xs px-2 py-0.5 rounded-full bg-[#166856]/10 text-[#166856]">
+            {news.source}
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -38,14 +58,7 @@ const ScrollableCard = ({ title, viewAllText, children, height = "400px" }) => (
         {viewAllText} <ArrowRight className="h-4 w-4" />
       </Button>
     </div>
-    <ScrollArea 
-      className={`h-[${height}] pr-4 overflow-auto custom-scrollbar`}
-      style={{
-        '--scrollbar-width': '8px',
-        '--scrollbar-track': 'rgba(141, 241, 226, 0.1)',
-        '--scrollbar-thumb': 'rgba(22, 104, 86, 0.2)',
-      }}
-    >
+    <ScrollArea className={`${height} pr-4`}>
       <div className="space-y-4">
         {children}
       </div>
@@ -62,6 +75,8 @@ const Dashboard = () => {
   });
 
   const [recentActivities, setRecentActivities] = useState([]);
+  const [newsData, setNewsData] = useState([]);
+  const [newsLoading, setNewsLoading] = useState(true);
 
   const mockChartData = [
     { month: 'Jan', donations: 4000, projects: 5 },
@@ -146,7 +161,20 @@ const Dashboard = () => {
       }
     };
 
+    const loadNews = async () => {
+      try {
+        const fetchedNews = await fetchNGONews();
+        setNewsData(fetchedNews.length > 0 ? fetchedNews : mockNewsData);
+      } catch (error) {
+        console.error('Error loading news:', error);
+        setNewsData(mockNewsData);
+      } finally {
+        setNewsLoading(false);
+      }
+    };
+
     fetchDashboardData();
+    loadNews();
   }, []);
 
   const generatePDF = () => {
@@ -365,7 +393,7 @@ const Dashboard = () => {
       {/* Bottom Section Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Donation Trends Chart - Bottom Left */}
-        <ScrollableCard title="Donation Trends" viewAllText="View Details" height="350px">
+        <ScrollableCard title="Donation Trends" viewAllText="View Details" height="h-[350px]">
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={mockChartData}>
@@ -386,11 +414,23 @@ const Dashboard = () => {
           </div>
         </ScrollableCard>
 
-        {/* News Feed Card - Bottom Right */}
-        <ScrollableCard title="Latest News" viewAllText="View More" height="350px">
-          {mockNews.map((news, index) => (
-            <NewsCard key={index} news={news} />
-          ))}
+        {/* Updated News Feed Card */}
+        <ScrollableCard 
+          title="Latest NGO News" 
+          viewAllText="View More" 
+          height="h-[350px]"
+        >
+          {newsLoading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#166856]" />
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {newsData.slice(0, 5).map((article) => (
+                <NewsCard key={article.id} news={article} />
+              ))}
+            </div>
+          )}
         </ScrollableCard>
       </div>
     </div>

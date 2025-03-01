@@ -38,6 +38,7 @@ function App() {
             <Route path="/ngo/social" element={<Social />} />
             <Route path="/ngo/postevent" element={<PostEvent />} />
           </Route>
+          
           {/* USER ROUTES */}
         </Routes>
       </BrowserRouter>
