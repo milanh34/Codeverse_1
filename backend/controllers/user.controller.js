@@ -79,3 +79,69 @@ export const getMyProfile = TryCatch(async (req, res, next) => {
     user,
   });
 });
+
+export const changePassword = TryCatch(async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+  const user = await User.findById(req.user).select("+password");
+
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  const isMatch = await bcrypt.compare(oldPassword, user.password);
+  if (!isMatch) {
+    return next(new ErrorHandler("Incorrect old password", 400));
+  }
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password changed successfully",
+  });
+});
+
+export const updateProfile = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+  const { email, name, phone_no, age, gender, date_of_birth, address } = req.body;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  const updates = {};
+  if (email) updates.email = email;
+  if (name) updates.name = name;
+  if (phone_no) updates.phone_no = phone_no;
+  if (age) updates.age = age;
+  if (gender) updates.gender = gender;
+  if (date_of_birth) updates.date_of_birth = date_of_birth;
+
+  if (address) {
+    updates.address = {
+      street: address.street || user.address?.street,
+      city: address.city || user.address?.city,
+      state: address.state || user.address?.state,
+      pincode: address.pincode || user.address?.pincode,
+      latitude: address.latitude || user.address?.latitude,
+      longitude: address.longitude || user.address?.longitude,
+    };
+  }
+
+  const updatedUser = await User.findByIdAndUpdate(userId, updates, {
+    new: true,
+    runValidators: true,
+  }).select("-password");
+
+  if(!updatedUser) {
+    return next(new ErrorHandler("Profile update failed", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+    user: updatedUser,
+  });
+});
