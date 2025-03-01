@@ -8,15 +8,15 @@ import { s3Upload } from "../lib/s3.js";
 
 export const createEvent = TryCatch(async (req, res, next) => {
   const ngoId = req.user;
-  const { 
-    name, 
-    description, 
-    date, 
-    location, 
-    isEmergency, 
+  const {
+    name,
+    description,
+    date,
+    location,
+    isEmergency,
     allocatedFund,
     startDate,
-    endDate 
+    endDate,
   } = req.body;
   const files = req.files;
 
@@ -24,7 +24,7 @@ export const createEvent = TryCatch(async (req, res, next) => {
   if (startDate && endDate) {
     const start = new Date(startDate);
     const end = new Date(endDate);
-    
+
     if (start > end) {
       return next(new ErrorHandler("Start date cannot be after end date", 400));
     }
@@ -39,15 +39,17 @@ export const createEvent = TryCatch(async (req, res, next) => {
   // If allocatedFund is provided, verify sufficient funds
   if (allocatedFund) {
     if (allocatedFund > ngo.totalFunds) {
-      return next(new ErrorHandler(
-        `Insufficient funds. Available: ₹${ngo.totalFunds}, Required: ₹${allocatedFund}`,
-        400
-      ));
+      return next(
+        new ErrorHandler(
+          `Insufficient funds. Available: ₹${ngo.totalFunds}, Required: ₹${allocatedFund}`,
+          400
+        )
+      );
     }
 
     // Deduct funds from NGO's total funds
     await NGO.findByIdAndUpdate(ngoId, {
-      $inc: { totalFunds: -allocatedFund }
+      $inc: { totalFunds: -allocatedFund },
     });
   }
 
@@ -60,7 +62,7 @@ export const createEvent = TryCatch(async (req, res, next) => {
     isEmergency,
     allocatedFund: allocatedFund || 0,
     startDate: startDate || undefined,
-    endDate: endDate || undefined
+    endDate: endDate || undefined,
   };
 
   // Handle gallery images if they exist
@@ -116,7 +118,7 @@ export const createEvent = TryCatch(async (req, res, next) => {
     success: true,
     message: "Event created successfully",
     event,
-    remainingFunds: ngo.totalFunds - (allocatedFund || 0)
+    remainingFunds: ngo.totalFunds - (allocatedFund || 0),
   });
 });
 
@@ -204,14 +206,19 @@ export const getEventById = TryCatch(async (req, res, next) => {
 export const getAllNGOEvents = TryCatch(async (req, res, next) => {
   const ngoId = req.user; // Get NGO ID from authenticated user
 
+  console.count("NGO Events");
+
   const events = await Event.find({ organizer: ngoId })
     .populate("organizer", "name profile_image")
     .populate("participants", "name username profile_image")
     .sort({ createdAt: -1 }); // Sort by latest first
 
+  console.log("event", events);
+  console.count("NGO Events");
+
   res.status(200).json({
     success: true,
     events,
-    count: events.length
+    count: events.length,
   });
 });

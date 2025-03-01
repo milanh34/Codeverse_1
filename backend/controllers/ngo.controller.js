@@ -7,6 +7,7 @@ import { Event } from "../models/event.model.js";
 import { Notification } from "../models/notification.model.js";
 import { Post } from "../models/post.model.js";
 import { s3Upload } from "../lib/s3.js";
+import { cookieOptions } from "../constants/cookie-options.js";
 
 export const newNGO = TryCatch(async (req, res, next) => {
   const {
@@ -136,7 +137,8 @@ export const changePassword = TryCatch(async (req, res, next) => {
 
 export const updateNGOProfile = TryCatch(async (req, res, next) => {
   const ngoId = req.user;
-  const { name, email, phone_no, address, socials, description, staff } = req.body;
+  const { name, email, phone_no, address, socials, description, staff } =
+    req.body;
 
   const ngo = await NGO.findById(ngoId);
   if (!ngo) {

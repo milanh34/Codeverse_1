@@ -26,6 +26,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { format } from "date-fns";
+import { SERVER } from "@/config/constant";
+import { useQuery } from "@tanstack/react-query";
+import { fetchNGONews } from "../components/News";
 
 const NewsCard = ({ news }) => (
   <div
@@ -61,49 +64,95 @@ const ScrollableCard = ({ title, viewAllText, children, height = "400px" }) => (
         {viewAllText} <ArrowRight className="h-4 w-4" />
       </Button>
     </div>
-    <ScrollArea 
+    <ScrollArea
       className={`h-[${height}] pr-4 overflow-auto custom-scrollbar`}
       style={{
-        '--scrollbar-width': '8px',
-        '--scrollbar-track': 'rgba(141, 241, 226, 0.1)',
-        '--scrollbar-thumb': 'rgba(22, 104, 86, 0.2)',
+        "--scrollbar-width": "8px",
+        "--scrollbar-track": "rgba(141, 241, 226, 0.1)",
+        "--scrollbar-thumb": "rgba(22, 104, 86, 0.2)",
       }}
     >
-      <div className="space-y-4">
-        {children}
-      </div>
+      <div className="space-y-4">{children}</div>
     </ScrollArea>
   </Card>
 );
 
 const mockNewsData = [
   {
-    id: '1',
-    title: 'Local NGO Launches Environmental Initiative',
-    description: 'Community-based organization starts new recycling program',
-    date: '2024-02-20',
-    source: 'Environmental News',
-    image: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3',
+    id: "1",
+    title: "Local NGO Launches Environmental Initiative",
+    description: "Community-based organization starts new recycling program",
+    date: "2024-02-20",
+    source: "Environmental News",
+    image:
+      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3",
   },
   {
-    id: '2',
-    title: 'NGO Partners with Government for Education Program',
-    description: 'New partnership aims to improve rural education access',
-    date: '2024-02-19',
-    source: 'Education Weekly',
-    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3',
+    id: "2",
+    title: "NGO Partners with Government for Education Program",
+    description: "New partnership aims to improve rural education access",
+    date: "2024-02-19",
+    source: "Education Weekly",
+    image:
+      "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?ixlib=rb-4.0.3",
   },
   {
-    id: '3',
-    title: 'Community Engagement: Best Practices for NGOs',
-    description: 'New guidelines for community engagement released',
-    date: '2024-02-18',
-    source: 'NGO Times',
-    image: 'https://images.unsplash.com/photo-1584982751601-97dcc096659c?ixlib=rb-4.0.3',
-  }
+    id: "3",
+    title: "Community Engagement: Best Practices for NGOs",
+    description: "New guidelines for community engagement released",
+    date: "2024-02-18",
+    source: "NGO Times",
+    image:
+      "https://images.unsplash.com/photo-1584982751601-97dcc096659c?ixlib=rb-4.0.3",
+  },
 ];
 
 const Dashboard = () => {
+  // 1. NGO Profile Query
+  const { data: authNGO } = useQuery({
+    queryKey: ["authNGO"],
+  });
+
+  // 2. Pending Volunteer Requests Query
+  const {
+    data: pendingRequests,
+    isError: pendingRequestsError,
+    isLoading: pendingRequestsLoading,
+  } = useQuery({
+    queryKey: ["pendingRequests"],
+    queryFn: async () => {
+      const response = await fetch(`${SERVER}/api/ngo/volunteer-requests`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      return data.requests;
+    },
+    enabled: !!authNGO,
+  });
+
+  const {
+    data: ngoEvents,
+    isError: ngoEventsError,
+    isLoading: ngoEventsLoading,
+  } = useQuery({
+    queryKey: ["ngoEvents"],
+    queryFn: async () => {
+      const response = await fetch(`${SERVER}/api/events/ngo-events`, {
+        method: "GET",
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message);
+      return data.requests;
+    },
+    enabled: !!authNGO,
+  });
+
+  console.log(ngoEvents);
+  console.log(authNGO);
+
   const [stats, setStats] = useState({
     totalDonations: 0,
     activeProjects: 0,
@@ -194,7 +243,7 @@ const Dashboard = () => {
           // Add more activities...
         ]);
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error("Error fetching dashboard data:", error);
       }
     };
 
@@ -203,7 +252,7 @@ const Dashboard = () => {
         const fetchedNews = await fetchNGONews();
         setNewsData(fetchedNews.length > 0 ? fetchedNews : mockNewsData);
       } catch (error) {
-        console.error('Error loading news:', error);
+        console.error("Error loading news:", error);
         setNewsData(mockNewsData);
       } finally {
         setNewsLoading(false);
@@ -541,9 +590,9 @@ const Dashboard = () => {
         </ScrollableCard>
 
         {/* Updated News Feed Card */}
-        <ScrollableCard 
-          title="Latest NGO News" 
-          viewAllText="View More" 
+        <ScrollableCard
+          title="Latest NGO News"
+          viewAllText="View More"
           height="h-[350px]"
         >
           {newsLoading ? (
