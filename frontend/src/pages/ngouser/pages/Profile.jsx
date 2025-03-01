@@ -178,95 +178,95 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <Label>Organization Name</Label>
+          <Label className="text-green-400">Organization Name</Label>
           <Input
             name="name"
             value={formData.name}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-white text-gray-900"
+            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
           />
         </div>
         <div>
-          <Label>Email</Label>
+          <Label className="text-green-400">Email</Label>
           <Input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-white text-gray-900"
+            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
           />
         </div>
         <div>
-          <Label>Phone Number</Label>
+          <Label className="text-green-400">Phone Number</Label>
           <Input
             type="tel"
             name="phone_no"
             value={formData.phone_no}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-white text-gray-900"
+            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
           />
         </div>
         <div>
-          <Label>Staff Count</Label>
+          <Label className="text-green-400">Staff Count</Label>
           <Input
             type="number"
             name="staff"
             value={formData.staff}
             onChange={handleInputChange}
-            className="w-full p-2 border rounded bg-white text-gray-900"
+            className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
           />
         </div>
       </div>
 
       <div>
-        <Label>Description</Label>
+        <Label className="text-green-400">Description</Label>
         <Textarea
           name="description"
           value={formData.description}
           onChange={handleInputChange}
           rows={4}
-          className="w-full p-2 border rounded bg-white text-gray-900"
+          className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
         />
       </div>
 
       {/* Address Fields */}
       <div className="space-y-4">
-        <h3 className="font-semibold">Address</h3>
+        <h3 className="font-semibold text-green-400">Address</h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <Label>Street</Label>
+            <Label className="text-green-400">Street</Label>
             <Input
               name="address.street"
               value={formData.address.street}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-white text-gray-900"
+              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
             />
           </div>
           <div>
-            <Label>City</Label>
+            <Label className="text-green-400">City</Label>
             <Input
               name="address.city"
               value={formData.address.city}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-white text-gray-900"
+              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
             />
           </div>
           <div>
-            <Label>State</Label>
+            <Label className="text-green-400">State</Label>
             <Input
               name="address.state"
               value={formData.address.state}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-white text-gray-900"
+              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
             />
           </div>
           <div>
-            <Label>Pincode</Label>
+            <Label className="text-green-400">Pincode</Label>
             <Input
               name="address.pincode"
               value={formData.address.pincode}
               onChange={handleInputChange}
-              className="w-full p-2 border rounded bg-white text-gray-900"
+              className="w-full p-2 border rounded bg-gray-900/80 text-green-400"
             />
           </div>
         </div>
@@ -274,7 +274,7 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
 
       {/* Social Links */}
       <div className="space-y-4">
-        <Label>Social Links</Label>
+        <Label className="text-green-400">Social Links</Label>
         {formData.socials.map((social, index) => (
           <div key={index} className="flex gap-2">
             <Input
@@ -282,7 +282,7 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
               value={social}
               onChange={(e) => handleSocialChange(index, e.target.value)}
               placeholder="Social media link"
-              className="flex-1 bg-white text-gray-900"
+              className="flex-1 bg-gray-900/80 text-green-400"
             />
             <Button
               type="button"
@@ -309,12 +309,12 @@ const EditProfileForm = React.memo(({ onCancel, currentData }) => {
 
       {/* Profile Image */}
       <div>
-        <Label>Profile Image</Label>
+        <Label className="text-green-400">Profile Image</Label>
         <Input
           type="file"
           accept="image/*"
           onChange={handleImageChange}
-          className="w-full bg-white text-gray-900"
+          className="w-full bg-gray-900/80 text-green-400"
         />
       </div>
 
@@ -543,10 +543,10 @@ const Profile = () => {
 
       {/* Edit Profile Form */}
       {isEditing && (
-        <Card>
+        <Card className="bg-gray-900/80">
           <CardHeader>
-            <CardTitle>Edit Profile</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-green-400">Edit Profile</CardTitle>
+            <CardDescription className="text-green-400/80">
               Update your organization's information
             </CardDescription>
           </CardHeader>
