@@ -15,6 +15,7 @@ import AddEvent from "../components/project/AddProject";
 import { toast } from "react-hot-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SERVER } from "@/config/constant";
+import { Progress } from "@/components/ui/progress"; // Add this import
 
 // Mock data with image URLs
 const mockEvents = [
@@ -147,7 +148,7 @@ const mockEvents = [
       "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d",
       "https://images.unsplash.com/photo-1584515933487-779824d29309",
     ],
-    coverImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d",
+    coverImage: "https://images.unsplash.com/photo-1576091160399-112ba8d25d",
     badges: ["Healthcare", "Rural Development"],
     category: "Healthcare",
   },
@@ -158,6 +159,12 @@ const EventCard = ({ event }) => {
 
   const handleViewDetails = () => {
     navigate(`/ngo/projects/${event.id}`);
+  };
+
+  // Add getFundingProgress function inside EventCard component
+  const getFundingProgress = (event) => {
+    if (!event.allocatedFund) return 0;
+    return (event.collectedFunds / event.allocatedFund) * 100;
   };
 
   return (
@@ -244,6 +251,27 @@ const EventCard = ({ event }) => {
             </div>
           )}
         </div>
+
+        {/* Add Funding Progress Section */}
+        {event.allocatedFund > 0 && (
+          <div className="px-6 pb-6">
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-[#166856]">
+                <span>Fund Collection</span>
+                <span>{getFundingProgress(event).toFixed(1)}%</span>
+              </div>
+              <Progress value={getFundingProgress(event)} className="h-1.5" />
+              <div className="flex justify-between text-sm">
+                <span className="text-[#166856]">
+                  ₹{event.collectedFunds?.toLocaleString() || 0}
+                </span>
+                <span className="text-[#0d3320] font-medium">
+                  ₹{event.allocatedFund?.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Button - Now always at bottom */}
         <Button
@@ -373,6 +401,12 @@ const Projects = () => {
   const EventCard = ({ event }) => {
     const navigate = useNavigate();
 
+    // Add getFundingProgress function inside EventCard component
+    const getFundingProgress = (event) => {
+      if (!event.allocatedFund) return 0;
+      return (event.collectedFunds / event.allocatedFund) * 100;
+    };
+
     return (
       <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full">
         {/* Image Section */}
@@ -447,6 +481,27 @@ const Projects = () => {
               </div>
             )}
           </div>
+
+          {/* Add Funding Progress Section */}
+          {event.allocatedFund > 0 && (
+            <div className="px-6 pb-6">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm text-[#166856]">
+                  <span>Fund Collection</span>
+                  <span>{getFundingProgress(event).toFixed(1)}%</span>
+                </div>
+                <Progress value={getFundingProgress(event)} className="h-1.5" />
+                <div className="flex justify-between text-sm">
+                  <span className="text-[#166856]">
+                    ₹{event.collectedFunds?.toLocaleString() || 0}
+                  </span>
+                  <span className="text-[#0d3320] font-medium">
+                    ₹{event.allocatedFund?.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <Button
             onClick={() => navigate(`/ngo/projects/${event._id}`)}

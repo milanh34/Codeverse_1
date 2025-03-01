@@ -51,6 +51,11 @@ const eventSchema = new Schema(
     ],
     allocatedFund: {
       type: Number,
+      default: 0,
+    },
+    collectedFunds: {
+      type: Number,
+      default: 0,
     },
     startDate: {
       type: Date,

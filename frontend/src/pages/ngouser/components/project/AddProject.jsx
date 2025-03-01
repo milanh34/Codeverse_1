@@ -323,13 +323,15 @@ const AddEvent = ({ onClose, onSubmit }) => {
               <div className="relative">
                 <Calendar className="absolute left-4 top-3.5 h-4 w-4 text-[#166856]" />
                 <Input
-                  type="datetime-local"
+                  type="date"  // Changed from datetime-local to date
                   required
+                  min={new Date().toISOString().split('T')[0]}  // Set minimum date to today
                   value={formData.startDate}
                   onChange={(e) =>
                     setFormData((prev) => ({
                       ...prev,
                       startDate: e.target.value,
+                      date: e.target.value, // Also update the main date field
                     }))
                   }
                   className="rounded-xl pl-12 pr-4 py-3 border-[#166856]/20 focus:border-[#166856] focus:ring-1 focus:ring-[#166856]"
@@ -344,8 +346,9 @@ const AddEvent = ({ onClose, onSubmit }) => {
               <div className="relative">
                 <Calendar className="absolute left-4 top-3.5 h-4 w-4 text-[#166856]" />
                 <Input
-                  type="datetime-local"
+                  type="date"  // Changed from datetime-local to date
                   required
+                  min={formData.startDate || new Date().toISOString().split('T')[0]}  // Set minimum date to start date or today
                   value={formData.endDate}
                   onChange={(e) =>
                     setFormData((prev) => ({

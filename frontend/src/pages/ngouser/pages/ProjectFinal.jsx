@@ -68,10 +68,10 @@ const ProjectFinal = () => {
   // Define helper functions
   const getFundingProgress = () => {
     if (!project.allocatedFund) return 0;
-    return (currentFunding / project.allocatedFund) * 100;
+    return (project.collectedFunds / project.allocatedFund) * 100;
   };
 
-  const isFullyFunded = currentFunding >= (project.allocatedFund || 0);
+  const isFullyFunded = project.collectedFunds >= (project.allocatedFund || 0);
 
   const getMapUrl = (location) => {
     if (!location) return "";
@@ -314,116 +314,63 @@ const ProjectFinal = () => {
 
   const renderFundingStatus = () => (
     <div className="sticky top-6">
-      <Card
-        className="p-6 bg-white/80 backdrop-blur-xl border border-[#166856]/10 
-        shadow-[0_8px_30px_rgb(22,104,86,0.12)] hover:shadow-[0_8px_30px_rgb(22,104,86,0.18)] 
-        transition-all duration-300 rounded-2xl overflow-hidden"
-      >
-        {/* Status Overlay for Fully Funded Projects */}
-        {isFullyFunded && (
-          <div className="absolute inset-0 bg-emerald-50/95 backdrop-blur-sm flex items-center justify-center z-10">
-            <div className="text-center">
-              <Badge className="bg-emerald-600 text-white px-4 py-2 text-lg mb-2">
-                Fund Limit Reached
-              </Badge>
-              <p className="text-emerald-800 mt-2">
-                Allocated amount has been reached
-              </p>
-            </div>
-          </div>
-        )}
-
+      <Card className="p-6 bg-white/80 backdrop-blur-xl border border-[#166856]/10">
         <div className="space-y-4">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-[#0d3320]">
               Funding Status
             </h3>
             <Badge
-              className={`
-              ${
+              className={`${
                 isFullyFunded
                   ? "bg-emerald-600"
                   : "bg-gradient-to-r from-[#166856] to-[#0d3320]"
-              }
-              text-white shadow-lg px-3 py-1`}
+              } text-white shadow-lg px-3 py-1`}
             >
-              {isFullyFunded ? "Completed" : "Active"}
+              {isFullyFunded ? "Target Reached" : "Collecting"}
             </Badge>
           </div>
 
-          <div className="space-y-2">
-            {/* Progress Section */}
-            <div className="flex justify-between text-sm">
-              <span>Progress</span>
-              <span className="font-medium">
-                {getFundingProgress().toFixed(1)}%
-              </span>
+          <div className="space-y-4">
+            {/* Progress Bar */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span>Collection Progress</span>
+                <span className="font-medium">{getFundingProgress().toFixed(1)}%</span>
+              </div>
+              <Progress value={getFundingProgress()} className="h-2" />
             </div>
-            <div className="relative h-3 bg-[#8df1e2]/20 rounded-full overflow-hidden">
-              <div
-                className={`absolute h-full rounded-full transition-all duration-500 ${
-                  isFullyFunded
-                    ? "bg-emerald-500"
-                    : "bg-gradient-to-r from-[#166856] to-[#0d3320]"
-                }`}
-                style={{ width: `${Math.min(getFundingProgress(), 100)}%` }}
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+
+            {/* Fund Details */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <p className="text-sm text-[#166856]">Collected</p>
+                <p className="text-2xl font-bold text-[#0d3320]">
+                  ₹{project.collectedFunds?.toLocaleString() || 0}
+                </p>
+              </div>
+              <div className="space-y-1 text-right">
+                <p className="text-sm text-[#166856]">Target</p>
+                <p className="text-2xl font-bold text-[#0d3320]">
+                  ₹{project.allocatedFund?.toLocaleString() || 0}
+                </p>
               </div>
             </div>
 
-            {/* Amount Display */}
-            <div className="flex justify-between items-end mt-3">
-              <div>
-                <p className="text-sm text-[#166856]">Current Funds</p>
-                <p className="text-2xl font-bold text-[#0d3320]">
-                  ₹{currentFunding.toLocaleString()}
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-[#166856]">Allocated</p>
-                <p className="text-2xl font-bold text-[#0d3320]">
-                  ₹{(project.allocatedFund || 0).toLocaleString()}
-                </p>
+            {/* Remaining Amount */}
+            <div className="p-4 bg-[#166856]/5 rounded-xl">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-[#166856]">Remaining to collect</span>
+                <span className="font-bold text-[#0d3320]">
+                  ₹{((project.allocatedFund || 0) - (project.collectedFunds || 0)).toLocaleString()}
+                </span>
               </div>
             </div>
           </div>
-
-          {/* Fund Addition Section - Only shown if not fully funded */}
-          {!isFullyFunded && (
-            <div className="space-y-3 pt-4 border-t border-[#166856]/10">
-              <Label className="text-[#0d3320] font-medium">Add Funds</Label>
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  value={fundAmount}
-                  onChange={(e) => setFundAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  className="rounded-full border-[#166856]/20 focus:border-[#166856] 
-                    focus:ring-1 focus:ring-[#166856]/20 placeholder:text-[#166856]/40
-                    text-lg font-medium"
-                />
-                <Button
-                  onClick={handleAddFunds}
-                  className="rounded-full bg-gradient-to-r from-[#166856] to-[#0d3320] 
-                    text-white hover:opacity-90 shadow-lg shadow-[#166856]/20 
-                    border border-[#166856]/20 px-6"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add
-                </Button>
-              </div>
-              <p className="text-sm text-[#166856]/80">
-                Remaining: ₹
-                {(project.allocatedFund - currentFunding).toLocaleString()}
-              </p>
-            </div>
-          )}
         </div>
       </Card>
     </div>
   );
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#8df1e2]/5 to-white p-6">

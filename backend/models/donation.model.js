@@ -12,6 +12,10 @@ const donationSchema = new Schema(
       ref: "NGO",
       required: true,
     },
+    event: {
+      type: Schema.Types.ObjectId,
+      ref: "Event",
+    },
     amount: {
       type: Number,
       required: [true, "Donation amount is required"],

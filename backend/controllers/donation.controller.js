@@ -6,7 +6,7 @@ import { Notification } from "../models/notification.model.js";
 import { v4 as uuidv4 } from 'uuid';
 
 export const createDonation = TryCatch(async (req, res, next) => {
-    const { ngoId, amount } = req.body;
+    const { ngoId, amount, eventId } = req.body;
     const userId = req.user;
 
     if (!ngoId || !amount) {
@@ -21,34 +21,35 @@ export const createDonation = TryCatch(async (req, res, next) => {
     // Create unique order ID
     const orderId = uuidv4();
 
-    // Create donation record
-    const donation = await Donation.create({
+    // Create donation data
+    const donationData = {
         user: userId,
         ngo: ngoId,
         amount,
         orderId
-    });
+    };
+
+    // If eventId is provided, verify and include it
+    if (eventId) {
+        const event = await Event.findById(eventId);
+        if (!event) {
+            return next(new ErrorHandler("Event not found", 404));
+        }
+        donationData.event = eventId;
+
+        // Update event's collected funds
+        await Event.findByIdAndUpdate(eventId, {
+            $inc: { collectedFunds: amount }
+        });
+    }
+
+    // Create donation record
+    const donation = await Donation.create(donationData);
 
     // Update NGO's total funds
     await NGO.findByIdAndUpdate(ngoId, {
         $inc: { totalFunds: amount }
     });
-
-    // Create notification for NGO
-    // const notificationContent = `You received a donation of ₹${amount}`;
-    // await Notification.findOneAndUpdate(
-    //     { user: ngoId },
-    //     {
-    //         $push: {
-    //             notifications: {
-    //                 content: notificationContent,
-    //                 type: "donation",
-    //                 isRead: false
-    //             }
-    //         }
-    //     },
-    //     { upsert: true }
-    // );
 
     res.status(201).json({
         success: true,

@@ -36,34 +36,29 @@ export const createEvent = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("NGO not found", 404));
   }
 
-  // If allocatedFund is provided, verify sufficient funds
-  if (allocatedFund) {
-    if (allocatedFund > ngo.totalFunds) {
-      return next(
-        new ErrorHandler(
-          `Insufficient funds. Available: ₹${ngo.totalFunds}, Required: ₹${allocatedFund}`,
-          400
-        )
-      );
-    }
-
-    // Deduct funds from NGO's total funds
-    await NGO.findByIdAndUpdate(ngoId, {
-      $inc: { totalFunds: -allocatedFund },
-    });
-  }
-
   const eventData = {
     name,
     description,
     date,
-    location,
     organizer: ngoId,
     isEmergency,
     allocatedFund: allocatedFund || 0,
+    collectedFunds: collectedFunds || 0, // Initial collected funds
     startDate: startDate || undefined,
     endDate: endDate || undefined,
   };
+
+  // Handle location data properly
+  if (location) {
+    eventData.location = {
+      street: location.street || undefined,
+      city: location.city || undefined,
+      state: location.state || undefined,
+      pincode: location.pincode || undefined,
+      latitude: location.latitude || undefined,
+      longitude: location.longitude || undefined,
+    };
+  }
 
   // Handle gallery images if they exist
   if (files?.gallery) {
