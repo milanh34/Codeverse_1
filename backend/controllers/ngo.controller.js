@@ -1,6 +1,7 @@
 import { sendToken } from "../lib/token.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.middleware.js";
 import { NGO } from "../models/ngo.model.js";
+import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 import { Request } from "../models/request.model.js";
 import { Event } from "../models/event.model.js";

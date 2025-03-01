@@ -385,3 +385,29 @@ export const addComment = TryCatch(async (req, res, next) => {
     commentCount: updatedPost.comments.length,
   });
 });
+
+export const getAllNGOsWithFollowStatus = TryCatch(async (req, res, next) => {
+  const userId = req.user; // Get userId from authenticated user
+
+  // Get the user's following list
+  const user = await User.findById(userId).select("following");
+  const userFollowingSet = new Set(user.following.map(id => id.toString()));
+
+  // Fetch all NGOs with basic info
+  const ngos = await NGO.find()
+    .select("name description profile_image followers address badges totalFunds staff")
+    .lean();
+
+  // Add isFollowing field to each NGO
+  const ngosWithFollowStatus = ngos.map(ngo => ({
+    ...ngo,
+    isFollowing: userFollowingSet.has(ngo._id.toString()),
+    followerCount: ngo.followers?.length || 0
+  }));
+
+  res.status(200).json({
+    success: true,
+    ngos: ngosWithFollowStatus,
+    total: ngos.length
+  });
+});

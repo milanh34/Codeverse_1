@@ -6,6 +6,7 @@ import {
   MapPin,
   Users,
   Clock,
+  IndianRupee,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -13,113 +14,133 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const VolunCard = ({ event, isOpen, onToggle }) => {
+  const {
+    id,
+    title,
+    date,
+    startDate,
+    endDate,
+    location,
+    description,
+    allocatedFund,
+    isEmergency,
+    image,
+    status,
+    volunteers = [],
+    organizer,
+  } = event;
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl"
-    >
-      {/* Event Image Banner */}
-      <div className="relative h-56 overflow-hidden group">
-        <img
-          src={event.image}
-          alt={event.title}
-          className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-        <div className="absolute bottom-4 left-4 right-4 text-white">
-          <div className="flex justify-between items-center">
-            <span className="px-3 py-1 bg-emerald-500 rounded-full text-sm font-medium">
-              {event.status}
-            </span>
-            <span className="flex items-center px-3 py-1 bg-black/50 backdrop-blur-sm rounded-full text-sm">
-              <Clock className="w-4 h-4 mr-1" />
-              {new Date(event.date).toLocaleDateString()}
-            </span>
-          </div>
-        </div>
+    <Card className="bg-white overflow-hidden transition-all duration-300">
+      {/* Card Image */}
+      <div className="relative h-48">
+        <img src={image} alt={title} className="w-full h-full object-cover" />
+        {isEmergency && (
+          <Badge className="absolute top-2 right-2 bg-red-100 text-red-800 border-red-200">
+            Emergency
+          </Badge>
+        )}
       </div>
 
-      {/* Event Details Section */}
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-3 line-clamp-2">
-          {event.title}
-        </h2>
-
-        <div className="space-y-3 mb-6">
-          <div className="inline-flex items-center px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700">
-            <MapPin className="w-4 h-4 mr-2 text-gray-600 dark:text-gray-300" />
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              {event.location}
-            </span>
-          </div>
-          <div className="inline-flex items-center px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-700 ml-2">
-            <Users className="w-4 h-4 mr-2 text-gray-600 dark:text-gray-300" />
-            <span className="text-sm text-gray-600 dark:text-gray-300">
-              {event.volunteers.length} Volunteers
-            </span>
-          </div>
+      {/* Card Content */}
+      <div className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+          <Badge className={getStatusColor(status)}>{status}</Badge>
         </div>
 
-        <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2">
-          {event.description}
-        </p>
+        {/* Location and Date */}
+        <div className="space-y-2 text-sm text-gray-600 mb-4">
+          <p className="flex items-center gap-2">
+            <MapPin className="h-4 w-4" />
+            {location.fullAddress}
+          </p>
+          <p className="flex items-center gap-2">
+            <Calendar className="h-4 w-4" />
+            {startDate} - {endDate}
+          </p>
+          {allocatedFund > 0 && (
+            <p className="flex items-center gap-2 text-emerald-600">
+              <IndianRupee className="h-4 w-4" />
+              {allocatedFund.toLocaleString()}
+            </p>
+          )}
+        </div>
 
-        {/* Volunteers Dropdown */}
-        <div className="relative">
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              onToggle();
-            }}
-            className="flex items-center justify-between w-full py-3 text-left text-gray-800 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg px-4 transition-colors duration-200 border border-gray-200 dark:border-gray-600"
-          >
-            <span className="font-medium flex items-center">
-              <Users className="w-5 h-5 mr-2" />
-              Volunteer Details
+        {/* Description */}
+        <p className="text-gray-600 mb-4 line-clamp-2">{description}</p>
+
+        {/* Volunteers Count */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-[#166856]" />
+            <span className="text-sm text-gray-600">
+              {volunteers.length} Volunteers
             </span>
-            {isOpen ? (
-              <ChevronUp className="w-5 h-5" />
-            ) : (
-              <ChevronDown className="w-5 h-5" />
-            )}
-          </button>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onToggle}
+            className="text-[#166856] border-[#166856]"
+          >
+            {isOpen ? "Hide Details" : "View Details"}
+          </Button>
+        </div>
 
-          {isOpen && (
-            <div className="mt-4 space-y-4 max-h-80 overflow-y-auto">
-              {event.volunteers.map((volunteer) => (
+        {/* Expanded Details */}
+        {isOpen && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <h4 className="font-medium text-gray-800 mb-2">Volunteers</h4>
+            <div className="space-y-3">
+              {volunteers.map((volunteer) => (
                 <div
                   key={volunteer.id}
-                  className="flex items-center p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+                  className="flex items-center gap-3 text-sm"
                 >
-                  <img
-                    src={volunteer.profile_image}
-                    alt={volunteer.name}
-                    className="w-12 h-12 rounded-full object-cover mr-4 border-2 border-white shadow-md ring-2 ring-gray-200 dark:ring-gray-600"
-                  />
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-800 dark:text-white">
-                      {volunteer.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">
-                      {volunteer.email}
-                    </p>
-                    <div className="flex items-center mt-1">
-                      <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded-full">
-                        {volunteer.role}
-                      </span>
-                    </div>
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={volunteer.profile_image} />
+                    <AvatarFallback>
+                      {volunteer.name.substring(0, 2)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{volunteer.name}</p>
+                    <p className="text-gray-500">{volunteer.role}</p>
                   </div>
                 </div>
               ))}
             </div>
-          )}
-        </div>
+          </div>
+        )}
+
+        {/* Organizer */}
+        {/* <div className="mt-4 pt-4 border-t border-gray-200 flex items-center gap-2">
+          <Avatar className="h-6 w-6">
+            <AvatarImage src={organizer.image} />
+            <AvatarFallback>{organizer.name.substring(0, 2)}</AvatarFallback>
+          </Avatar>
+          <span className="text-sm text-gray-600">{organizer.name}</span>
+        </div> */}
       </div>
-    </motion.div>
+    </Card>
   );
+};
+
+const getStatusColor = (status) => {
+  const colors = {
+    Completed: "bg-gray-100 text-gray-800 border-gray-200",
+    Ongoing: "bg-green-100 text-green-800 border-green-200",
+    Upcoming: "bg-blue-100 text-blue-800 border-blue-200",
+    Unknown: "bg-gray-100 text-gray-800 border-gray-200",
+  };
+  return colors[status] || colors.Unknown;
 };
 
 export default VolunCard;
