@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import { connectDB } from "./lib/db.js";
 import userRoutes from "./routes/user.routes.js";
+import ngoRoutes from "./routes/ngo.routes.js";
 const app = express();
 
 const port = process.env.PORT || 8080;
@@ -22,6 +23,7 @@ app.use(
 );
 
 app.use("/api/user", userRoutes);
+app.use("/api/ngo", ngoRoutes);
 
 app.listen(port, () => {
   console.log(`server is listening on port ${port}`);

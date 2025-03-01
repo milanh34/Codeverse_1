@@ -1,13 +1,16 @@
 import express from "express";
 import {
-  newNGO,
-  loginNGO,
-  getMyProfile,
-  logout,
   changePassword,
-  updateProfile,
+  getMyNGOProfile,
+  getPendingVolunteerRequests,
+  handleVolunteerRequest,
+  loginNGO,
+  logoutNGO,
+  newNGO,
+  updateNGOProfile,
 } from "../controllers/ngo.controller.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
+import { multerUpload } from "../lib/multer.js";
 
 const router = express.Router();
 
@@ -24,16 +27,24 @@ router.post("/login", loginNGO);
 
 router.use(isAuthenticated);
 
-router.get("/me", getMyProfile);
+router.get("/me", getMyNGOProfile);
 
-router.get("/logout", logout);
+router.get("/logout", logoutNGO);
 
 router.post("/change-password", changePassword);
 
 router.put(
   "/update-profile",
   multerUpload.fields([{ name: "file", maxCount: 1 }]),
-  updateProfile
+  updateNGOProfile
+);
+
+// Volunteer request handling routes
+router.get("/volunteer-requests", isAuthenticated, getPendingVolunteerRequests);
+router.put(
+  "/volunteer-request/:requestId/:action",
+  isAuthenticated,
+  handleVolunteerRequest
 );
 
 export default router;

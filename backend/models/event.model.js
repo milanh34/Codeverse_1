@@ -34,11 +34,6 @@ const eventSchema = new Schema(
         ref: "User",
       },
     ],
-    status: {
-      type: String,
-      enum: ["Scheduled", "Ongoing", "Completed", "Cancelled"],
-      default: "Scheduled",
-    },
     event_galley: [
       {
         type: String,

@@ -3,6 +3,7 @@ import { sendToken } from "../lib/token.js";
 import { ErrorHandler, TryCatch } from "../middlewares/error.middleware.js";
 import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
+import { NGO } from "../models/ngo.model.js";
 
 export const newUser = TryCatch(async (req, res, next) => {
   const {
@@ -103,7 +104,12 @@ export const login = TryCatch(async (req, res, next) => {
 export const logout = TryCatch(async (req, res, next) => {
   return res
     .status(200)
-    .cookie("auth-token", "", { httpOnly: true, secure: true, sameSite: "None", maxAge: 0 })
+    .cookie("auth-token", "", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "None",
+      maxAge: 0,
+    })
     .json({
       success: true,
       message: "Logged Out Successfully!",
@@ -187,5 +193,37 @@ export const updateProfile = TryCatch(async (req, res, next) => {
     success: true,
     message: "Profile updated successfully",
     user: updatedUser,
+  });
+});
+
+export const toggleFollowNGO = TryCatch(async (req, res, next) => {
+  const { ngoId } = req.params;
+  const userId = req.user;
+
+  const ngo = await NGO.findById(ngoId);
+  if (!ngo) return next(new ErrorHandler("NGO not found", 404));
+
+  const user = await User.findById(userId);
+
+  const isFollowing = user.following.includes(ngoId);
+
+  if (isFollowing) {
+    // Unfollow
+    user.following = user.following.filter((id) => id.toString() !== ngoId);
+    ngo.followers = ngo.followers.filter((id) => id.toString() !== userId);
+  } else {
+    // Follow
+    user.following.push(ngoId);
+    ngo.followers.push(userId);
+  }
+
+  await Promise.all([user.save(), ngo.save()]);
+
+  res.status(200).json({
+    success: true,
+    message: isFollowing
+      ? "Successfully unfollowed the NGO"
+      : "Successfully followed the NGO",
+    isFollowing: !isFollowing,
   });
 });

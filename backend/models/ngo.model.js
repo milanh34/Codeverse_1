@@ -56,6 +56,12 @@ const ngoSchema = new Schema(
         type: String,
       },
     ],
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

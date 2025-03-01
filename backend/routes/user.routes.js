@@ -13,6 +13,7 @@ import {
   logout,
   newUser,
   updateProfile,
+  toggleFollowNGO,
 } from "../controllers/user.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -57,5 +58,8 @@ router.put(
   isAuthenticated,
   rejectVolunteerRequest
 );
+
+// Follow/Unfollow routes
+router.post("/toggle-follow/:ngoId", isAuthenticated, toggleFollowNGO);
 
 export default router;
