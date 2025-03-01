@@ -6,7 +6,7 @@ const UserLayout = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-[#8df1e2]/10 to-white">
       <UserNavbar />
-      <main className="container py-20 px-4 md:px-6">
+      <main className=" py-20 ">
         <Outlet />
       </main>
     </div>
