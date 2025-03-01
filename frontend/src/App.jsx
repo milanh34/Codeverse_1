@@ -2,11 +2,9 @@ import { Toaster } from "react-hot-toast";
 import Landing from "./pages/landing/Landing";
 import Dashboard from "./pages/ngouser/pages/Dashboard";
 import Funds from "./pages/ngouser/pages/Funds";
-import PostEvent from "./pages/ngouser/pages/PostEvent";
 import Profile from "./pages/ngouser/pages/Profile";
 import Projects from "./pages/ngouser/pages/Projects";
 import Social from "./pages/ngouser/pages/socialmedia/Social";
-import StaffRecruitment from "./pages/ngouser/pages/StaffRecruitment";
 import Volunteer from "./pages/ngouser/pages/Volunteer";
 import SignInNgo from "./pages/signup-in/ngo/signin/SignInNgo";
 import SignUpNgo from "./pages/signup-in/ngo/signup/SignUpNgo";
@@ -20,6 +18,9 @@ import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "./layout/Spinner";
 import { SERVER } from "./config/constant";
 
+import Home from "./pages/normaluser/pages/Home";
+import UserNavbar from "./pages/normaluser/components/UserNavbar";
+import UserLayout from "./layout/UserLayout";
 function App() {
   // Auth User Query
   const {
@@ -132,12 +133,6 @@ function App() {
             element={authNGO ? <Funds /> : <Navigate to="/signinngo" />}
           />
           <Route
-            path="/ngo/staffrecruitment"
-            element={
-              authNGO ? <StaffRecruitment /> : <Navigate to="/signinngo" />
-            }
-          />
-          <Route
             path="/ngo/volunteer"
             element={authNGO ? <Volunteer /> : <Navigate to="/signinngo" />}
           />
@@ -146,13 +141,13 @@ function App() {
             element={authNGO ? <Social /> : <Navigate to="/signinngo" />}
           />
           <Route
-            path="/ngo/postevent"
-            element={authNGO ? <PostEvent /> : <Navigate to="/signinngo" />}
-          />
-          <Route
             path="/ngo/projects/:id"
             element={authNGO ? <ProjectFinal /> : <Navigate to="/signinngo" />}
           />
+        </Route>
+
+        <Route element={<UserLayout />}>
+          <Route path="/user" element={<Home />} />
         </Route>
       </Routes>
     </>

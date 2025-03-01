@@ -56,12 +56,6 @@ const Sidebar = () => {
       description: "Track donations and expenditures",
     },
     {
-      icon: Users,
-      label: "Staff Recruitment",
-      path: "/ngo/staffrecruitment",
-      description: "Hire new team members",
-    },
-    {
       icon: HandHeart,
       label: "Volunteer",
       path: "/ngo/volunteer",
@@ -72,12 +66,6 @@ const Sidebar = () => {
       label: "Social",
       path: "/ngo/social",
       description: "Connect with supporters",
-    },
-    {
-      icon: Calendar,
-      label: "Post Event",
-      path: "/ngo/postevent",
-      description: "Schedule and share events",
     },
   ];
 
