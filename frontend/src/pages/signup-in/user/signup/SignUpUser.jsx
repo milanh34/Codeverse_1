@@ -21,13 +21,20 @@ import {
 import { Link } from "react-router-dom";
 import AuthLayout from "../../AuthLayout";
 import { Label } from "@/components/ui/label";
-import { Camera, Instagram, Twitter, Facebook, Upload, AlertCircle } from "lucide-react";
+import {
+  Camera,
+  Instagram,
+  Twitter,
+  Facebook,
+  Upload,
+  AlertCircle,
+} from "lucide-react";
 import PageTransition from "@/components/PageTransition";
 import axios from "axios";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const ProfileImageUpload = ({ profileImage, onImageChange }) => (
-  <div className="space-y-2 bg-emerald-900/20 p-4 rounded-lg border border-emerald-600/20">
+  <div className="space-y-2 bg-emerald-900/10 p-4 rounded-lg border border-emerald-400/20 backdrop-blur-sm">
     <Label className="text-emerald-300 font-medium">Profile Image</Label>
     <div className="flex items-center gap-4">
       <div className="relative">
@@ -68,8 +75,10 @@ const ProfileImageUpload = ({ profileImage, onImageChange }) => (
 );
 
 const AadharUpload = ({ aadharImage, onAadharChange }) => (
-  <div className="space-y-2 bg-emerald-900/20 p-4 rounded-lg border border-emerald-600/20">
-    <Label className="text-emerald-300 font-medium">Aadhar Card Verification</Label>
+  <div className="space-y-2 bg-emerald-900/10 p-4 rounded-lg border border-emerald-400/20 backdrop-blur-sm">
+    <Label className="text-emerald-300 font-medium">
+      Aadhar Card Verification
+    </Label>
     <div className="flex items-center gap-4">
       <div className="relative flex-1">
         <input
@@ -90,7 +99,9 @@ const AadharUpload = ({ aadharImage, onAadharChange }) => (
               <p className="text-sm text-emerald-300">Document uploaded</p>
             ) : (
               <>
-                <p className="text-sm font-medium text-emerald-300">Upload Aadhar Card</p>
+                <p className="text-sm font-medium text-emerald-300">
+                  Upload Aadhar Card
+                </p>
                 <p className="text-xs text-emerald-400/60">PDF or Image file</p>
               </>
             )}
@@ -101,7 +112,8 @@ const AadharUpload = ({ aadharImage, onAadharChange }) => (
     <Alert className="bg-emerald-900/20 border-emerald-500/30">
       <AlertCircle className="h-4 w-4 text-emerald-400" />
       <AlertDescription className="text-xs text-emerald-300/80">
-        Please upload a clear copy of your Aadhar card for verification purposes.
+        Please upload a clear copy of your Aadhar card for verification
+        purposes.
       </AlertDescription>
     </Alert>
   </div>
@@ -158,14 +170,15 @@ const SignUpUser = () => {
       {/* Basic Info */}
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Username</Label>
+          <Label className="text-white/90">Username</Label>
           <Input
             name="username"
             value={formData.username}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -176,9 +189,10 @@ const SignUpUser = () => {
             name="email"
             value={formData.email}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -193,9 +207,10 @@ const SignUpUser = () => {
             name="password"
             value={formData.password}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -206,9 +221,10 @@ const SignUpUser = () => {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -222,9 +238,10 @@ const SignUpUser = () => {
             name="fullName"
             value={formData.fullName}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -234,9 +251,10 @@ const SignUpUser = () => {
             name="phone_no"
             value={formData.phone_no}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -251,9 +269,10 @@ const SignUpUser = () => {
             name="age"
             value={formData.age}
             onChange={handleInputChange}
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
             required
           />
         </div>
@@ -266,17 +285,13 @@ const SignUpUser = () => {
             }
           >
             <SelectTrigger
-              className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+              className="bg-emerald-100/10 border-emerald-300/20 text-emerald-50 
+            placeholder:text-emerald-300/30 focus:border-emerald-400/50
+            hover:border-emerald-400/30 transition-all backdrop-blur-sm"
             >
               <SelectValue placeholder="Select gender" />
             </SelectTrigger>
-            <SelectContent
-              className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
-            >
+            <SelectContent className="bg-emerald-900/90 border-emerald-400/20 text-emerald-50">
               <SelectItem value="male">Male</SelectItem>
               <SelectItem value="female">Female</SelectItem>
               <SelectItem value="other">Other</SelectItem>
@@ -300,9 +315,10 @@ const SignUpUser = () => {
                   address: { ...prev.address, street: e.target.value },
                 }))
               }
-              className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
               required
             />
           </div>
@@ -317,9 +333,10 @@ const SignUpUser = () => {
                   address: { ...prev.address, city: e.target.value },
                 }))
               }
-              className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
               required
             />
           </div>
@@ -334,9 +351,10 @@ const SignUpUser = () => {
                   address: { ...prev.address, state: e.target.value },
                 }))
               }
-              className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
               required
             />
           </div>
@@ -351,9 +369,10 @@ const SignUpUser = () => {
                   address: { ...prev.address, pincode: e.target.value },
                 }))
               }
-              className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-                placeholder:text-emerald-700/50 focus:border-emerald-500
-                hover:border-emerald-600/50 transition-colors"
+              className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
               required
             />
           </div>
@@ -369,9 +388,10 @@ const SignUpUser = () => {
             value={formData.aadharNumber}
             onChange={handleInputChange}
             placeholder="XXXX-XXXX-XXXX"
-            className="bg-emerald-900/30 border-emerald-700/50 text-emerald-100 
-            placeholder:text-emerald-700/50 focus:border-emerald-500
-            hover:border-emerald-600/50 transition-colors"
+            className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+              placeholder:text-emerald-900/50 focus:border-emerald-500
+              hover:border-emerald-500/50 transition-all backdrop-blur-sm
+              focus:bg-white"
           />
         </div>
         <AadharUpload
@@ -414,34 +434,282 @@ const SignUpUser = () => {
   return (
     <AuthLayout>
       <PageTransition>
-        <Card className="auth-card max-w-xl w-full bg-emerald-950/50 border-emerald-800/50">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl text-center text-emerald-400">
+        <Card
+          className="w-full bg-emerald-900/95 border-emerald-600/30 rounded-2xl
+          backdrop-blur-xl shadow-xl mx-auto px-8"
+        >
+          <CardHeader className="space-y-1 py-8">
+            <CardTitle className="text-3xl text-center text-white">
               Create an account
             </CardTitle>
-            <CardDescription className="text-center text-emerald-300/70">
+            <CardDescription className="text-center text-white/70 text-lg">
               Join our comedy events platform
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {renderForm()}
+            <form onSubmit={handleSubmit} className="space-y-8">
+              {/* Profile Section */}
+              <div className="space-y-6">
+                <div className="flex flex-col items-center gap-6">
+                  <ProfileImageUpload
+                    profileImage={formData.profileImage}
+                    onImageChange={handleImageChange}
+                  />
+                  <div className="w-full grid grid-cols-2 gap-6">
+                    {/* Basic Info Fields */}
+                    <div className="space-y-2">
+                      <Label className="text-white">Username</Label>
+                      <Input
+                        name="username"
+                        value={formData.username}
+                        onChange={handleInputChange}
+                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">Email</Label>
+                      <Input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">Password</Label>
+                      <Input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-white">Confirm Password</Label>
+                      <Input
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleInputChange}
+                        className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                          placeholder:text-emerald-900/50 focus:border-emerald-500
+                          hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                          focus:bg-white"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Personal Information */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label className="text-white">Full Name</Label>
+                  <Input
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-white">Phone Number</Label>
+                  <Input
+                    name="phone_no"
+                    value={formData.phone_no}
+                    onChange={handleInputChange}
+                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-white">Age</Label>
+                  <Input
+                    type="number"
+                    name="age"
+                    value={formData.age}
+                    onChange={handleInputChange}
+                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-white">Gender</Label>
+                  <Select
+                    value={formData.gender}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, gender: value }))
+                    }
+                  >
+                    <SelectTrigger
+                      className="bg-emerald-100/10 border-emerald-300/20 text-emerald-50 
+                      placeholder:text-emerald-300/30 focus:border-emerald-400/50
+                      hover:border-emerald-400/30 transition-all backdrop-blur-sm"
+                    >
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-emerald-900/90 border-emerald-400/20 text-emerald-50">
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label className="text-white">Aadhar Number</Label>
+                  <Input
+                    name="aadharNumber"
+                    value={formData.aadharNumber}
+                    onChange={handleInputChange}
+                    placeholder="XXXX-XXXX-XXXX"
+                    className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              {/* Address Section */}
+              <div className="space-y-6">
+                <h3 className="text-lg font-medium text-white border-b border-emerald-800/50 pb-2">
+                  Address Information
+                </h3>
+                <div className="grid grid-cols-2 gap-6">
+                  <div className="col-span-2">
+                    <Label className="text-white">Street Address</Label>
+                    <Input
+                      name="address.street"
+                      value={formData.address.street}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          address: {
+                            ...prev.address,
+                            street: e.target.value,
+                          },
+                        }))
+                      }
+                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">City</Label>
+                    <Input
+                      name="address.city"
+                      value={formData.address.city}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, city: e.target.value },
+                        }))
+                      }
+                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">State</Label>
+                    <Input
+                      name="address.state"
+                      value={formData.address.state}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          address: { ...prev.address, state: e.target.value },
+                        }))
+                      }
+                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-white">Pincode</Label>
+                    <Input
+                      name="address.pincode"
+                      value={formData.address.pincode}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          address: {
+                            ...prev.address,
+                            pincode: e.target.value,
+                          },
+                        }))
+                      }
+                      className="bg-white/90 border-emerald-600/30 text-emerald-950 rounded-lg
+                        placeholder:text-emerald-900/50 focus:border-emerald-500
+                        hover:border-emerald-500/50 transition-all backdrop-blur-sm
+                        focus:bg-white"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Document Verification */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-white border-b border-emerald-800/50 pb-2">
+                  Document Verification
+                </h3>
+                <AadharUpload
+                  aadharImage={formData.aadharImage}
+                  onAadharChange={handleAadharChange}
+                />
+              </div>
+
               <Button
                 type="submit"
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white
-                transition-colors duration-200"
+                className="w-full py-6 text-lg bg-emerald-600 hover:bg-emerald-500 text-white
+                  transition-all duration-200 backdrop-blur-sm border border-emerald-500/30
+                  hover:border-emerald-400/50 shadow-lg shadow-emerald-900/20"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating account..." : "Sign up"}
+                {isLoading ? "Creating account..." : "Create Account"}
               </Button>
             </form>
           </CardContent>
-          <CardFooter>
-            <p className="text-center text-sm text-emerald-400/70 w-full">
+          <CardFooter className="py-6">
+            <p className="text-center text-sm text-white/70 w-full">
               Already have an account?{" "}
               <Link
                 to="/signinuser"
-                className="text-emerald-400 hover:text-emerald-300"
+                className="text-white hover:text-emerald-200"
               >
                 Sign in
               </Link>
@@ -451,6 +719,6 @@ const SignUpUser = () => {
       </PageTransition>
     </AuthLayout>
   );
-}  
+};
 
 export default SignUpUser;
