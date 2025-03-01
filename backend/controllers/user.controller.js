@@ -4,10 +4,10 @@ import { User } from "../models/user.model.js";
 import bcrypt from "bcrypt";
 
 export const newUser = TryCatch(async (req, res, next) => {
-  const { name, email, password, role, teamId } = req.body;
+  const { username, email, name, password } = req.body;
 
   console.count("newUser");
-  if (!name || !email || !password || !role || !teamId) {
+  if (!username || !name || !email || !password) {
     return next(new ErrorHandler("All fields are required", 400));
   }
 
@@ -21,11 +21,10 @@ export const newUser = TryCatch(async (req, res, next) => {
   console.count("newUser");
 
   const user = await User.create({
+    username,
     name,
     email,
     password,
-    role,
-    teamId,
   });
 
   console.count("newUser");
@@ -34,25 +33,25 @@ export const newUser = TryCatch(async (req, res, next) => {
 });
 
 export const login = TryCatch(async (req, res, next) => {
-  const { email, password } = req.body;
+  const {username, password } = req.body;
 
   console.count("login");
-  if (!email || !password) {
-    return next(new ErrorHandler("Email and password are required", 400));
+  if (!username || !password) {
+    return next(new ErrorHandler("Username and password are required", 400));
   }
 
   console.count("login");
 
-  const user = await User.findOne({ email }).select("+password");
+  const user = await User.findOne({ username }).select("+password");
   if (!user) {
-    return next(new ErrorHandler("Invalid email or password", 401));
+    return next(new ErrorHandler("Invalid username or password", 401));
   }
 
   console.count("login");
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
-    return next(new ErrorHandler("Invalid email or password", 401));
+    return next(new ErrorHandler("Invalid username or password", 401));
   }
 
   console.count("login");
