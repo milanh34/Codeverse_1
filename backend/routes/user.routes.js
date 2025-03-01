@@ -17,6 +17,7 @@ import {
   getFollowingNGOPosts,
   togglePostLike,
   addComment,
+  getAllNGOsWithFollowStatus,
 } from "../controllers/user.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -87,5 +88,7 @@ router.post("/post/:postId/comment", isAuthenticated, addComment);
 // Donation routes
 router.post("/donation/create", isAuthenticated, createDonation);
 router.get("/donations", isAuthenticated, getUserDonations);
+
+router.get("/all-with-follow-status", isAuthenticated, getAllNGOsWithFollowStatus);
 
 export default router;
