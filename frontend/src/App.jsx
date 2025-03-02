@@ -23,6 +23,8 @@ import UserLayout from "./layout/UserLayout";
 import Home from "./pages/normaluser/pages/Home";
 import Project from "./pages/normaluser/pages/Project";
 import SocialUser from "./pages/normaluser/pages/SocialUser";
+import VolunteerHistory from "./pages/normaluser/pages/VolunteerHistory";
+import DonationHistory from "./pages/normaluser/pages/DonationHistory";
 import VolunteerUser from "./pages/normaluser/pages/VolunteerUser";
 function App() {
   // Auth User Query
@@ -171,10 +173,25 @@ function App() {
           <Route
             path="/user/volunteer"
             element={
-              authUser ? <VolunteerUser /> : <Navigate to={"/siginuser"} />
+              
+              authUser ? <VolunteerUser  /> : <Navigate to={"/siginuser"} />
+            
+            }
+          />
+          <Route
+            path="/user/volunteerhistory"
+            element={
+              authUser ? <VolunteerHistory /> : <Navigate to={"/siginuser"} />
+            }
+          />
+          <Route
+            path="/user/donationhistory"
+            element={
+              authUser ? <DonationHistory /> : <Navigate to={"/siginuser"} />
             }
           />
         </Route>
+        
       </Routes>
     </>
   );

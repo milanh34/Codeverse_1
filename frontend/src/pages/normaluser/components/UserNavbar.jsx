@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import {
   Bell,
   Search,
@@ -24,6 +24,8 @@ export default function UserProfileNavbar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const dropdownRef = useRef(null);
+  const notificationRef = useRef(null);
 
   // Handle scroll effect
   useEffect(() => {
@@ -41,7 +43,15 @@ export default function UserProfileNavbar() {
 
   // Close dropdowns when clicking outside
   useEffect(() => {
-    const handleClickOutside = () => {
+    const handleClickOutside = (event) => {
+      // Don't close if clicking inside the dropdown
+      if (dropdownRef.current && dropdownRef.current.contains(event.target)) {
+        return;
+      }
+      // Don't close if clicking inside the notification panel
+      if (notificationRef.current && notificationRef.current.contains(event.target)) {
+        return;
+      }
       setActiveDropdown(null);
       setNotificationsOpen(false);
     };
@@ -90,10 +100,21 @@ export default function UserProfileNavbar() {
 
   // Modified navigation handler
   const handleNavigation = (path, e) => {
-    e.preventDefault();
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation(); // Prevent dropdown from closing before navigation
+    }
     navigate(path);
-    setIsOpen(false); // Close mobile menu after navigation
+    setIsOpen(false);
+    setActiveDropdown(null);
   };
+
+  // Direct link handler - this is what we're adding
+  const handleLinkClick = (path) => {
+    navigate(path);
+    setActiveDropdown(null);
+  };
+  
 
   return (
     <div className="w-full fixed top-0 left-0 z-50">
@@ -177,6 +198,7 @@ export default function UserProfileNavbar() {
                       <a
                         key={dropIdx}
                         href="#"
+                        onClick={(e) => e.stopPropagation()}
                         className="block px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors"
                       >
                         {dropdownItem}
@@ -204,7 +226,11 @@ export default function UserProfileNavbar() {
 
               {/* Notifications Dropdown */}
               {notificationsOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg z-10 border border-[#8df1e2]/50 animate-in fade-in-80 zoom-in-95">
+                <div 
+                  ref={notificationRef}
+                  className="absolute right-0 mt-2 w-80 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg z-10 border border-[#8df1e2]/50 animate-in fade-in-80 zoom-in-95"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <div className="flex items-center justify-between p-3 border-b border-[#8df1e2]/30">
                     <h3 className="font-medium text-[#0d3320]">
                       Notifications
@@ -271,7 +297,11 @@ export default function UserProfileNavbar() {
 
               {/* Profile Dropdown */}
               {activeDropdown === "profile" && (
-                <div className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-sm rounded-md shadow-lg z-10 py-1 border border-[#8df1e2]/50 animate-in fade-in-80 zoom-in-95">
+                <div 
+                  ref={dropdownRef}
+                  className="absolute right-0 mt-2 w-56 bg-white/95 backdrop-blur-sm rounded-md shadow-lg z-10 py-1 border border-[#8df1e2]/50 animate-in fade-in-80 zoom-in-95"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <div className="px-4 py-3 border-b border-[#8df1e2]/30">
                     <p className="text-sm font-medium text-[#0d3320]">
                       Sarah Johnson
@@ -280,39 +310,39 @@ export default function UserProfileNavbar() {
                       sarah.j@example.com
                     </p>
                   </div>
-
-                  <a
-                    href="#"
-                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors"
+                  
+                  <div 
+                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors cursor-pointer"
+                    onClick={() => handleLinkClick('/user/settings')}
                   >
                     <Settings size={16} className="mr-2" />
                     Account Settings
-                  </a>
-
-                  <a
-                    href="#"
-                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors"
+                  </div>
+                  
+                  <div 
+                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors cursor-pointer"
+                    onClick={() => handleLinkClick('/user/donationhistory')}
                   >
                     <History size={16} className="mr-2" />
                     Donation History
-                  </a>
-
-                  <a
-                    href="#"
-                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors"
+                  </div>
+                  
+                  <div 
+                    className="flex items-center px-4 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/10 hover:text-[#166856] transition-colors cursor-pointer"
+                    onClick={() => handleLinkClick('/user/volunteerhistory')}
                   >
                     <Users size={16} className="mr-2" />
                     Volunteer History
-                  </a>
-
+                  </div>
+                  
                   <div className="border-t border-[#8df1e2]/30 mt-1">
-                    <a
-                      href="#"
-                      className="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    <div 
+                      className="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+                      onClick={() => handleLinkClick('/')}
                     >
                       <LogOut size={16} className="mr-2" />
                       Logout
-                    </a>
+                    </div>
                   </div>
                 </div>
               )}
@@ -381,11 +411,7 @@ export default function UserProfileNavbar() {
                 <div key={index} className="py-2">
                   <div
                     className="flex items-center justify-between px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 cursor-pointer"
-                    onClick={(e) =>
-                      item.hasDropdown
-                        ? toggleDropdown(index, e)
-                        : handleNavigation(item.path, e)
-                    }
+                    onClick={() => handleLinkClick(item.path)}
                   >
                     <div className="flex items-center gap-2">
                       {item.icon}
@@ -409,6 +435,7 @@ export default function UserProfileNavbar() {
                           key={dropIdx}
                           href="#"
                           className="block px-8 py-3 text-sm text-[#0d3320] hover:bg-[#8df1e2]/20 hover:text-[#166856] transition-colors"
+                          onClick={(e) => e.stopPropagation()}
                         >
                           {dropdownItem}
                         </a>
@@ -424,39 +451,39 @@ export default function UserProfileNavbar() {
               <h3 className="text-sm font-medium text-[#0d3320] px-2 mb-2">
                 Profile
               </h3>
-
-              <a
-                href="#"
-                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320]"
+              
+              <div 
+                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320] cursor-pointer"
+                onClick={() => handleLinkClick('/user/settings')}
               >
                 <Settings size={16} className="mr-2 text-[#166856]" />
                 Account Settings
-              </a>
-
-              <a
-                href="#"
-                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320]"
+              </div>
+              
+              <div 
+                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320] cursor-pointer"
+                onClick={() => handleLinkClick('/user/donationhistory')}
               >
                 <History size={16} className="mr-2 text-[#166856]" />
                 Donation History
-              </a>
-
-              <a
-                href="#"
-                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320]"
+              </div>
+              
+              <div 
+                className="flex items-center px-2 py-3 rounded-md hover:bg-[#8df1e2]/10 text-sm text-[#0d3320] cursor-pointer"
+                onClick={() => handleLinkClick('/user/volunteerhistory')}
               >
                 <Users size={16} className="mr-2 text-[#166856]" />
                 Volunteer History
-              </a>
+              </div>
 
               <div className="pt-4 mt-4 border-t border-[#8df1e2]/30">
-                <a
-                  href="#"
-                  className="flex items-center px-2 py-3 rounded-md hover:bg-red-50 text-sm text-red-600"
+                <div 
+                  className="flex items-center px-2 py-3 rounded-md hover:bg-red-50 text-sm text-red-600 cursor-pointer"
+                  onClick={() => handleLinkClick('/')}
                 >
                   <LogOut size={16} className="mr-2" />
                   Logout
-                </a>
+                </div>
               </div>
             </div>
           </div>

@@ -141,3 +141,7 @@
   background-position: center;
   background-size: cover;
 }
+
+.dropdown-menu {
+  z-index: 1000; /* Ensure it's above other elements */
+}
