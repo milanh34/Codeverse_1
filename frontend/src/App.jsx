@@ -6,25 +6,24 @@ import Profile from "./pages/ngouser/pages/Profile";
 import Projects from "./pages/ngouser/pages/Projects";
 import Social from "./pages/ngouser/pages/socialmedia/Social";
 import Volunteer from "./pages/ngouser/pages/Volunteer";
+import Donate from "./pages/normaluser/pages/Donate";
 import SignInNgo from "./pages/signup-in/ngo/signin/SignInNgo";
 import SignUpNgo from "./pages/signup-in/ngo/signup/SignUpNgo";
 import SignInUser from "./pages/signup-in/user/signin/SignInUser";
 import SignUpUser from "./pages/signup-in/user/signup/SignUpUser";
-import Donate from "./pages/normaluser/pages/Donate";
 
-import { Navigate, Route, Routes } from "react-router-dom";
-import Layout from "./layout/Layout";
-import ProjectFinal from "./pages/ngouser/pages/ProjectFinal";
 import { useQuery } from "@tanstack/react-query";
-import LoadingSpinner from "./layout/Spinner";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { SERVER } from "./config/constant";
+import Layout from "./layout/Layout";
+import LoadingSpinner from "./layout/Spinner";
+import ProjectFinal from "./pages/ngouser/pages/ProjectFinal";
 
+import UserLayout from "./layout/UserLayout";
 import Home from "./pages/normaluser/pages/Home";
 import Project from "./pages/normaluser/pages/Project";
 import SocialUser from "./pages/normaluser/pages/SocialUser";
-import UserNavbar from "./pages/normaluser/components/UserNavbar";
 import VolunteerUser from "./pages/normaluser/pages/VolunteerUser";
-import UserLayout from "./layout/UserLayout";
 function App() {
   // Auth User Query
   const {
@@ -161,7 +160,7 @@ function App() {
               element={authUser ? <Project /> : <Navigate to="/signinuser" />}
             />
             <Route
-              path="/user/donate"
+              path="/user/donate/:id"
               element={authUser ? <Donate /> : <Navigate to={"/siginuser"} />}
             />
           </Route>
@@ -169,9 +168,11 @@ function App() {
             path="/user/social"
             element={authUser ? <SocialUser /> : <Navigate to={"/siginuser"} />}
           />
-            <Route
+          <Route
             path="/user/volunteer"
-            element={authUser ? <VolunteerUser/> : <Navigate to={"/siginuser"} />}
+            element={
+              authUser ? <VolunteerUser /> : <Navigate to={"/siginuser"} />
+            }
           />
         </Route>
       </Routes>

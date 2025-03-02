@@ -74,9 +74,11 @@ export const getUserDonations = TryCatch(async (req, res, next) => {
 export const getNGODonations = TryCatch(async (req, res, next) => {
     const ngoId = req.user;
 
+    console.log("coun")
     const donations = await Donation.find({ ngo: ngoId })
-        .populate("user", "name profile_image")
-        .sort({ createdAt: -1 });
+    .populate("user", "name profile_image")
+    .sort({ createdAt: -1 });
+    console.log("coun")
 
     res.status(200).json({
         success: true,

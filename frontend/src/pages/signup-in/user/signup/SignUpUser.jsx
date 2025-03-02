@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from "axios";
-import { AlertCircle, Camera, Upload } from "lucide-react";
+import { AlertCircle, Camera, Upload, MapPin } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import AuthLayout from "../../AuthLayout";
@@ -182,6 +182,60 @@ const SignUpUser = () => {
       console.error("Registration error:", error);
     },
   });
+
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast.error("Geolocation is not supported by your browser");
+      return;
+    }
+
+    toast.loading("Getting your location...");
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        try {
+          const { latitude, longitude } = position.coords;
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+          );
+          const data = await response.json();
+
+          if (data.address) {
+            setFormData((prev) => ({
+              ...prev,
+              address: {
+                street: data.address.road || data.address.pedestrian || "",
+                city:
+                  data.address.city ||
+                  data.address.town ||
+                  data.address.village ||
+                  "",
+                state: data.address.state || "",
+                pincode: data.address.postcode || "",
+                latitude,
+                longitude,
+              },
+            }));
+
+            toast.dismiss();
+            toast.success("Location updated!");
+          }
+        } catch (error) {
+          toast.dismiss();
+          toast.error("Failed to get address details");
+        }
+      },
+      (error) => {
+        toast.dismiss();
+        toast.error("Please allow location access");
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      }
+    );
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -399,7 +453,19 @@ const SignUpUser = () => {
 
                 {/* Optional Address Section */}
                 <div className="space-y-4">
-                  <Label className="text-white">Address</Label>
+                  <div className="flex justify-between items-center">
+                    <Label className="text-white">Address</Label>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={getCurrentLocation}
+                      className="text-emerald-300 border-emerald-600/30 hover:bg-emerald-900/20"
+                    >
+                      <MapPin className="w-4 h-4 mr-2" />
+                      Get Current Location
+                    </Button>
+                  </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2">
                       <Label className="text-white">Street Address</Label>

@@ -15,7 +15,6 @@ export const createEvent = TryCatch(async (req, res, next) => {
     location,
     isEmergency,
     allocatedFund,
-    collectedFunds,
     startDate,
     endDate,
   } = req.body;
@@ -202,33 +201,81 @@ export const getEventById = TryCatch(async (req, res, next) => {
 });
 
 export const getAllNGOEvents = TryCatch(async (req, res, next) => {
-  const ngoId = req.user; // Get NGO ID from authenticated user
-  const { ngo } = req.body;
+  const { id } = req.params; // Get NGO ID from route params
 
-  let id;
-  if(!ngo && !ngoId){
-    return next(new ErrorHandler("NGO not found", 404));
+  if (!id) {
+    return next(new ErrorHandler("NGO ID is required", 400));
   }
 
-  if(ngo){
-    id = ngo;
-  } else{
-    id = ngoId;
-  }
-
-  console.count("NGO Events");
-
+  console.log(id);
   const events = await Event.find({ organizer: id })
     .populate("organizer", "name profile_image")
     .populate("participants", "name username profile_image")
     .sort({ createdAt: -1 }); // Sort by latest first
 
-  // console.log("event", events);
-  console.count("NGO Events");
-
   return res.status(200).json({
     success: true,
     events,
     count: events.length,
+  });
+});
+
+export const getNearbyEvents = TryCatch(async (req, res, next) => {
+  const userId = req.user;
+
+  // Get user's pincode
+  const user = await User.findById(userId).select("address");
+  if (!user?.address?.pincode) {
+    return next(new ErrorHandler("User location not found", 404));
+  }
+
+  const userPincode = user.address.pincode;
+
+  // Find events with matching or nearby pincodes
+  // First get exact matches
+  const events = await Event.find({
+    "location.pincode": userPincode,
+    date: { $gte: new Date() }, // Only future events
+  })
+    .populate("organizer", "name profile_image")
+    .populate("participants", "name profile_image")
+    .sort({ date: 1 }) // Sort by nearest date first
+    .limit(5);
+
+  // If we don't have 5 events, get events from nearby areas
+  if (events.length < 5) {
+    // Get first 3 digits of pincode for broader area match
+    const pincodePrefix = userPincode.substring(0, 3);
+
+    const nearbyEvents = await Event.find({
+      "location.pincode": { $regex: `^${pincodePrefix}` },
+      _id: { $nin: events.map((e) => e._id) }, // Exclude already found events
+      date: { $gte: new Date() },
+    })
+      .populate("organizer", "name profile_image")
+      .populate("participants", "name profile_image")
+      .sort({ date: 1 })
+      .limit(5 - events.length);
+
+    events.push(...nearbyEvents);
+  }
+
+  res.status(200).json({
+    success: true,
+    events,
+    total: events.length,
+    userLocation: user.address,
+  });
+});
+
+export const getAllPublicEvents = TryCatch(async (req, res, next) => {
+  const events = await Event.find({ date: { $gte: new Date() } })
+    .populate("organizer", "name profile_image")
+    .populate("participants", "name profile_image")
+    .sort({ date: 1 });
+
+  res.status(200).json({
+    success: true,
+    events,
   });
 });

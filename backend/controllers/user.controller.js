@@ -9,7 +9,7 @@ import { Post } from "../models/post.model.js";
 
 export const newUser = TryCatch(async (req, res, next) => {
   const {
-    username, 
+    username,
     email,
     name,
     password,
@@ -412,4 +412,80 @@ export const getAllNGOsWithFollowStatus = TryCatch(async (req, res, next) => {
     ngos: ngosWithFollowStatus,
     total: ngos.length,
   });
+});
+
+export const sendMail = TryCatch(async (req, res, next) => {
+  const file = req.file;
+  const userId = req.user;
+
+  const user = await User.findById(userId);
+  if (!user) {
+    return next(new ErrorHandler("User not found", 404));
+  }
+
+  if (!file) {
+    return next(new ErrorHandler("No file attached", 400));
+  }
+
+  try {
+    // 1. Upload file to Cloudinary with specific options
+    const [uploadResult] = await uploadFilesToCloudinary([file], {
+      folder: "receipts",
+      resource_type: "raw", // Important for PDF files
+      access_mode: "public",
+    });
+
+    console.log("File uploaded to Cloudinary:", uploadResult);
+
+    // 2. Create transporter with OAuth2
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD, // Use app-specific password
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    // 3. Setup email with direct PDF attachment
+    const mailOptions = {
+      from: process.env.EMAIL_ADDRESS,
+      // to: "krishnathakkar1304@gmail.com",
+      to: user.email,
+      subject: "Your Donation Receipt from EcoImpact",
+      html: `
+        <div style="font-family: Arial, sans-serif; color: #333;">
+          <h2 style="color: #166856;">Thank You for Your Donation!</h2>
+          <p>Dear Donor,</p>
+          <p>Please find attached your donation receipt.</p>
+          <p>Thank you for supporting our cause!</p>
+          <br/>
+          <p style="color: #666;">Best regards,</p>
+          <p style="color: #166856;">EcoImpact Team</p>
+        </div>
+      `,
+      attachments: [
+        {
+          filename: "donation-receipt.pdf",
+          content: file.buffer,
+          contentType: "application/pdf",
+        },
+      ],
+    };
+
+    // 4. Send email
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Email sent:", info);
+
+    res.status(200).json({
+      success: true,
+      message: "Receipt sent successfully",
+      fileUrl: uploadResult.url,
+    });
+  } catch (error) {
+    console.error("Email sending failed:", error);
+    return next(new ErrorHandler(error.message || "Failed to send email", 500));
+  }
 });

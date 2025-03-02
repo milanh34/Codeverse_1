@@ -7,11 +7,18 @@ import userRoutes from "./routes/user.routes.js";
 import ngoRoutes from "./routes/ngo.routes.js";
 import eventRoutes from "./routes/event.routes.js";
 import { errorMiddleware } from "./middlewares/error.middleware.js";
+import { v2 as cloudinary } from "cloudinary";
+
 const app = express();
 
 const port = process.env.PORT || 8080;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
-connectDB(0);
+connectDB();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -10,14 +10,47 @@ import {
   Calendar,
   Shield,
 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { SERVER } from "@/config/constant";
+import { toast } from "react-hot-toast";
 
 const NgoDetails = ({ ngo }) => {
   const navigate = useNavigate();
-  const [isFollowing, setIsFollowing] = useState(false);
+  const queryClient = useQueryClient();
+  const [isFollowing, setIsFollowing] = useState(ngo.isFollowing);
 
-  const toggleFollow = () => {
-    setIsFollowing(!isFollowing);
-    // Here you'll add API call to follow/unfollow NGO
+  // Follow/Unfollow mutation
+  const { mutate: toggleFollowMutation, isPending } = useMutation({
+    mutationFn: async () => {
+      const response = await fetch(
+        `${SERVER}/api/user/toggle-follow/${ngo.ngoId}`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to toggle follow status");
+      }
+
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setIsFollowing(data.isFollowing);
+      queryClient.invalidateQueries(["fetchNgos"]); // Invalidate NGOs list to refresh data
+      queryClient.invalidateQueries(["authUser"]); // Invalidate user data to refresh following list
+      toast.success(data.message);
+    },
+    onError: (error) => {
+      toast.error(error.message || "Failed to update follow status");
+    },
+  });
+
+  const handleToggleFollow = () => {
+    if (!isPending) {
+      toggleFollowMutation();
+    }
   };
 
   return (
@@ -49,25 +82,30 @@ const NgoDetails = ({ ngo }) => {
 
             <div className="flex gap-3">
               <button
-                onClick={() => navigate("/user/donate")}
+                onClick={() => navigate(`/user/donate/${ngo?.ngoId}`)}
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#0d3320] text-white hover:bg-[#0d3320]/90 transition-all"
               >
                 Donate
               </button>
 
               <button
-                onClick={toggleFollow}
+                onClick={handleToggleFollow}
+                disabled={isPending}
                 className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
                   isFollowing
                     ? "bg-red-50 text-red-600 hover:bg-red-100"
                     : "bg-[#166856] text-white hover:bg-[#166856]/90"
-                }`}
+                } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
               >
                 <Heart
                   size={18}
                   className={isFollowing ? "fill-red-600" : ""}
                 />
-                {isFollowing ? "Unfollow" : "Follow"}
+                {isPending
+                  ? "Processing..."
+                  : isFollowing
+                    ? "Unfollow"
+                    : "Follow"}
               </button>
             </div>
           </div>
@@ -116,10 +154,10 @@ const NgoDetails = ({ ngo }) => {
           </div>
 
           {/* Establishment */}
-          <div className="mt-4 flex items-center gap-2 text-[#166856]">
+          {/* <div className="mt-4 flex items-center gap-2 text-[#166856]">
             <Calendar size={18} />
             <span>Established: {ngo?.established || "2010"}</span>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

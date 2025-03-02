@@ -11,32 +11,35 @@ export const multerUpload = multer({
 export const getBase64 = (file) =>
   `data:${file.mimetype};base64,${file.buffer.toString("base64")}`;
 
-export const uploadFilesToCloudinary = async (files = []) => {
+export const uploadFilesToCloudinary = async (files = [], options = {}) => {
   const uploadPromises = files.map((file) => {
     return new Promise((resolve, reject) => {
-      cloudinary.uploader.upload(
-        getBase64(file),
-        {
-          resource_type: "auto",
-          public_id: uuid(),
-        },
-        (error, result) => {
-          if (error) return reject(error);
-          resolve(result);
-        }
-      );
+      const uploadOptions = {
+        resource_type: "auto",
+        public_id: uuid(),
+        folder: "receipts",
+        ...options,
+      };
+
+      const base64Data = `data:${file.mimetype};base64,${file.buffer.toString(
+        "base64"
+      )}`;
+
+      cloudinary.uploader.upload(base64Data, uploadOptions, (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      });
     });
   });
 
   try {
     const results = await Promise.all(uploadPromises);
-
-    const formattedResults = results.map((result) => ({
+    return results.map((result) => ({
       public_id: result.public_id,
       url: result.secure_url,
     }));
-    return formattedResults;
   } catch (err) {
-    throw new Error("Error uploading files to cloudinary", err);
+    console.error("Cloudinary upload error:", err);
+    throw new Error("Error uploading files to cloudinary");
   }
 };

@@ -16,7 +16,7 @@ import {
   logoutNGO,
   newNGO,
   updateNGOProfile,
-  getEventRequests,
+  getAllNGOsPublic,
 } from "../controllers/ngo.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -28,7 +28,6 @@ router.post(
   multerUpload.fields([
     { name: "file", maxCount: 1 },
     { name: "certificate", maxCount: 1 },
-    { name: "cover", maxCount: 1 },
   ]),
   newNGO
 );
@@ -45,10 +44,7 @@ router.post("/change-password", changePassword);
 
 router.put(
   "/update-profile",
-  multerUpload.fields([
-    { name: "file", maxCount: 1 },
-    { name: "cover", maxCount: 1 },
-  ]),
+  multerUpload.fields([{ name: "file", maxCount: 1 }]),
   updateNGOProfile
 );
 
@@ -78,7 +74,7 @@ router.get("/funds", isAuthenticated, getNGOFunds);
 //ngo details for the donation and allocation page
 router.get("/complete-details", isAuthenticated, getNGOCompleteDetails);
 
-// Event requests route
-router.get("/event/:eventId/requests", isAuthenticated, getEventRequests);
+// Public routes
+router.get("/public/all", getAllNGOsPublic);
 
 export default router;

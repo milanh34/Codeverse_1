@@ -18,15 +18,23 @@ import {
   togglePostLike,
   addComment,
   getAllNGOsWithFollowStatus,
+  sendMail,
 } from "../controllers/user.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
 import {
-    createDonation,
-    getUserDonations,
+  createDonation,
+  getUserDonations,
 } from "../controllers/donation.controller.js";
 
 const router = express.Router();
+
+router.post(
+  "/sendmail",
+  isAuthenticated,
+  multerUpload.single("file"),
+  sendMail
+);
 
 router.post(
   "/new",
@@ -89,6 +97,10 @@ router.post("/post/:postId/comment", isAuthenticated, addComment);
 router.post("/donation/create", isAuthenticated, createDonation);
 router.get("/donations", isAuthenticated, getUserDonations);
 
-router.get("/all-with-follow-status", isAuthenticated, getAllNGOsWithFollowStatus);
+router.get(
+  "/all-with-follow-status",
+  isAuthenticated,
+  getAllNGOsWithFollowStatus
+);
 
 export default router;
