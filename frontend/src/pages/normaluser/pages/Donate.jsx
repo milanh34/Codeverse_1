@@ -357,15 +357,11 @@ const DonateForm = ({ selectedEvent, ngoId, onClose }) => {
               onClick={onClose}
               disabled={isProcessing}
               className="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all disabled:opacity-50"
-              disabled={isProcessing}
-              className="flex-1 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={isProcessing}
-              className="flex-1 py-2 rounded-lg bg-[#166856] text-white hover:bg-[#166856]/90 transition-all disabled:opacity-50"
               disabled={isProcessing}
               className="flex-1 py-2 rounded-lg bg-[#166856] text-white hover:bg-[#166856]/90 transition-all disabled:opacity-50"
             >
