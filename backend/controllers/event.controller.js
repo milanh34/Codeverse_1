@@ -15,6 +15,7 @@ export const createEvent = TryCatch(async (req, res, next) => {
     location,
     isEmergency,
     allocatedFund,
+    collectedFunds,
     startDate,
     endDate,
   } = req.body;

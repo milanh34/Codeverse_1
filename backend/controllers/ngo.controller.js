@@ -43,6 +43,7 @@ export const newNGO = TryCatch(async (req, res, next) => {
 
   const profile_image = await s3Upload(files.file[0]);
   const certificate = await s3Upload(files.certificate[0]);
+  const coverImage = files?.cover?.[0] ? await s3Upload(files.cover[0]) : null;
 
   const ngoData = {
     name,
@@ -56,6 +57,7 @@ export const newNGO = TryCatch(async (req, res, next) => {
   if (description) ngoData.description = description;
   if (profile_image) ngoData.profile_image = profile_image.url;
   if (certificate) ngoData.certificate = certificate.url;
+  if (coverImage) ngoData.coverImage = coverImage?.url;
 
   if (address) {
     ngoData.address = {
@@ -72,6 +74,7 @@ export const newNGO = TryCatch(async (req, res, next) => {
 
   sendToken(res, ngo, 201, "NGO registered successfully");
 });
+
 
 export const loginNGO = TryCatch(async (req, res, next) => {
   const { email, password } = req.body;
@@ -136,7 +139,8 @@ export const changePassword = TryCatch(async (req, res, next) => {
 
 export const updateNGOProfile = TryCatch(async (req, res, next) => {
   const ngoId = req.user;
-  const { name, email, phone_no, address, socials, description } = req.body;
+  const { name, email, phone_no, address, socials, description, staff } =
+    req.body;
 
   const ngo = await NGO.findById(ngoId);
   if (!ngo) {
@@ -149,6 +153,7 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
   if (phone_no) updates.phone_no = phone_no;
   if (socials) updates.socials = socials;
   if (description) updates.description = description;
+  if (staff) updates.staff = staff;
 
   if (address) {
     updates.address = {
@@ -165,6 +170,10 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
   if (files?.file?.[0]) {
     const profile_image = await s3Upload(files.file[0]);
     updates.profile_image = profile_image.url;
+  }
+  if (files?.cover?.[0]) {
+    const coverImage = await s3Upload(files.cover[0]);
+    updates.coverImage = coverImage.url;
   }
 
   const updatedNGO = await NGO.findByIdAndUpdate(ngoId, updates, {
