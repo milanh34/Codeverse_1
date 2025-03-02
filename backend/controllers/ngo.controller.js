@@ -401,7 +401,7 @@ export const getNGOCompleteDetails = TryCatch(async (req, res, next) => {
     events: eventsWithDetails,
     totalEvents: events.length,
     totalVolunteers,
-    totalFunds: totalDonations,
+    totalFunds: ngo.totalFunds,
     recentDonations: donations.slice(0, 5), // Latest 5 donations
     recentEvents: eventsWithDetails
       .filter((event) => new Date(event.date) >= new Date())
