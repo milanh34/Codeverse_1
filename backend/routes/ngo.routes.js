@@ -28,6 +28,7 @@ router.post(
   multerUpload.fields([
     { name: "file", maxCount: 1 },
     { name: "certificate", maxCount: 1 },
+    { name: "cover", maxCount: 1 },
   ]),
   newNGO
 );
@@ -44,7 +45,10 @@ router.post("/change-password", changePassword);
 
 router.put(
   "/update-profile",
-  multerUpload.fields([{ name: "file", maxCount: 1 }]),
+  multerUpload.fields([
+    { name: "file", maxCount: 1 },
+    { name: "cover", maxCount: 1 },
+  ]),
   updateNGOProfile
 );
 

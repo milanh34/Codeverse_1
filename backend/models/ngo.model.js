@@ -45,6 +45,9 @@ const ngoSchema = new Schema(
     profile_image: {
       type: String,
     },
+    coverImage: {
+      type: String,
+    },
     password: {
       type: String,
       required: [true, "Password is required"],

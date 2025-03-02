@@ -47,6 +47,7 @@ export const newNGO = TryCatch(async (req, res, next) => {
 
   const profile_image = await s3Upload(files.file[0]);
   const certificate = await s3Upload(files.certificate[0]);
+  const coverImage = files?.cover?.[0] ? await s3Upload(files.cover[0]) : null;
 
   const ngoData = {
     name,
@@ -60,6 +61,7 @@ export const newNGO = TryCatch(async (req, res, next) => {
   if (description) ngoData.description = description;
   if (profile_image) ngoData.profile_image = profile_image.url;
   if (certificate) ngoData.certificate = certificate.url;
+  if (coverImage) ngoData.coverImage = coverImage?.url;
 
   if (address) {
     ngoData.address = {
@@ -171,6 +173,10 @@ export const updateNGOProfile = TryCatch(async (req, res, next) => {
   if (files?.file?.[0]) {
     const profile_image = await s3Upload(files.file[0]);
     updates.profile_image = profile_image.url;
+  }
+  if (files?.cover?.[0]) {
+    const coverImage = await s3Upload(files.cover[0]);
+    updates.coverImage = coverImage.url;
   }
 
   const updatedNGO = await NGO.findByIdAndUpdate(ngoId, updates, {

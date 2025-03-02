@@ -9,7 +9,7 @@ import { Post } from "../models/post.model.js";
 
 export const newUser = TryCatch(async (req, res, next) => {
   const {
-    username,
+    username, 
     email,
     name,
     password,
