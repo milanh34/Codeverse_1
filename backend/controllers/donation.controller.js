@@ -32,6 +32,7 @@ export const createDonation = TryCatch(async (req, res, next) => {
 
     // If eventId is provided, verify and include it
     if (eventId) {
+        console.log("Hi");
         const event = await Event.findById(eventId);
         if (!event) {
             return next(new ErrorHandler("Event not found", 404));
