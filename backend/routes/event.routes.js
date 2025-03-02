@@ -8,6 +8,7 @@ import {
   getAllNGOEvents,
   getNearbyEvents,
   getAllPublicEvents,
+  getAllNGOEvents2,
 } from "../controllers/event.controller.js";
 import { multerUpload } from "../lib/multer.js";
 import { isAuthenticated } from "../middlewares/auth.middleware.js";
@@ -21,7 +22,7 @@ router.get("/public/all", getAllPublicEvents);
 
 // Protected routes (NGO only)
 
-router.get("/ngo/all/", isAuthenticated, getAllNGOEvents);
+router.get("/ngo/all/", isAuthenticated, getAllNGOEvents2);
 router.get("/ngo/:id", getAllNGOEvents); // This matches the frontend fetch URL
 router.get("/nearby", isAuthenticated, getNearbyEvents);
 

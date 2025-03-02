@@ -2,6 +2,7 @@ import { TryCatch } from "../middlewares/error.middleware.js";
 import { ErrorHandler } from "../middlewares/error.middleware.js";
 import { Donation } from "../models/donation.model.js";
 import { NGO } from "../models/ngo.model.js";
+import { Event } from "../models/event.model.js";
 import { Notification } from "../models/notification.model.js";
 import { v4 as uuidv4 } from 'uuid';
 

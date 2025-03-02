@@ -221,6 +221,26 @@ export const getAllNGOEvents = TryCatch(async (req, res, next) => {
   });
 });
 
+export const getAllNGOEvents2 = TryCatch(async (req, res, next) => {
+  const id = req.user; // Get NGO ID from route params
+
+  if (!id) {
+    return next(new ErrorHandler("NGO ID is required", 400));
+  }
+
+  console.log(id);
+  const events = await Event.find({ organizer: id })
+    .populate("organizer", "name profile_image")
+    .populate("participants", "name username profile_image")
+    .sort({ createdAt: -1 }); // Sort by latest first
+
+  return res.status(200).json({
+    success: true,
+    events,
+    count: events.length,
+  });
+});
+
 export const getNearbyEvents = TryCatch(async (req, res, next) => {
   const userId = req.user;
 
